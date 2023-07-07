@@ -42,26 +42,35 @@ protected:
 	// Called when inputs look (move camera) is triggered
 	void Look(const FInputActionValue& Value);
 	
-	// Called when inputs primary attack is triggered
+	// Primary attack method
 	void PrimaryAttack();
 	
-	// Called when inputs primary attack is triggered
+	// Secondary attack method
 	void SecondaryAttack();
 	
-	// Called when TimerHandle_*Attack time is elapsed 
-	void Attack_TimeElapsed();
+	// Dash ability method
+	void DashCast();
+	
+	// Called when TimerHandle_PrimaryAttack time is elapsed 
+	void PrimaryAttack_TimeElapsed();
+
+	// Called when TimerHandle_SecondaryAttack time is elapsed 
+	void SecondaryAttack_TimeElapsed();
+
+	// Called when TimerHandle_Dash time is elapsed 
+	void DashAbility_TimeElapsed();
+
+	// Called to spawn projectiles from player
+	void SpawnProjectile(TSubclassOf<AActor> ClassToSpawn);	
 	
 	// Called when inputs primary interact is triggered
 	void PrimaryInteract();
 	
-	// Called when inputs primary attack is triggered
+	// Called when inputs jump is triggered
 	void JumpTriggered();
 	
-	// Called when inputs primary attack is canceled
+	// Called when inputs jump is canceled
 	void JumpCanceled();
-	
-	// Called when inputs primary attack is canceled
-	void DashCast();
 
 
 	
@@ -118,17 +127,13 @@ protected:
 
 	
 	
-	/** Save the current projectile casted */
-	UPROPERTY(BlueprintReadOnly, Category=Attack)
-	TSubclassOf<AActor> CurrentProjectile;
-	
 	/** To set primary project from editor */
 	UPROPERTY(EditAnywhere, Category=Attack)
 	TSubclassOf<AActor> PrimaryProjectileClass;
 	
 	/** To set secondary project from editor */
 	UPROPERTY(EditAnywhere, Category=Attack)
-	TSubclassOf<AActor> SecondProjectileClass;
+	TSubclassOf<AActor> SecondaryProjectileClass;
 	
 	/** To set secondary project from editor */
 	UPROPERTY(EditAnywhere, Category=Attack)

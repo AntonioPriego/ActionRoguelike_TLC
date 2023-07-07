@@ -13,24 +13,6 @@ ASMagicProjectile::ASMagicProjectile()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Set up and take SphereComponent as RootComponent
-	SphereComponent = CreateDefaultSubobject<USphereComponent>("SphereComponent");
-	SphereComponent->SetCollisionObjectType(ECC_WorldDynamic);
-	SphereComponent->SetCollisionProfileName("Projectile");	
-	RootComponent = SphereComponent;
-
-	// Basic set up for EffectComponent and attach to SphereComponent
-	EffectComponent = CreateDefaultSubobject<UParticleSystemComponent>("EffectComponent");
-	EffectComponent->SetupAttachment(SphereComponent);
-
-	// Set up MovementComponent and some initial values
-	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComponent");
-	MovementComponent->InitialSpeed                 = 1000.0f;
-	MovementComponent->bRotationFollowsVelocity     = true;
-	MovementComponent->bInitialVelocityInLocalSpace = true;
-
-	// Add OnBeginOverlap to SphereComponent
-	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ASMagicProjectile::OnActorOverlap);
 }
 
 
@@ -39,6 +21,23 @@ void ASMagicProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+
+// Internal function between Constructor and BeginPlay
+void ASMagicProjectile::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	
+	// Add OnBeginOverlap to SphereComponent
+	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ASMagicProjectile::OnActorOverlap);
+}
+
+
+// _Implementation from it being marked as BlueprintNativeEvent 
+void ASMagicProjectile::Explode_Implementation()
+{
+	Super::Explode_Implementation();
 }
 
 
@@ -61,7 +60,7 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 		if (AttributeComp) {
 			AttributeComp->ApplyHealthChange(-20.0f);
 
-			Destroy();
+			Explode();
 		}
 	}
 }

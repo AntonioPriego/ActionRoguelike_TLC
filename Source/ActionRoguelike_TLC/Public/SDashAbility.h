@@ -10,7 +10,7 @@
 #include "SDashAbility.generated.h"
 
 UCLASS()
-class ACTIONROGUELIKE_TLC_API ASDashAbility : public ASMagicProjectile
+class ACTIONROGUELIKE_TLC_API ASDashAbility : public ASProjectileBase
 {
 	GENERATED_BODY()
 	
@@ -33,17 +33,21 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UParticleSystemComponent* ParticleExitTeleportComponent;
 
-private:
-	// Called on SphereComponent hit
-	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-               FVector NormalImpulse, const FHitResult& Hit);
+	// _Implementation from it being marked as BlueprintNativeEvent 
+	virtual void Explode_Implementation() override;
 
+private:
 	// Do what the Ability have to do (Dash)
 	void AbilityAction();
 
 	// Teleport instigator to this actor location
-	void Teleport() const;
+	void Teleport();
+
+	// Time beyond teleport input and teleport end
+	float TeleportDelay;
+	
+	// Time beyond end of teleport and teleport detonation
+	float DetonationDelay;
 	
 	// Timer handle for Actor Life Span
 	FTimerHandle TimerHandle_DashLifeSpan;

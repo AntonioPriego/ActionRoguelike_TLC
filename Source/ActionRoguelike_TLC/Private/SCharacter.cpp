@@ -126,39 +126,65 @@ void ASCharacter::Look(const FInputActionValue& Value)
 		AddControllerYawInput(CurrentValue.X);
 	if (CurrentValue.Y)
 		AddControllerPitchInput(-CurrentValue.Y);
-
-	GEngine->AddOnScreenDebugMessage(-1,0,FColor::Green, FString::Printf(TEXT("%f | %f"), CurrentValue.X, CurrentValue.Y));
 }
 
 
-// Called when inputs primary attack is triggered
+// Primary attack method
 void ASCharacter::PrimaryAttack()
 {
 	if (!IsAnyAttackTimerPending()) {
-		CurrentProjectile = PrimaryProjectileClass;
 		PlayAnimMontage(AttackAnim);
 		
-		GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::Attack_TimeElapsed, 0.2f);
-		//GetWorldTimerManager().ClearTimer(TimerHandle_PrimaryAttack);
+		GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_TimeElapsed, 0.2f);
 	}
 }
 
 
-// Called when inputs primary attack is triggered
+// Secondary attack method
 void ASCharacter::SecondaryAttack()
 {
 	if (!IsAnyAttackTimerPending()) {
-		CurrentProjectile = SecondProjectileClass;
 		PlayAnimMontage(AttackAnim);
 		
-		GetWorldTimerManager().SetTimer(TimerHandle_SecondaryAttack, this, &ASCharacter::Attack_TimeElapsed, 0.2f);
-		//GetWorldTimerManager().ClearTimer(TimerHandle_PrimaryAttack);
+		GetWorldTimerManager().SetTimer(TimerHandle_SecondaryAttack, this, &ASCharacter::SecondaryAttack_TimeElapsed, 0.2f);
 	}
 }
 
 
-// Called when TimerHandle_*Attack time is elapsed 
-void ASCharacter::Attack_TimeElapsed()
+// Dash ability method
+void ASCharacter::DashCast()
+{
+	if (!IsAnyAttackTimerPending()) {
+		PlayAnimMontage(AttackAnim);
+		
+		GetWorldTimerManager().SetTimer(TimerHandle_SecondaryAttack, this, &ASCharacter::DashAbility_TimeElapsed, 0.2f);
+	}
+}
+
+
+// Called when TimerHandle_PrimaryAttack time is elapsed 
+void ASCharacter::PrimaryAttack_TimeElapsed()
+{
+	SpawnProjectile(PrimaryProjectileClass);
+}
+
+
+// Called when TimerHandle_SecondaryAttack time is elapsed 
+void ASCharacter::SecondaryAttack_TimeElapsed()
+{
+	SpawnProjectile(SecondaryProjectileClass);
+}
+
+
+// Called when TimerHandle_Dash time is elapsed 
+void ASCharacter::DashAbility_TimeElapsed()
+{
+	SpawnProjectile(DashProjectileClass);
+}
+
+
+// Called to spawn projectiles from player
+void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
 {
 	// Getting some parameters for sweep raycast projectile trajectory searching hit points 
 	const FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
@@ -168,10 +194,14 @@ void ASCharacter::Attack_TimeElapsed()
 	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
 	ObjectQueryParams.AddObjectTypesToQuery(ECC_PhysicsBody);
 
+	// To ignore Player
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);	
+
 	// Calculation of the projectile trajectory and possible hit point
 	const FVector SweepStartPoint = CameraComponent->GetComponentLocation();
 	const FVector SweepEndPoint   = CameraComponent->GetComponentLocation() + CameraComponent->GetForwardVector()*HitAttackRange;
-	const bool bBlockingHit = GetWorld()->LineTraceSingleByObjectType(HitResult, SweepStartPoint, SweepEndPoint, ObjectQueryParams);
+	const bool bBlockingHit = GetWorld()->LineTraceSingleByObjectType(HitResult, SweepStartPoint, SweepEndPoint, ObjectQueryParams, Params);
 	
 	// Calculation of the projectile spawn rotation from the hand (HandLocation to ProjectileEndLocation)
 	const FVector ProjectileEndLocation = bBlockingHit ? HitResult.Location : SweepEndPoint;
@@ -184,7 +214,7 @@ void ASCharacter::Attack_TimeElapsed()
 	SpawnParams.Instigator = this;
 
 	// Projectile Spawn
-	GetWorld()->SpawnActor<AActor>(CurrentProjectile, SpawnTM, SpawnParams);
+	GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTM, SpawnParams);
 
 	// DEBUG: Draw sphere on ProjectileEndLocation
 	DrawDebugSphere(GetWorld(),ProjectileEndLocation,32.0f,32.f,FColor::Black,false,3.0f);
@@ -210,19 +240,6 @@ void ASCharacter::JumpTriggered()
 void ASCharacter::JumpCanceled()
 {
 	StopJumping();
-}
-
-
-// Called when inputs primary attack is canceled
-void ASCharacter::DashCast()
-{
-	if (!IsAnyAttackTimerPending()) {
-		CurrentProjectile = DashProjectileClass;
-		PlayAnimMontage(AttackAnim);
-		
-		GetWorldTimerManager().SetTimer(TimerHandle_SecondaryAttack, this, &ASCharacter::Attack_TimeElapsed, 0.2f);
-		//GetWorldTimerManager().ClearTimer(TimerHandle_PrimaryAttack);
-	}
 }
 
 

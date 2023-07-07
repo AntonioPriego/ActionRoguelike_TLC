@@ -3,13 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SProjectileBase.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "SMagicProjectile.generated.h"
 
 UCLASS()
-class ACTIONROGUELIKE_TLC_API ASMagicProjectile : public AActor
+class ACTIONROGUELIKE_TLC_API ASMagicProjectile : public ASProjectileBase
 {
 	GENERATED_BODY()
 	
@@ -24,19 +25,13 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	/** Sphere root component */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	USphereComponent* SphereComponent;
+	// Internal function between Constructor and BeginPlay
+	virtual void PostInitializeComponents() override;
 
-	/** Particle system for ability visuals */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UParticleSystemComponent* EffectComponent;
-
-	/** Movement component for projectiles */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UProjectileMovementComponent* MovementComponent;
+	// _Implementation from it being marked as BlueprintNativeEvent 
+	UFUNCTION()
+	virtual void Explode_Implementation() override;
 	
-
 	// Called when actor overlaps with something
 	UFUNCTION()
 	void OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

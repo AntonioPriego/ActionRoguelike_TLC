@@ -23,13 +23,13 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// Internal function between Constructor and BeginPlay
+	virtual void PostInitializeComponents() override;
+
 	// Called when onComponentHit triggers
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 			   FVector NormalImpulse, const FHitResult& Hit);
-
-	// Internal function between Constructor and BeginPlay
-	virtual void PostInitializeComponents() override;
 		
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* StaticMeshComponent;

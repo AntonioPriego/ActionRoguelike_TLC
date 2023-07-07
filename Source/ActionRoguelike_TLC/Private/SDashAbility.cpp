@@ -19,10 +19,9 @@ ASDashAbility::ASDashAbility()
 	ParticleExitTeleportComponent->SetupAttachment(SphereComponent);
 	ParticleExitTeleportComponent->SetAutoActivate(false);
 
-	MovementComponent->InitialSpeed = 10000.0f;
-
-	// Attach OnComponentHit method
-	SphereComponent->OnComponentHit.AddDynamic(this, &ASDashAbility::OnHit);
+	MovementComponent->InitialSpeed = 3500.0f;
+	TeleportDelay   = 0.35f;
+	DetonationDelay = 0.2f;
 }
 
 
@@ -32,7 +31,7 @@ void ASDashAbility::BeginPlay()
 	Super::BeginPlay();
 
 	ParticleEnterTeleportComponent->Activate();
-	GetWorldTimerManager().SetTimer(TimerHandle_DashLifeSpan, this, &ASDashAbility::AbilityAction, 0.6f);
+	GetWorldTimerManager().SetTimer(TimerHandle_DashLifeSpan, this, &ASDashAbility::AbilityAction, TeleportDelay);
 }
 
 
@@ -44,42 +43,37 @@ void ASDashAbility::Tick(float DeltaTime)
 }
 
 
-// Called on SphereComponent hit
-void ASDashAbility::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	                      FVector NormalImpulse, const FHitResult& Hit)
+// _Implementation from it being marked as BlueprintNativeEvent 
+void ASDashAbility::Explode_Implementation()
 {
+	GetWorldTimerManager().ClearTimer(TimerHandle_DashLifeSpan); // Clear timer bc we are calling AbilityAction before expected for timer
 	AbilityAction();
-
-	if (GEngine)
-		GEngine->AddOnScreenDebugMessage(-1,2.0f,FColor::Red,TEXT("Dash SphereComponent Hitted"));
 }
 
 
 // Do what the Ability have to do (Dash)
 void ASDashAbility::AbilityAction()
 {
-	GetWorldTimerManager().SetTimer(TimerHandle_WaitExplosionAnim, this, &ASDashAbility::Teleport, 0.2f);
-
+	GetWorldTimerManager().SetTimer(TimerHandle_WaitExplosionAnim, this, &ASDashAbility::Teleport, DetonationDelay);
 	
 	SphereComponent->OnComponentHit.Clear();
 	MovementComponent->Deactivate();
-	
-	if (GEngine)
-		GEngine->AddOnScreenDebugMessage(-1,2.0f,FColor::White,TEXT("ASDashAbility::AbilityAction()"));
 }
 
 
 // Teleport instigator to this actor location
-void ASDashAbility::Teleport() const
+void ASDashAbility::Teleport()
 {
-	const FVector  Location = GetActorLocation();
-	const FRotator Rotation = FRotator(GetInstigator()->GetActorRotation().Pitch, GetActorRotation().Yaw, GetInstigator()->GetActorRotation().Roll);
-	
-	GetInstigator()->SetActorLocationAndRotation(Location, Rotation,false,
-								  nullptr, ETeleportType::TeleportPhysics);
+	AActor* ActorToTeleport = GetInstigator();
+	if (ActorToTeleport) {
+		// Keep instigator rotation or it may end up jarring
+		ActorToTeleport->TeleportTo(GetActorLocation(), ActorToTeleport->GetActorRotation(), false, false);
+	}
 
+	// Some visuals
 	ParticleExitTeleportComponent->Activate();
 	EffectComponent->Deactivate();
-	if (GEngine)
-		GEngine->AddOnScreenDebugMessage(-1,2.0f,FColor::White,TEXT("ASDashAbility::Teleport()"));
+	
+
+	Destroy();
 }
