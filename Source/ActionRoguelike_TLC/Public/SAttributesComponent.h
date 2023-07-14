@@ -25,6 +25,10 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged OnHealthChanged;
 
+	/** Return if Health is greater than 0 */
+	UFUNCTION(BlueprintCallable)
+	bool IsAlive() const;
+
 protected:
 
 	// EditAnywhere - edit in BP editor and per-instance in level.
@@ -37,8 +41,12 @@ protected:
 	// BlueprintReadWrite - read-write access in Blueprints
 	// --
 	// Category = "" - display only for detail panels and blueprint context menu.
-
+	
 	/** That's it, just the health as a float */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Attributes)
 	float Health;
+
+	/** The max Health value assignable */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Attributes)
+	float MaxHealth;
 };

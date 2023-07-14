@@ -11,14 +11,17 @@ USAttributesComponent::USAttributesComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	Health = 100;
+	// Health values
+	MaxHealth = 100;
+	Health    = MaxHealth;
 }
 
 
 // Apply the Delta increment/decrement to Health and return true if it was successful
 bool USAttributesComponent::ApplyHealthChange(float Delta)
 {
-	Health += Delta;
+	Health = FMath::Clamp(Health + Delta, 0, MaxHealth);;
+	
 
 	OnHealthChanged.Broadcast(nullptr, this, Health, Delta);
 	
@@ -26,3 +29,9 @@ bool USAttributesComponent::ApplyHealthChange(float Delta)
 	return true;
 }
 
+
+// Return if Health is greater than 0
+bool USAttributesComponent::IsAlive() const
+{
+	return Health > 0.0f;
+}

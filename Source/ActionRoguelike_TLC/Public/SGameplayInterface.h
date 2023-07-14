@@ -13,9 +13,7 @@ class USGameplayInterface : public UInterface
 	GENERATED_BODY()
 };
 
-/**
- * 
- */
+/** Interface to manage Interaction on gameplay */
 class ACTIONROGUELIKE_TLC_API ISGameplayInterface
 {
 	GENERATED_BODY()

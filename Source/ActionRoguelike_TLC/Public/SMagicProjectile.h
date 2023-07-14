@@ -7,12 +7,15 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Sound/SoundCue.h"
 #include "SMagicProjectile.generated.h"
 
 UCLASS()
 class ACTIONROGUELIKE_TLC_API ASMagicProjectile : public ASProjectileBase
 {
 	GENERATED_BODY()
+
+
 	
 public:	
 	// Sets default values for this actor's properties
@@ -21,6 +24,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -37,4 +42,14 @@ protected:
 	void OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 						UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 		                bool bFromSweep, const FHitResult& SweepResult);
+
+	
+
+	/** The looped sound of projectile on air */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Sounds)
+	USoundCue* FlightLoopSound;
+
+	/** The sound of MagicProjectile impact */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Sounds)
+	USoundCue* ImpactSound;
 };

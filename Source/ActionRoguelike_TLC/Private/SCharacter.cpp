@@ -42,6 +42,16 @@ void ASCharacter::BeginPlay()
 	
 }
 
+
+// Internal function between Constructor and BeginPlay
+void ASCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	AttributesComponent->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
+}
+
+
 // Called every frame
 void ASCharacter::Tick(float DeltaTime)
 {
@@ -240,6 +250,21 @@ void ASCharacter::JumpTriggered()
 void ASCharacter::JumpCanceled()
 {
 	StopJumping();
+}
+
+
+// The broadcast function that notifies when Health changes on AttributesComponent
+void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributesComponent* OwningComp, float NewHealth, float Delta)
+{
+	// Damaged
+	if (Delta < 0)
+		GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->TimeSeconds);
+	
+	// Death if
+	if (NewHealth <= 0.0f  &&  Delta < 0.0f) {
+		APlayerController* PlayerController = Cast<APlayerController>(GetController());
+		DisableInput(PlayerController);
+	}
 }
 
 

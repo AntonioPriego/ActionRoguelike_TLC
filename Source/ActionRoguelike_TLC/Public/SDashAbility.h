@@ -36,6 +36,7 @@ protected:
 	// _Implementation from it being marked as BlueprintNativeEvent 
 	virtual void Explode_Implementation() override;
 
+
 private:
 	// Do what the Ability have to do (Dash)
 	void AbilityAction();

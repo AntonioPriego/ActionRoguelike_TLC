@@ -43,6 +43,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components)
 	UProjectileMovementComponent* MovementComponent;
 
+	/** Movement component for projectiles */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=OnDestroy)
+	bool DestroyActorOnExplode;
+
+	/** Variable that saves the amount of Health the projectile is going to make */
+	UPROPERTY(EditAnywhere, Category=Damage)
+	float Damage;
+
 
 	// 'virtual' so we can override ths in child-classes
 	UFUNCTION()

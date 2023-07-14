@@ -56,9 +56,7 @@ void AExplosiveBarrel::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAct
 	GEngine->AddOnScreenDebugMessage(-1,2.0f,FColor::Black,TEXT("Hay overlap"));
 
 	UE_LOG(LogTemp, Log, TEXT("OnActorHit in Explosive Barrel"));
-
-    // %s = string
-    // %f = float
+	
     // logs: "OtherActor: MyActor_1, at gametime: 124.4" 
     UE_LOG(LogTemp, Warning, TEXT("OtherActor: %s, at game time: %f"), *GetNameSafe(OtherActor), GetWorld()->TimeSeconds);
 

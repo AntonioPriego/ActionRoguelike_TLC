@@ -11,6 +11,10 @@ ASDashAbility::ASDashAbility()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Set DestroyActorOnExplode to false bc we want the parent Explode don't destroy the actor
+	//to destroy it when ParticleExitTeleport is finished 
+	DestroyActorOnExplode = false;
+
 	// Basic set up for visuals components and attach to SphereComponent
 	ParticleEnterTeleportComponent = CreateDefaultSubobject<UParticleSystemComponent>("ParticleEnterTeleportComponent");
 	ParticleEnterTeleportComponent->SetupAttachment(SphereComponent);
@@ -19,9 +23,14 @@ ASDashAbility::ASDashAbility()
 	ParticleExitTeleportComponent->SetupAttachment(SphereComponent);
 	ParticleExitTeleportComponent->SetAutoActivate(false);
 
+	// Ignore Player when moving
+	SphereComponent->IgnoreActorWhenMoving(GetInstigator(), true);
+
+	// Set up some class values
 	MovementComponent->InitialSpeed = 3500.0f;
 	TeleportDelay   = 0.35f;
 	DetonationDelay = 0.2f;
+	InitialLifeSpan = 2.0f;
 }
 
 
@@ -46,7 +55,12 @@ void ASDashAbility::Tick(float DeltaTime)
 // _Implementation from it being marked as BlueprintNativeEvent 
 void ASDashAbility::Explode_Implementation()
 {
+	// Call parent Explode() but DestroyActorOnExplode is false, so it wont destroy actor. So we must deactivate EffectComponent
+	Super::Explode_Implementation();
+	EffectComponent->Deactivate();
+	
 	GetWorldTimerManager().ClearTimer(TimerHandle_DashLifeSpan); // Clear timer bc we are calling AbilityAction before expected for timer
+	
 	AbilityAction();
 }
 
@@ -55,9 +69,10 @@ void ASDashAbility::Explode_Implementation()
 void ASDashAbility::AbilityAction()
 {
 	GetWorldTimerManager().SetTimer(TimerHandle_WaitExplosionAnim, this, &ASDashAbility::Teleport, DetonationDelay);
-	
-	SphereComponent->OnComponentHit.Clear();
+
+	// Deactivate movement and collisions bc the active interaction of the actor with the world is finished at this time
 	MovementComponent->Deactivate();
+	SetActorEnableCollision(false);
 }
 
 
@@ -74,6 +89,7 @@ void ASDashAbility::Teleport()
 	ParticleExitTeleportComponent->Activate();
 	EffectComponent->Deactivate();
 	
-
-	Destroy();
+	
+	//Destroy();
 }
+

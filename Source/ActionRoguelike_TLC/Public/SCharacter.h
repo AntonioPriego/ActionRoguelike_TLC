@@ -36,6 +36,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
+	// Internal function between Constructor and BeginPlay
+	virtual void PostInitializeComponents() override;
+	
 	// Called when inputs move is triggered
 	void Move(const FInputActionValue& Value);
 	
@@ -155,6 +158,9 @@ protected:
 	FTimerHandle TimerHandle_Dash;
 
 
+	// The broadcast function that notifies when Health changes on AttributesComponent
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, USAttributesComponent* OwningComp, float NewHealth, float Delta);
 	
 private:
 	// Return true if any attack timer handle is pending

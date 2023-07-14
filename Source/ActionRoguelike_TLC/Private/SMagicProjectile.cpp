@@ -4,6 +4,7 @@
 
 #include "SAttributesComponent.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 
 
@@ -11,8 +12,11 @@
 ASMagicProjectile::ASMagicProjectile()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	//PrimaryActorTick.bCanEverTick = true;
 
+	SphereComponent->IgnoreActorWhenMoving(GetInstigator(), true);
+
+	Damage = 20.0f;
 }
 
 
@@ -20,7 +24,7 @@ ASMagicProjectile::ASMagicProjectile()
 void ASMagicProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	UGameplayStatics::SpawnSoundAttached(FlightLoopSound, SphereComponent);
 }
 
 
@@ -45,7 +49,6 @@ void ASMagicProjectile::Explode_Implementation()
 void ASMagicProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 
@@ -55,10 +58,13 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 						               bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor  &&  OtherActor!=GetInstigator()) {
-		USAttributesComponent* AttributeComp = Cast<USAttributesComponent>( OtherActor->GetComponentByClass(USAttributesComponent::StaticClass()) );
+		DrawDebugSphere(GetWorld(), GetActorLocation(), 10.0f, 12, FColor::Red, false, 1.0f);
+		UActorComponent* Component = OtherActor->GetComponentByClass(USAttributesComponent::StaticClass());
 
-		if (AttributeComp) {
-			AttributeComp->ApplyHealthChange(-20.0f);
+		if (USAttributesComponent* AttributeComp = Cast<USAttributesComponent>(Component)) {
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSound, GetActorLocation());
+			AttributeComp->ApplyHealthChange(-Damage);
+
 
 			Explode();
 		}
