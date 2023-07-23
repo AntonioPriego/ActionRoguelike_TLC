@@ -29,6 +29,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsAlive() const;
 
+	/** Return if Health is equal to MaxHealth */
+	UFUNCTION(BlueprintCallable)
+	bool IsFullHealth() const;
+
+	/** Return Health */
+	UFUNCTION(BlueprintCallable)
+	float GetHealth() const;
+	
+
 protected:
 
 	// EditAnywhere - edit in BP editor and per-instance in level.

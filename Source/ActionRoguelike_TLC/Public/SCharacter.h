@@ -10,8 +10,8 @@
 #include "SAttributesComponent.h"
 #include "SInteractionComponent.h"
 #include "Components/InputComponent.h"
-
 #include "SCharacter.generated.h"
+
 
 UCLASS()
 class ACTIONROGUELIKE_TLC_API ASCharacter : public ACharacter
@@ -29,6 +29,9 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	// Getter for Mesh
+	USkeletalMeshComponent* GetSKMesh() const;
 
 	
 	
@@ -161,7 +164,12 @@ protected:
 	// The broadcast function that notifies when Health changes on AttributesComponent
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, USAttributesComponent* OwningComp, float NewHealth, float Delta);
-	
+
+	// Method called when Mesh begin overlap with another collision actor
+	UFUNCTION()
+	void OnActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+		                     int32 OtherBodyIndex, bool bFromSweep, const FHitResult &HitResult);
+
 private:
 	// Return true if any attack timer handle is pending
 	bool IsAnyAttackTimerPending();

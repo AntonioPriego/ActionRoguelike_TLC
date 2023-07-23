@@ -23,11 +23,13 @@ ASCharacter::ASCharacter()
 	CameraComponent    = CreateDefaultSubobject<UCameraComponent>("CameraComponent");		// Camera
 	SpringArmComponent->SetupAttachment(RootComponent);									// Attachment SpringArm->RootComponent
 	CameraComponent->SetupAttachment(SpringArmComponent);									// Attachment Camera->SpringArm
-	SpringArmComponent->bUsePawnControlRotation = true;			// Some constructor values  /
-	bUseControllerRotationYaw = false;							// Some constructor values | https://drive.google.com/file/d/1QDxeYIUHOry3bJtOwmN2_SAaEdPWIXTy/view?usp=sharing
-	GetCharacterMovement()->bOrientRotationToMovement = true;	// Some constructor values  \
+	SpringArmComponent->bUsePawnControlRotation = true;			// Some constructor values  /-
+	bUseControllerRotationYaw = false;							// Some constructor values { https://drive.google.com/file/d/1QDxeYIUHOry3bJtOwmN2_SAaEdPWIXTy/view?usp=sharing
+	GetCharacterMovement()->bOrientRotationToMovement = true;	// Some constructor values  \_
+	HitAttackRange = 10000.0f;                                  // Some Constructor values
 
-	HitAttackRange = 10000.0f;
+	// Activate OverlapEvents on player mesh
+	GetMesh()->SetGenerateOverlapEvents(true);
 }
 
 // Called when the game starts or when spawned
@@ -49,6 +51,7 @@ void ASCharacter::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	AttributesComponent->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
+	GetMesh()->OnComponentBeginOverlap.AddDynamic(this, &ASCharacter::OnActorBeginOverlap);
 }
 
 
@@ -107,6 +110,13 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		EnhancedInputComponent->BindAction(JumpAction,            ETriggerEvent::Canceled,  this, &ASCharacter::JumpCanceled   );		
 		EnhancedInputComponent->BindAction(DashAction,            ETriggerEvent::Started,   this, &ASCharacter::DashCast       );
 	}
+}
+
+
+// Getter for Mesh
+USkeletalMeshComponent* ASCharacter::GetSKMesh() const
+{
+	return GetMesh();
 }
 
 
@@ -258,12 +268,29 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributesComponent
 {
 	// Damaged
 	if (Delta < 0)
-		GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->TimeSeconds);
+		GetMesh()->SetScalarParameterValueOnMaterials("IsHeal", false);
+
+	// Healed
+	if (Delta > 0)
+		GetMesh()->SetScalarParameterValueOnMaterials("IsHeal", true);
+	
+	GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->TimeSeconds);
 	
 	// Death if
 	if (NewHealth <= 0.0f  &&  Delta < 0.0f) {
 		APlayerController* PlayerController = Cast<APlayerController>(GetController());
 		DisableInput(PlayerController);
+	}
+}
+
+
+// Method called when Mesh begin overlap with another collision actor
+void ASCharacter::OnActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+                                      int32 OtherBodyIndex, bool bFromSweep, const FHitResult &HitResult)
+{
+	// Execute interact when it is possible
+	if (OtherActor->Implements<USGameplayInterface>()) {
+		ISGameplayInterface::Execute_Interact(OtherActor, this);
 	}
 }
 

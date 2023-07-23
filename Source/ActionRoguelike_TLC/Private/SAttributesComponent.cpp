@@ -35,3 +35,17 @@ bool USAttributesComponent::IsAlive() const
 {
 	return Health > 0.0f;
 }
+
+
+// Return if Health is equal to MaxHealth
+bool USAttributesComponent::IsFullHealth() const
+{
+	return Health == MaxHealth;
+}
+
+
+// Return Health
+float USAttributesComponent::GetHealth() const
+{
+	return Health;
+}
