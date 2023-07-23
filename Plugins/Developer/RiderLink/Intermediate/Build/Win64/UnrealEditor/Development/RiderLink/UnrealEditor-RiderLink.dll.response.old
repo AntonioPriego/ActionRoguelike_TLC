@@ -34,6 +34,9 @@
 /NODEFAULTLIB:"LIBCPD"
 /FUNCTIONPADMIN:6
 "C:\Users\TonyPC\Documents\Unreal Projects\ActionRoguelike_TLC\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLink\Module.RiderLink.cpp.obj"
+"C:\Users\TonyPC\Documents\Unreal Projects\ActionRoguelike_TLC\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLink\ProtocolFactory.cpp.obj"
+"C:\Users\TonyPC\Documents\Unreal Projects\ActionRoguelike_TLC\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLink\RiderLink.cpp.obj"
+"C:\Users\TonyPC\Documents\Unreal Projects\ActionRoguelike_TLC\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLink\UE4TypesMarshallers.cpp.obj"
 "C:\Users\TonyPC\Documents\Unreal Projects\ActionRoguelike_TLC\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLink\Default.rc2.res"
 "..\Intermediate\Build\Win64\UnrealEditor\Development\Core\UnrealEditor-Core.lib"
 "C:\Users\TonyPC\Documents\Unreal Projects\ActionRoguelike_TLC\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RD\UnrealEditor-RD.lib"
