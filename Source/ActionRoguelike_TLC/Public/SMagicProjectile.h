@@ -7,7 +7,7 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "Sound/SoundCue.h"
+#include "Camera/CameraShakeBase.h"
 #include "SMagicProjectile.generated.h"
 
 UCLASS()
@@ -15,15 +15,10 @@ class ACTIONROGUELIKE_TLC_API ASMagicProjectile : public ASProjectileBase
 {
 	GENERATED_BODY()
 
-
 	
 public:	
 	// Sets default values for this actor's properties
 	ASMagicProjectile();
-	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 
 	
 protected:
@@ -43,13 +38,4 @@ protected:
 						UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 		                bool bFromSweep, const FHitResult& SweepResult);
 
-	
-
-	/** The looped sound of projectile on air */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Sounds)
-	USoundCue* FlightLoopSound;
-
-	/** The sound of MagicProjectile impact */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Sounds)
-	USoundCue* ImpactSound;
 };

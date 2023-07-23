@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Sound/SoundCue.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "SProjectileBase.generated.h"
 
@@ -28,29 +29,51 @@ protected:
 	virtual void PostInitializeComponents() override;
 	
 	/** Sphere root component */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Mesh)
 	USphereComponent* SphereComponent;
 
+	/** Movement component for projectiles */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Movement)
+	UProjectileMovementComponent* MovementComponent;
+
 	/** Particle system for ability visuals */
-	UPROPERTY(EditDefaultsOnly, Category=Particles)
+	UPROPERTY(EditDefaultsOnly, Category=Effects)
 	UParticleSystemComponent* EffectComponent;
 	
 	/** Particle system for impact visuals */
-	UPROPERTY(EditDefaultsOnly, Category=Particles)
+	UPROPERTY(EditDefaultsOnly, Category=Effects)
 	UParticleSystem* ImpactVfx; // UParticleSystem is just an asset of particle, so !=UParticleSystemComponent
+	
+	/** Particle system for cast visuals */
+	UPROPERTY(EditDefaultsOnly, Category=Effects)
+	UParticleSystem* CastVfx; // UParticleSystem is just an asset of particle, so !=UParticleSystemComponent
+	
+	/** CameraShake used on impact */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Effects|Shake")
+	TSubclassOf<UCameraShakeBase> ImpactShake;
+	
+	/** The looped sound of projectile on air */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Sounds)
+	USoundCue* FlightLoopSound;
+	UAudioComponent* FlightLoopInstance; // The AudioComponent attached to actor that plays FlightLoopSound
 
-	/** Movement component for projectiles */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components)
-	UProjectileMovementComponent* MovementComponent;
+	/** The sound of MagicProjectile impact */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Sounds)
+	USoundCue* ImpactSound;
 
+	
 	/** Movement component for projectiles */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=OnDestroy)
+	UPROPERTY(EditAnywhere, Category=OnDestroy)
 	bool DestroyActorOnExplode;
 
 	/** Variable that saves the amount of Health the projectile is going to make */
 	UPROPERTY(EditAnywhere, Category=Damage)
 	float Damage;
 
+	/** Name of the attach point of the SKMesh where CastVFX is going to spawn */
+	UPROPERTY(EditAnywhere, Category=Effects)
+	FName CastAttachPointName;
+	
 
 	// 'virtual' so we can override ths in child-classes
 	UFUNCTION()
