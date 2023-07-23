@@ -12,23 +12,40 @@ class ACTIONROGUELIKE_TLC_API ASPickUpItem : public AActor, public ISGameplayInt
 {
 	GENERATED_BODY()
 
-	/* When interface function declared as BlueprintNativeEvent on UFUNCTION
-    we have to add "_Implementation", bc we are using it on C++ but on BLUEPRINTS too */
-	// Definition of Interact function of SGameplayInterface on PickUpItem
-	void Interact_Implementation(APawn* InstigatorPawn);
-	
+
 public:	
 	// Sets default values for this actor's properties
 	ASPickUpItem();
 	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	/* When interface function declared as BlueprintNativeEvent on UFUNCTION
+    we have to add "_Implementation", bc we are using it on C++ but on BLUEPRINTS too */
+	// Definition of Interact function of SGameplayInterface on PickUpItem
+	virtual void Interact_Implementation(APawn* InstigatorPawn);
+
+	// Set Actor enabled or disabled: visibility and collisions
+	void Enable();	
+	void Disable();
+
 
 	/** Mesh Component for PickUpItem */
-	UMeshComponent* MeshComponent;
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* MeshComponent;
+
+	/** When true: respawn after RespawnSeconds. When false: Destroy on use */
+	UPROPERTY(VisibleAnywhere, Category=Values)
+	bool IsReSpawnable;
+
+	/** Time to respawn the item if IsReSpawnable */
+	UPROPERTY(VisibleAnywhere, Category=Values)
+	float RespawnSeconds;
+
+
+private:
+	//Timers
+	FTimerHandle TimerHandle_Respawn;
 };
