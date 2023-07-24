@@ -11,9 +11,6 @@
 // Sets default values
 ASProjectileBase::ASProjectileBase()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	// PrimaryActorTick.bCanEverTick = true;
-
 	// Set DestroyActorOnExplode true on default
 	DestroyActorOnExplode = true;
 
@@ -34,7 +31,7 @@ ASProjectileBase::ASProjectileBase()
 
 	// Set up MovementComponent and some initial values
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComponent");
-	MovementComponent->InitialSpeed                 = 1000.0f;
+	MovementComponent->InitialSpeed                 = 3000.0f;
 	MovementComponent->bRotationFollowsVelocity     = true;
 	MovementComponent->bInitialVelocityInLocalSpace = true;
 	Damage = 0.0f;
@@ -48,13 +45,21 @@ void ASProjectileBase::BeginPlay()
 
 	// Spawn sound attached to the MagicProjectile itself
 	if (FlightLoopSound)
+	{
 		FlightLoopInstance = UGameplayStatics::SpawnSoundAttached(FlightLoopSound, SphereComponent);
-
+	}
+		
 	// Spawn Particle effect attached to SCharacter hand ("Muzzle_01")
 	if (GetInstigator())
+	{
 		if (USkeletalMeshComponent* SkeletalMesh = Cast<ASCharacter>(GetInstigator())->GetSKMesh())
+		{
 			if (CastVfx  &&  SkeletalMesh)
+			{
 				UGameplayStatics::SpawnEmitterAttached(CastVfx, SkeletalMesh, CastAttachPointName);
+			}
+		}
+	}
 }
 
 
@@ -79,18 +84,28 @@ void ASProjectileBase::OnActorHit(UPrimitiveComponent* HitComponent, AActor* Oth
 // _Implementation from it being marked as BlueprintNativeEvent 
 void ASProjectileBase::Explode_Implementation()
 {
-	if (ensure(IsValid(this))) {
+	if (ensure(IsValid(this)))
+	{
 
 		// Visuals and sound on impact
 		if (ImpactVfx)
+		{
 			UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVfx, GetActorLocation(), GetActorRotation());
+		}
+		
 		if (ImpactSound)
-		UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSound, GetActorLocation());
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSound, GetActorLocation());
+		}
+		
 		if (FlightLoopInstance)
+		{
 			FlightLoopInstance->Stop();
-
+		}
 		
 		if (DestroyActorOnExplode)
+		{
 			Destroy();
+		}
 	}
 }

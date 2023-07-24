@@ -7,9 +7,6 @@
 // Sets default values
 ASPickUpItem::ASPickUpItem()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	//PrimaryActorTick.bCanEverTick = true;
-
 	// Set up MeshComponent default, as a root and collision profile
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("MeshComponent");
 	SetRootComponent(MeshComponent);
@@ -34,12 +31,14 @@ void ASPickUpItem::Interact_Implementation(APawn* InstigatorPawn)
 	ISGameplayInterface::Interact_Implementation(InstigatorPawn);
 
 
-	if (IsReSpawnable) {
+	if (IsReSpawnable)
+	{
 		// Disabled and reEnabled in RespawnSeconds seconds
 		Disable();		
 		GetWorldTimerManager().SetTimer(TimerHandle_Respawn, this, &ASPickUpItem::Enable, RespawnSeconds);
 	}
-	else {
+	else
+	{
 		// Clear timer due to possible inconsistencies and destroy bc is not respawnable
 		GetWorldTimerManager().ClearTimer(TimerHandle_Respawn);		
 		Destroy();

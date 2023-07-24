@@ -20,8 +20,7 @@ USAttributesComponent::USAttributesComponent()
 // Apply the Delta increment/decrement to Health and return true if it was successful
 bool USAttributesComponent::ApplyHealthChange(float Delta)
 {
-	Health = FMath::Clamp(Health + Delta, 0, MaxHealth);;
-	
+	Health = FMath::Clamp(Health + Delta, 0, MaxHealth);;	
 
 	OnHealthChanged.Broadcast(nullptr, this, Health, Delta);
 	

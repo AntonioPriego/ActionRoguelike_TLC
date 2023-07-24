@@ -23,10 +23,12 @@ void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 	UActorComponent* ActorComponent = InstigatorPawn->GetComponentByClass(USAttributesComponent::StaticClass());
 
 	// Cast and apply healthChange if correct
-	if (USAttributesComponent* AttributesComponent = Cast<USAttributesComponent>(ActorComponent)) {
+	if (USAttributesComponent* AttributesComponent = Cast<USAttributesComponent>(ActorComponent))
+	{
 
 		// Ignores when Health is Full
-		if (!AttributesComponent->IsFullHealth()) {
+		if (!AttributesComponent->IsFullHealth())
+		{
 			AttributesComponent->ApplyHealthChange(DeltaHealthChange);
 
 			Super::Interact_Implementation(InstigatorPawn);

@@ -20,9 +20,6 @@ class ACTIONROGUELIKE_TLC_API ASItemChest : public AActor, public ISGameplayInte
 public:	
 	// Sets default values for this actor's properties
 	ASItemChest();
-	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	/** To set rotation degrees on chest open */
 	UPROPERTY(EditAnywhere)

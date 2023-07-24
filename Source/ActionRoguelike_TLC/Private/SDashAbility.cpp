@@ -44,14 +44,6 @@ void ASDashAbility::BeginPlay()
 }
 
 
-// Called every frame
-void ASDashAbility::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-
 // _Implementation from it being marked as BlueprintNativeEvent 
 void ASDashAbility::Explode_Implementation()
 {
@@ -80,7 +72,8 @@ void ASDashAbility::AbilityAction()
 void ASDashAbility::Teleport()
 {
 	AActor* ActorToTeleport = GetInstigator();
-	if (ActorToTeleport) {
+	if (ActorToTeleport)
+	{
 		// Keep instigator rotation or it may end up jarring
 		ActorToTeleport->TeleportTo(GetActorLocation(), ActorToTeleport->GetActorRotation(), false, false);
 	}

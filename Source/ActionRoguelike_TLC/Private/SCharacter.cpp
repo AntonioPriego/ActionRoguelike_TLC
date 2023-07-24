@@ -61,12 +61,12 @@ void ASCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	/* DEBUG TO SEE WHAT IS DOING ON REAL GAMEPLAY THIS VARIABLES
-	if (GetLocalViewingPlayerController()->WasInputKeyJustPressed(EKeys::One)) {
+	if (GetLocalViewingPlayerController()->WasInputKeyJustPressed(EKeys::One))
 		SpringArmComponent->bUsePawnControlRotation = !SpringArmComponent->bUsePawnControlRotation;
 		GEngine->AddOnScreenDebugMessage(-1,4,FColor::Yellow, FString::Printf(TEXT("bUseControllerRotationYaw to %s"), (SpringArmComponent->bUsePawnControlRotation) ? TEXT("true") : TEXT("false")));
 	}
 
-	if (GetLocalViewingPlayerController()->WasInputKeyJustPressed(EKeys::Two)) {
+	if (GetLocalViewingPlayerController()->WasInputKeyJustPressed(EKeys::Two))
 		bUseControllerRotationYaw = !bUseControllerRotationYaw;
 		GEngine->AddOnScreenDebugMessage(-1,4,FColor::Yellow, FString::Printf(TEXT("bUseControllerRotationYaw to %s"), (bUseControllerRotationYaw) ? TEXT("true") : TEXT("false")));
 	}
@@ -268,16 +268,23 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributesComponent
 {
 	// Damaged
 	if (Delta < 0)
+	{
 		GetMesh()->SetScalarParameterValueOnMaterials("IsHeal", false);
-
+	}
+		
 	// Healed
 	if (Delta > 0)
+	{
 		GetMesh()->SetScalarParameterValueOnMaterials("IsHeal", true);
-	
+	}
+
+	// TimeToHit act over the flash color when damaged or heal
 	GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->TimeSeconds);
+
 	
 	// Death if
-	if (NewHealth <= 0.0f  &&  Delta < 0.0f) {
+	if (NewHealth <= 0.0f  &&  Delta < 0.0f)
+	{
 		APlayerController* PlayerController = Cast<APlayerController>(GetController());
 		DisableInput(PlayerController);
 	}
@@ -289,7 +296,8 @@ void ASCharacter::OnActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
                                       int32 OtherBodyIndex, bool bFromSweep, const FHitResult &HitResult)
 {
 	// Execute interact when it is possible
-	if (OtherActor->Implements<USGameplayInterface>()) {
+	if (OtherActor->Implements<USGameplayInterface>())
+	{
 		ISGameplayInterface::Execute_Interact(OtherActor, this);
 	}
 }

@@ -54,12 +54,15 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 						               UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 						               bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor  &&  OtherActor!=GetInstigator()) {
+	if (OtherActor  &&  OtherActor!=GetInstigator())
+	{
 		DrawDebugSphere(GetWorld(), GetActorLocation(), 10.0f, 12, FColor::Red, false, 1.0f);
 		UActorComponent* Component = OtherActor->GetComponentByClass(USAttributesComponent::StaticClass());
 
 		if (USAttributesComponent* AttributeComp = Cast<USAttributesComponent>(Component))
+		{
 			AttributeComp->ApplyHealthChange(-Damage);
+		}
 		
 		Explode();
 	}

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Perception/PawnSensingComponent.h"
 #include "SAICharacter.generated.h"
 
 UCLASS()
@@ -16,10 +17,14 @@ public:
 	ASAICharacter();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	/** Component to retrieve perception senses */
+	UPROPERTY(VisibleAnywhere, Category=Components)
+	UPawnSensingComponent* PawnSensingComponent;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	// Internal function between Constructor and BeginPlay
+	void PostInitializeComponents() override;
+	
+	// Called when pawn sees
+	UFUNCTION()
+	void OnPawnSeen(APawn* Pawn);
 };
