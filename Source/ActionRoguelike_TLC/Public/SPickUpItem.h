@@ -19,18 +19,16 @@ public:
 	
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
 	/* When interface function declared as BlueprintNativeEvent on UFUNCTION
     we have to add "_Implementation", bc we are using it on C++ but on BLUEPRINTS too */
 	// Definition of Interact function of SGameplayInterface on PickUpItem
-	virtual void Interact_Implementation(APawn* InstigatorPawn);
+	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
 
 	// Set Actor enabled or disabled: visibility and collisions
-	void Enable();	
+	void SetActiveStatus(const bool Active);
+	void Enable();
 	void Disable();
-
+	
 
 	/** Mesh Component for PickUpItem */
 	UPROPERTY(VisibleAnywhere)

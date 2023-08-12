@@ -19,19 +19,27 @@ ASHealthPotion::ASHealthPotion()
 // Definition of Interact function of SGameplayInterface on PickUpItem
 void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 {
+	// Error management
+	if (!ensure(InstigatorPawn))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("InstigatorPawn not found on SHealthPotion Interact"));
+		return;
+	}
+	
+	
 	// Get Attribute Component
-	UActorComponent* ActorComponent = InstigatorPawn->GetComponentByClass(USAttributesComponent::StaticClass());
+	UActorComponent*       ActorComponent      = InstigatorPawn->GetComponentByClass(USAttributesComponent::StaticClass());
+	USAttributesComponent* AttributesComponent = Cast<USAttributesComponent>(ActorComponent);
 
 	// Cast and apply healthChange if correct
-	if (USAttributesComponent* AttributesComponent = Cast<USAttributesComponent>(ActorComponent))
+	if (ensure(ActorComponent))
 	{
-
 		// Ignores when Health is Full
 		if (!AttributesComponent->IsFullHealth())
 		{
 			AttributesComponent->ApplyHealthChange(DeltaHealthChange);
 
-			Super::Interact_Implementation(InstigatorPawn);
+			Super::Interact_Implementation(InstigatorPawn); // Manages respawn or destroy logic
 		}
 	}
 }

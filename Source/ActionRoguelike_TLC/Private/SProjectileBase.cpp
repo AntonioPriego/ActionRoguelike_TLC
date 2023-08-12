@@ -24,10 +24,15 @@ ASProjectileBase::ASProjectileBase()
 
 	// Basic set up for EffectComponent and attach to SphereComponent
 	EffectComponent = CreateDefaultSubobject<UParticleSystemComponent>("EffectComponent");
-	EffectComponent->SetupAttachment(SphereComponent);
-
+	EffectComponent->SetupAttachment(RootComponent);
+	
 	// Set point name for SKMesh player on projectile casting location
 	CastAttachPointName = "Muzzle_01";
+	
+	
+	// Set up audio
+	FlightLoopAudioComponent = CreateDefaultSubobject<UAudioComponent>("FlightLoopAudioComponent");
+	FlightLoopAudioComponent->SetupAttachment(RootComponent);
 
 	// Set up MovementComponent and some initial values
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComponent");
@@ -46,7 +51,7 @@ void ASProjectileBase::BeginPlay()
 	// Spawn sound attached to the MagicProjectile itself
 	if (FlightLoopSound)
 	{
-		FlightLoopInstance = UGameplayStatics::SpawnSoundAttached(FlightLoopSound, SphereComponent);
+		FlightLoopAudioComponent = UGameplayStatics::SpawnSoundAttached(FlightLoopSound, SphereComponent);
 	}
 		
 	// Spawn Particle effect attached to SCharacter hand ("Muzzle_01")
@@ -98,9 +103,9 @@ void ASProjectileBase::Explode_Implementation()
 			UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSound, GetActorLocation());
 		}
 		
-		if (FlightLoopInstance)
+		if (FlightLoopAudioComponent)
 		{
-			FlightLoopInstance->Stop();
+			FlightLoopAudioComponent->Stop();
 		}
 		
 		if (DestroyActorOnExplode)

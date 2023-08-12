@@ -20,7 +20,7 @@ public:
 
 	/** Apply the Delta increment/decrement to Health and return true if it was successful */
 	UFUNCTION(BlueprintCallable, Category=Attributes)
-	bool ApplyHealthChange(float Delta);
+	bool ApplyHealthChange(const float Delta);
 
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged OnHealthChanged;
@@ -36,6 +36,10 @@ public:
 	/** Return Health */
 	UFUNCTION(BlueprintCallable)
 	float GetHealth() const;
+
+	/** Return MaxHealth */
+	UFUNCTION(BlueprintCallable)
+	float GetMaxHealth() const;
 	
 
 protected:

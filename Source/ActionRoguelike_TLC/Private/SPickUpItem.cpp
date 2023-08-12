@@ -10,7 +10,7 @@ ASPickUpItem::ASPickUpItem()
 	// Set up MeshComponent default, as a root and collision profile
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("MeshComponent");
 	SetRootComponent(MeshComponent);
-	MeshComponent->SetCollisionProfileName("OverlapOnlyPawn");
+	MeshComponent->SetCollisionProfileName("PickUp");
 
 	// Set up some values
 	RespawnSeconds    = 10.0f;
@@ -18,14 +18,8 @@ ASPickUpItem::ASPickUpItem()
 }
 
 
-// Called when the game starts or when spawned
-void ASPickUpItem::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-
 // Definition of Interact function of SGameplayInterface on PickUpItem
+// On parent only logic to manage respawn or destroy (generic logic)
 void ASPickUpItem::Interact_Implementation(APawn* InstigatorPawn)
 {
 	ISGameplayInterface::Interact_Implementation(InstigatorPawn);
@@ -46,29 +40,19 @@ void ASPickUpItem::Interact_Implementation(APawn* InstigatorPawn)
 }
 
 
-// Set Actor enabled: visibility and collisions
-void ASPickUpItem::Enable()
+// Set enable or disable
+void ASPickUpItem::SetActiveStatus(const bool Active)
 {
 	// Clear timer due to possible inconsistencies
 	GetWorldTimerManager().ClearTimer(TimerHandle_Respawn);
 	
 	// Visibility
-	MeshComponent->SetVisibility(true);
+	MeshComponent->SetVisibility(Active);
 
 	// Collisions
-	SetActorEnableCollision(true);
+	SetActorEnableCollision(Active);
 }
 
-
-// Set Actor disabled: visibility and collisions
-void ASPickUpItem::Disable()
-{
-	// Clear timer due to possible inconsistencies
-	GetWorldTimerManager().ClearTimer(TimerHandle_Respawn);
-	
-	// Visibility
-	MeshComponent->SetVisibility(false);
-
-	// Collisions
-	SetActorEnableCollision(false);
-}
+// Unreal C++ standards recommends avoid using inline, so I just leave it at one line to earn space and that's all
+void ASPickUpItem::Enable()  { SetActiveStatus(true ); }
+void ASPickUpItem::Disable() { SetActiveStatus(false); }

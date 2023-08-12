@@ -153,6 +153,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category=Attack)
 	float HitAttackRange;
 
+	/** Manage the max distance to check hit actor on projectile trajectory */
+	UPROPERTY(VisibleAnywhere, Category=Attack)
+	FName HandSocketName;
+
 
 	
 	// Timer handles for attacks and abilities

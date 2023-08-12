@@ -10,8 +10,12 @@
 // Sets default values
 ASAICharacter::ASAICharacter()
 {
-	// Default sensing component
-	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComponent");	
+	// Default components
+	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComponent");
+	AttributesComponent  = CreateDefaultSubobject<USAttributesComponent>("AttributesComponent");
+
+	// Activate AI behavior on spawn and on placed actor (Default is only placed actor)
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 
@@ -36,4 +40,14 @@ void ASAICharacter::OnPawnSeen(APawn* Pawn)
 
 		DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
 	}
+}
+
+void ASAICharacter::DebugDamage(const float DamageAmount)
+{
+	AttributesComponent->ApplyHealthChange(-DamageAmount);
+}
+
+float ASAICharacter::GetHealth()
+{
+	return AttributesComponent->GetHealth();
 }

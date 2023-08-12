@@ -21,6 +21,7 @@ protected:
 	 * Calling INIT_SERVICE_NODE_NOTIFY_FLAGS in the constructor of the service will set this flag automatically */
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
+	/** Select the key to set attack range status */
 	UPROPERTY(EditAnywhere, Category=AI)
 	FBlackboardKeySelector AttackRangeKey;
 };

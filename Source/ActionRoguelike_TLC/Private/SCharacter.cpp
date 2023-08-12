@@ -27,6 +27,7 @@ ASCharacter::ASCharacter()
 	bUseControllerRotationYaw = false;							// Some constructor values { https://drive.google.com/file/d/1QDxeYIUHOry3bJtOwmN2_SAaEdPWIXTy/view?usp=sharing
 	GetCharacterMovement()->bOrientRotationToMovement = true;	// Some constructor values  \_
 	HitAttackRange = 10000.0f;                                  // Some Constructor values
+	HandSocketName = "Muzzle_01";
 
 	// Activate OverlapEvents on player mesh
 	GetMesh()->SetGenerateOverlapEvents(true);
@@ -39,8 +40,12 @@ void ASCharacter::BeginPlay()
 
 	// Set up Input
 	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
 			Subsystem->AddMappingContext(PlayerContext,0);
+		}
+	}
 	
 }
 
@@ -85,11 +90,11 @@ void ASCharacter::Tick(float DeltaTime)
 	// Offset to the right of pawn
 	LineStart += GetActorRightVector() * 100.0f;
 	// Set line end in direction of the actor's forward
-	FVector ActorDirection_LineEnd = LineStart + (GetActorForwardVector() * 100.0f);
+	const FVector ActorDirection_LineEnd = LineStart + (GetActorForwardVector() * 100.0f);
 	// Draw Actor's Direction
 	DrawDebugDirectionalArrow(GetWorld(), LineStart, ActorDirection_LineEnd, DrawScale, FColor::Yellow, false, 0.0f, 0, Thickness);
 
-	FVector ControllerDirection_LineEnd = LineStart + (GetControlRotation().Vector() * 100.0f);
+	const FVector ControllerDirection_LineEnd = LineStart + (GetControlRotation().Vector() * 100.0f);
 	// Draw 'Controller' Rotation ('PlayerController' that 'possessed' this character)
 	DrawDebugDirectionalArrow(GetWorld(), LineStart, ControllerDirection_LineEnd, DrawScale, FColor::Green, false, 0.0f, 0, Thickness);
 }
@@ -100,7 +105,8 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
+	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+	{
 		EnhancedInputComponent->BindAction(MoveAction,            ETriggerEvent::Triggered, this, &ASCharacter::Move           );
 		EnhancedInputComponent->BindAction(LookAction,            ETriggerEvent::Triggered, this, &ASCharacter::Look           );
 		EnhancedInputComponent->BindAction(PrimaryAttackAction,   ETriggerEvent::Started,   this, &ASCharacter::PrimaryAttack  );
@@ -129,9 +135,13 @@ void ASCharacter::Move(const FInputActionValue& Value)
 	ControlRotation.Roll  = 0.0f;	
 
 	if (CurrentValue.X)
+	{
 		AddMovementInput(ControlRotation.Vector(), CurrentValue.X);
+	}
 	if (CurrentValue.Y)
+	{
 		AddMovementInput(ControlRotation.Vector().RotateAngleAxis(90,FVector(0,0,1)), CurrentValue.Y);
+	}
 
 	GEngine->AddOnScreenDebugMessage(-1,0,FColor::Green, FString::Printf(TEXT("%f | %f"), CurrentValue.X, CurrentValue.Y));
 }
@@ -143,19 +153,24 @@ void ASCharacter::Look(const FInputActionValue& Value)
 	const FVector2D CurrentValue = Value.Get<FVector2D>();
 
 	if (CurrentValue.X)
+	{
 		AddControllerYawInput(CurrentValue.X);
+	}
 	if (CurrentValue.Y)
+	{
 		AddControllerPitchInput(-CurrentValue.Y);
+	}
 }
 
 
 // Primary attack method
 void ASCharacter::PrimaryAttack()
 {
-	if (!IsAnyAttackTimerPending()) {
+	if (!IsAnyAttackTimerPending())
+	{
 		PlayAnimMontage(AttackAnim);
 		
-		GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_TimeElapsed, 0.2f);
+		GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_TimeElapsed, 0.17f);
 	}
 }
 
@@ -163,7 +178,8 @@ void ASCharacter::PrimaryAttack()
 // Secondary attack method
 void ASCharacter::SecondaryAttack()
 {
-	if (!IsAnyAttackTimerPending()) {
+	if (!IsAnyAttackTimerPending())
+	{
 		PlayAnimMontage(AttackAnim);
 		
 		GetWorldTimerManager().SetTimer(TimerHandle_SecondaryAttack, this, &ASCharacter::SecondaryAttack_TimeElapsed, 0.2f);
@@ -174,7 +190,8 @@ void ASCharacter::SecondaryAttack()
 // Dash ability method
 void ASCharacter::DashCast()
 {
-	if (!IsAnyAttackTimerPending()) {
+	if (!IsAnyAttackTimerPending())
+	{
 		PlayAnimMontage(AttackAnim);
 		
 		GetWorldTimerManager().SetTimer(TimerHandle_SecondaryAttack, this, &ASCharacter::DashAbility_TimeElapsed, 0.2f);
@@ -207,7 +224,7 @@ void ASCharacter::DashAbility_TimeElapsed()
 void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
 {
 	// Getting some parameters for sweep raycast projectile trajectory searching hit points 
-	const FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	const FVector HandLocation = GetMesh()->GetSocketLocation(HandSocketName);
 	FHitResult HitResult;
 	FCollisionObjectQueryParams ObjectQueryParams;
 	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
@@ -245,7 +262,9 @@ void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
 void ASCharacter::PrimaryInteract()
 {
 	if (InteractionComponent)
+	{
 		InteractionComponent->PrimaryInteract();
+	}
 }
 
 
@@ -281,9 +300,8 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributesComponent
 	// TimeToHit act over the flash color when damaged or heal
 	GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->TimeSeconds);
 
-	
 	// Death if
-	if (NewHealth <= 0.0f  &&  Delta < 0.0f)
+	if (NewHealth == 0.0f  &&  Delta < 0.0f)
 	{
 		APlayerController* PlayerController = Cast<APlayerController>(GetController());
 		DisableInput(PlayerController);

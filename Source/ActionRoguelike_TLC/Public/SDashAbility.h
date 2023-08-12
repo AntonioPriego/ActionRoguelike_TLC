@@ -17,9 +17,6 @@ class ACTIONROGUELIKE_TLC_API ASDashAbility : public ASProjectileBase
 public:	
 	// Sets default values for this actor's properties
 	ASDashAbility();
-	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 protected:
 	// Called when the game starts or when spawned

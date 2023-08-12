@@ -55,7 +55,10 @@ protected:
 	/** The looped sound of projectile on air */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Sounds)
 	USoundCue* FlightLoopSound;
-	UAudioComponent* FlightLoopInstance; // The AudioComponent attached to actor that plays FlightLoopSound
+
+	/** Component for in air sound attached to projectile */
+	UPROPERTY(EditDefaultsOnly, Category=Sounds)
+	UAudioComponent* FlightLoopAudioComponent; // The AudioComponent attached to actor that plays FlightLoopSound
 
 	/** The sound of MagicProjectile impact */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Sounds)

@@ -18,33 +18,20 @@ USAttributesComponent::USAttributesComponent()
 
 
 // Apply the Delta increment/decrement to Health and return true if it was successful
-bool USAttributesComponent::ApplyHealthChange(float Delta)
+bool USAttributesComponent::ApplyHealthChange(const float Delta)
 {
+	const float PreviousHealth = Health;
 	Health = FMath::Clamp(Health + Delta, 0, MaxHealth);;	
 
-	OnHealthChanged.Broadcast(nullptr, this, Health, Delta);
-	
+	const float ClampedDelta = Health - PreviousHealth;
+	OnHealthChanged.Broadcast(nullptr, this, Health, ClampedDelta);
 
 	return true;
 }
 
 
-// Return if Health is greater than 0
-bool USAttributesComponent::IsAlive() const
-{
-	return Health > 0.0f;
-}
-
-
-// Return if Health is equal to MaxHealth
-bool USAttributesComponent::IsFullHealth() const
-{
-	return Health == MaxHealth;
-}
-
-
-// Return Health
-float USAttributesComponent::GetHealth() const
-{
-	return Health;
-}
+// Getters and simple conditions
+bool USAttributesComponent::IsAlive() const       { return Health > 0.0f;       }
+bool USAttributesComponent::IsFullHealth() const  { return Health == MaxHealth; }
+float USAttributesComponent::GetHealth() const    { return Health;              }
+float USAttributesComponent::GetMaxHealth() const { return MaxHealth;           }

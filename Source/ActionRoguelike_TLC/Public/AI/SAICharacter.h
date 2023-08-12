@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Perception/PawnSensingComponent.h"
+#include "SAttributesComponent.h"
 #include "SAICharacter.generated.h"
 
 UCLASS()
@@ -17,6 +18,10 @@ public:
 	ASAICharacter();
 
 protected:
+	/** The component for attributes management */
+	UPROPERTY(VisibleAnywhere, Category=Components)
+	USAttributesComponent* AttributesComponent;
+	
 	/** Component to retrieve perception senses */
 	UPROPERTY(VisibleAnywhere, Category=Components)
 	UPawnSensingComponent* PawnSensingComponent;
@@ -27,4 +32,9 @@ protected:
 	// Called when pawn sees
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
+
+	UFUNCTION(BlueprintCallable)
+	void DebugDamage(const float DamageAmount);
+	UFUNCTION(BlueprintCallable)
+	float GetHealth();
 };
