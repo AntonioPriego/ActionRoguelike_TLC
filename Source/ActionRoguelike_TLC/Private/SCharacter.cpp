@@ -33,6 +33,7 @@ ASCharacter::ASCharacter()
 	GetMesh()->SetGenerateOverlapEvents(true);
 }
 
+
 // Called when the game starts or when spawned
 void ASCharacter::BeginPlay()
 {
@@ -230,6 +231,7 @@ void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
 	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
 	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
 	ObjectQueryParams.AddObjectTypesToQuery(ECC_PhysicsBody);
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_Pawn);
 
 	// To ignore Player
 	FCollisionQueryParams Params;

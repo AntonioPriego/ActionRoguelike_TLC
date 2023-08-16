@@ -4,6 +4,7 @@
 #include "STargetDummy.h"
 #include "Components/StaticMeshComponent.h"
 
+
 ASTargetDummy::ASTargetDummy()
 {
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("MeshComp");
@@ -11,6 +12,7 @@ ASTargetDummy::ASTargetDummy()
 
 	AttributeComp = CreateDefaultSubobject<USAttributesComponent>("AttributeComp");
 }
+
 
 void ASTargetDummy::PostInitializeComponents()
 {

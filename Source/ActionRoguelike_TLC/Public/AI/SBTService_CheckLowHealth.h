@@ -15,6 +15,19 @@ class ACTIONROGUELIKE_TLC_API USBTService_CheckLowHealth : public UBTService
 {
 	GENERATED_BODY()
 
+	
+/********************************* PROPERTIES ********************************/
+protected:
+	/** Select the key to set low health status */
+	UPROPERTY(EditAnywhere, Category=AI)
+	FBlackboardKeySelector LowHealthKey;
+
+	/** Property to provide the limit percentage to determine that lower values are 'Low health' */
+	UPROPERTY(EditAnywhere, Category=AI, meta=(ClampMin="0", ClampMax="1"))
+	float LowHealthPercent;
+
+	
+/*********************************** METHODS *********************************/
 public:
 	// Sets default values for this character's properties
 	USBTService_CheckLowHealth();
@@ -28,12 +41,4 @@ protected:
 
 	// Get if AttributesComponent have low Health
 	bool IsLowHealth(const USAttributesComponent* AttributesComponent) const;
-
-	/** Select the key to set low health status */
-	UPROPERTY(EditAnywhere, Category=AI)
-	FBlackboardKeySelector LowHealthKey;
-
-	/** Property to provide the limit percentage to determine that lower values are 'Low health' */
-	UPROPERTY(EditAnywhere, Category=AI, meta=(ClampMin="0", ClampMax="1"))
-	float LowHealthPercent;
 };

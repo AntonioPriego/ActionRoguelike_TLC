@@ -11,18 +11,24 @@ UCLASS()
 class ACTIONROGUELIKE_TLC_API AExplosiveBarrel : public AActor
 {
 	GENERATED_BODY()
+
+
+/********************************* PROPERTIES ********************************/
+protected:
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* StaticMeshComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	URadialForceComponent* RadialForceComponent;
+
 	
+/*********************************** METHODS *********************************/
 public:	
 	// Sets default values for this actor's properties
 	AExplosiveBarrel();
-
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	
 	
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
 	// Internal function between Constructor and BeginPlay
 	virtual void PostInitializeComponents() override;
 
@@ -30,11 +36,4 @@ protected:
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 			   FVector NormalImpulse, const FHitResult& Hit);
-		
-	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* StaticMeshComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	URadialForceComponent* RadialForceComponent;
-
 };

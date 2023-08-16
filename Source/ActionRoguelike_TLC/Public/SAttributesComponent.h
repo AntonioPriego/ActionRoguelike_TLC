@@ -14,36 +14,14 @@ class ACTIONROGUELIKE_TLC_API USAttributesComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
-	// Sets default values for this component's properties
-	USAttributesComponent();
 
-	/** Apply the Delta increment/decrement to Health and return true if it was successful */
-	UFUNCTION(BlueprintCallable, Category=Attributes)
-	bool ApplyHealthChange(const float Delta);
-
+/********************************* PROPERTIES ********************************/
+public:
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged OnHealthChanged;
 
-	/** Return if Health is greater than 0 */
-	UFUNCTION(BlueprintCallable)
-	bool IsAlive() const;
-
-	/** Return if Health is equal to MaxHealth */
-	UFUNCTION(BlueprintCallable)
-	bool IsFullHealth() const;
-
-	/** Return Health */
-	UFUNCTION(BlueprintCallable)
-	float GetHealth() const;
-
-	/** Return MaxHealth */
-	UFUNCTION(BlueprintCallable)
-	float GetMaxHealth() const;
 	
-
 protected:
-
 	// EditAnywhere - edit in BP editor and per-instance in level.
 	// VisibleAnywhere - 'read-only' in editor and level. (Use for Components)
 	// EditDefaultsOnly - hide variable per-instance, edit in BP editor only
@@ -62,4 +40,30 @@ protected:
 	/** The max Health value assignable */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Attributes)
 	float MaxHealth;
+
+	
+/*********************************** METHODS *********************************/
+public:	
+	// Sets default values for this component's properties
+	USAttributesComponent();
+
+	/** Apply the Delta increment/decrement to Health and return true if it was successful */
+	UFUNCTION(BlueprintCallable, Category=Attributes)
+	bool ApplyHealthChange(const float Delta);
+
+	/** Return if Health is greater than 0 */
+	UFUNCTION(BlueprintCallable)
+	bool IsAlive() const;
+
+	/** Return if Health is equal to MaxHealth */
+	UFUNCTION(BlueprintCallable)
+	bool IsFullHealth() const;
+
+	/** Return Health */
+	UFUNCTION(BlueprintCallable)
+	float GetHealth() const;
+
+	/** Return MaxHealth */
+	UFUNCTION(BlueprintCallable)
+	float GetMaxHealth() const;
 };

@@ -3,19 +3,7 @@
 #include "SInteractionComponent.h"
 
 
-// Sets default values for this component's properties
-USInteractionComponent::USInteractionComponent()
-{	
-}
-
-
-// Called when the game starts
-void USInteractionComponent::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-
+// Method to define logic on interaction
 void USInteractionComponent::PrimaryInteract()
 {
 	FCollisionObjectQueryParams ObjectQueryParams;

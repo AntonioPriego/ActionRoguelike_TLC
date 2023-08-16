@@ -12,11 +12,20 @@ class ACTIONROGUELIKE_TLC_API ASItemChest : public AActor, public ISGameplayInte
 {
 	GENERATED_BODY()
 
-	/* When interface function declared as BlueprintNativeEvent on UFUNCTION
-	   we have to add "_Implementation", bc we are using it on C++ but on BLUEPRINTS too */
-	// Definition of Interact function of SGameplayInterface on SItemChest
-	void Interact_Implementation(APawn* InstigatorPawn);
 	
+/********************************* PROPERTIES ********************************/
+protected:
+	/** Base mesh for chest, the bottom static part */
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* BaseMesh;
+	
+	/** Lid mesh for chest, the top movable part */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UStaticMeshComponent* LidMesh;
+
+	
+/*********************************** METHODS *********************************/
+
 public:	
 	// Sets default values for this actor's properties
 	ASItemChest();
@@ -25,14 +34,10 @@ public:
 	UPROPERTY(EditAnywhere)
 	float TargetPitch;
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* BaseMesh;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UStaticMeshComponent* LidMesh;
-
+private:
+	/* When interface function declared as BlueprintNativeEvent on UFUNCTION
+	   we have to add "_Implementation", bc we are using it on C++ but on BLUEPRINTS too */
+	// Definition of Interact function of SGameplayInterface on SItemChest
+	void Interact_Implementation(APawn* InstigatorPawn);
 };

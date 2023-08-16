@@ -19,7 +19,91 @@ class ACTIONROGUELIKE_TLC_API ASCharacter : public ACharacter
 	GENERATED_BODY()
 
 
+/********************************* PROPERTIES ********************************/
+protected:
+	/** Spring Arm Component to manage Camera collisions */
+	UPROPERTY(VisibleAnywhere)
+	USpringArmComponent* SpringArmComponent;
 
+	/** Camera Component for player character */
+	UPROPERTY(VisibleAnywhere)
+	UCameraComponent* CameraComponent;
+
+	/** The component for interaction management */
+	UPROPERTY(VisibleAnywhere)
+	USInteractionComponent* InteractionComponent;
+
+	/** The component for attributes management */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	USAttributesComponent* AttributesComponent;
+
+	
+	/** Context input for player */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
+	UInputMappingContext* PlayerContext;
+	
+	/** Move input action for player */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
+	UInputAction* MoveAction;
+	
+	/** Move camera input action for player */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
+	UInputAction* LookAction;
+	
+	/** Primary attack input action for player */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
+	UInputAction* PrimaryAttackAction;
+	
+	/** Secondary attack input action for player */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
+	UInputAction* SecondaryAttackAction;
+	
+	/** Primary interact input action for player */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
+	UInputAction* PrimaryInteractAction;
+	
+	/** Jump input action for player */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
+	UInputAction* JumpAction;
+	
+	/** Dash input action for player */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
+	UInputAction* DashAction;
+	
+	
+	/** To set primary project from editor */
+	UPROPERTY(EditAnywhere, Category=Attack)
+	TSubclassOf<AActor> PrimaryProjectileClass;
+	
+	/** To set secondary project from editor */
+	UPROPERTY(EditAnywhere, Category=Attack)
+	TSubclassOf<AActor> SecondaryProjectileClass;
+	
+	/** To set secondary project from editor */
+	UPROPERTY(EditAnywhere, Category=Attack)
+	TSubclassOf<AActor> DashProjectileClass;
+	
+	/** To set attack anim from editor */
+	UPROPERTY(EditAnywhere, Category=Attack)
+	UAnimMontage* AttackAnim;
+	
+	/** Manage the max distance to check hit actor on projectile trajectory */
+	UPROPERTY(EditAnywhere, Category=Attack)
+	float HitAttackRange;
+
+	/** Manage the max distance to check hit actor on projectile trajectory */
+	UPROPERTY(VisibleAnywhere, Category=Attack)
+	FName HandSocketName;
+
+
+	
+	// Timer handles for attacks and abilities
+	FTimerHandle TimerHandle_PrimaryAttack;
+	FTimerHandle TimerHandle_SecondaryAttack;
+	FTimerHandle TimerHandle_Dash;
+
+	
+/*********************************** METHODS *********************************/
 public:
 	// Sets default values for this character's properties
 	ASCharacter();
@@ -33,8 +117,7 @@ public:
 	// Getter for Mesh
 	USkeletalMeshComponent* GetSKMesh() const;
 
-	
-	
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -77,92 +160,6 @@ protected:
 	
 	// Called when inputs jump is canceled
 	void JumpCanceled();
-
-
-	
-	/** Spring Arm Component to manage Camera collisions */
-	UPROPERTY(VisibleAnywhere)
-	USpringArmComponent* SpringArmComponent;
-
-	/** Camera Component for player character */
-	UPROPERTY(VisibleAnywhere)
-	UCameraComponent* CameraComponent;
-
-	/** The component for interaction management */
-	UPROPERTY(VisibleAnywhere)
-	USInteractionComponent* InteractionComponent;
-
-	/** The component for attributes management */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	USAttributesComponent* AttributesComponent;
-
-
-	
-	/** Context input for player */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
-	UInputMappingContext* PlayerContext;
-	
-	/** Move input action for player */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
-	UInputAction* MoveAction;
-	
-	/** Move camera input action for player */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
-	UInputAction* LookAction;
-	
-	/** Primary attack input action for player */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
-	UInputAction* PrimaryAttackAction;
-	
-	/** Secondary attack input action for player */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
-	UInputAction* SecondaryAttackAction;
-	
-	/** Primary interact input action for player */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
-	UInputAction* PrimaryInteractAction;
-	
-	/** Jump input action for player */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
-	UInputAction* JumpAction;
-	
-	/** Dash input action for player */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
-	UInputAction* DashAction;
-
-
-	
-	
-	/** To set primary project from editor */
-	UPROPERTY(EditAnywhere, Category=Attack)
-	TSubclassOf<AActor> PrimaryProjectileClass;
-	
-	/** To set secondary project from editor */
-	UPROPERTY(EditAnywhere, Category=Attack)
-	TSubclassOf<AActor> SecondaryProjectileClass;
-	
-	/** To set secondary project from editor */
-	UPROPERTY(EditAnywhere, Category=Attack)
-	TSubclassOf<AActor> DashProjectileClass;
-	
-	/** To set attack anim from editor */
-	UPROPERTY(EditAnywhere, Category=Attack)
-	UAnimMontage* AttackAnim;
-	
-	/** Manage the max distance to check hit actor on projectile trajectory */
-	UPROPERTY(EditAnywhere, Category=Attack)
-	float HitAttackRange;
-
-	/** Manage the max distance to check hit actor on projectile trajectory */
-	UPROPERTY(VisibleAnywhere, Category=Attack)
-	FName HandSocketName;
-
-
-	
-	// Timer handles for attacks and abilities
-	FTimerHandle TimerHandle_PrimaryAttack;
-	FTimerHandle TimerHandle_SecondaryAttack;
-	FTimerHandle TimerHandle_Dash;
 
 
 	// The broadcast function that notifies when Health changes on AttributesComponent

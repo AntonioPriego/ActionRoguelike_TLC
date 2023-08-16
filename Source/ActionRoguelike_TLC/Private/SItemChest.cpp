@@ -19,13 +19,6 @@ ASItemChest::ASItemChest()
 }
 
 
-// Called when the game starts or when spawned
-void ASItemChest::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-
 /* When interface function declared as BlueprintNativeEvent on UFUNCTION
    we have to add "_Implementation", bc we are using it on C++ but on BLUEPRINTS too */
 // Definition of Interact function of SGameplayInterface on SItemChest

@@ -14,15 +14,11 @@ class ACTIONROGUELIKE_TLC_API USInteractionComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
-	// Sets default values for this component's properties
-	USInteractionComponent();
 
+/********************************* PROPERTIES ********************************/
+// ...
+/*********************************** METHODS *********************************/
+public:
+	/** Method to define logic on interaction */
 	void PrimaryInteract();
-
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
-		
 };

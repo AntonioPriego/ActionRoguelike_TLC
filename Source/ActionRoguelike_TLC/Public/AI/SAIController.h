@@ -14,11 +14,15 @@ class ACTIONROGUELIKE_TLC_API ASAIController : public AAIController
 {
 	GENERATED_BODY()
 
+	
+/********************************* PROPERTIES ********************************/
+protected:
+	UPROPERTY(EditDefaultsOnly, Category=AI)
+	UBehaviorTree* BehaviorTree;
+
+	
+/*********************************** METHODS *********************************/
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-
-	UPROPERTY(EditDefaultsOnly, Category=AI)
-	UBehaviorTree* BehaviorTree;
 };

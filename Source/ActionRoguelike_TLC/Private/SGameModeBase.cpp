@@ -28,10 +28,14 @@ void ASGameModeBase::StartPlay()
 // Logic on TimerHandle_SpawnBots time elapsed, which means a Bot have to spawn
 void ASGameModeBase::SpawnBotTimeElapsed()
 {
-	UEnvQueryInstanceBlueprintWrapper* QueryInstance = UEnvQueryManager::RunEQSQuery
-	(
-		this, SpawnBotQuery, this, EEnvQueryRunMode::RandomBest5Pct, nullptr
-	);
+	// Run queries is expensive, so check if it is necessary to query before doing it
+	if (!CheckNumberAliveBotsUnderMax())
+	{
+		return;
+	}
+	
+	UEnvQueryInstanceBlueprintWrapper* QueryInstance = UEnvQueryManager::RunEQSQuery (this, SpawnBotQuery,
+		                                                 this, EEnvQueryRunMode::RandomBest5Pct, nullptr);
 
 	if (ensure(QueryInstance))
 	{
@@ -50,28 +54,6 @@ void ASGameModeBase::OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryIn
 		return;
 	}
 
-
-	int32 NumOfAliveBots = 0;
-	// This for is the equivalent to GetAllActorsOfClas on BP
-	for (TActorIterator<ASAICharacter> It(GetWorld()); It; ++It)
-	{
-		const ASAICharacter* Bot = *It;
-
-		USAttributesComponent* AttributeComponent = Cast<USAttributesComponent>(Bot->GetComponentByClass(USAttributesComponent::StaticClass()));		
-		if (ensure(AttributeComponent) && AttributeComponent->IsAlive())
-		{
-			NumOfAliveBots++;
-		}
-
-		if (NumOfAliveBots >= GetMaxNumOfBots(GetWorld()->TimeSeconds))
-		{
-			UE_LOG(LogTemp, Log, TEXT("Found >%i alive enemy bots.\nSkipping bot spawn."), NumOfAliveBots);
-			return;
-		}
-	}
-
-	UE_LOG(LogTemp, Log, TEXT("Found %i alive enemy bots."), NumOfAliveBots);
-
 	// Get locations from query
 	TArray<FVector> Locations = QueryInstance->GetResultsAsLocations();
 	
@@ -81,6 +63,35 @@ void ASGameModeBase::OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryIn
 		GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator());
 		DrawDebugCapsule(GetWorld(),Locations[0],50,20,FQuat().Identity,FColor::Blue, false, 60);
 	}
+}
+
+
+// Check the number of alive bots (enemies) is under the maximum (curve). Return true only if the number is below the max
+bool ASGameModeBase::CheckNumberAliveBotsUnderMax() const
+{	
+	int32 NumOfAliveBots = 0;
+	// This for is the equivalent to GetAllActorsOfClas on BP
+	for (TActorIterator<ASAICharacter> It(GetWorld()); It; ++It)
+	{
+		const ASAICharacter* Bot = *It;
+
+		const USAttributesComponent* AttributeComponent = Cast<USAttributesComponent>(Bot->GetComponentByClass(USAttributesComponent::StaticClass()));		
+		if (ensure(AttributeComponent) && AttributeComponent->IsAlive())
+		{
+			NumOfAliveBots++;
+		}
+
+		if (NumOfAliveBots >= GetMaxNumOfBots(GetWorld()->TimeSeconds))
+		{
+			UE_LOG(LogTemp, Log, TEXT("Found >%i alive enemy bots (Maximum).\nSkipping bot spawn."), NumOfAliveBots);
+			return false;
+		}
+	}
+	
+	UE_LOG(LogTemp, Log, TEXT("Found %i alive enemy bots."), NumOfAliveBots);
+
+
+	return true;
 }
 
 

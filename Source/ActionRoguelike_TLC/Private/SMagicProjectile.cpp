@@ -20,13 +20,6 @@ ASMagicProjectile::ASMagicProjectile()
 }
 
 
-// Called when the game starts or when spawned
-void ASMagicProjectile::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-
 // Internal function between Constructor and BeginPlay
 void ASMagicProjectile::PostInitializeComponents()
 {

@@ -15,26 +15,9 @@ class ACTIONROGUELIKE_TLC_API ASGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 
-public:
-	// Sets default values
-	ASGameModeBase();
-	
-	// GameMode class doesn't have BeginPlay() bc GM class is the responsible for calling BeginPlay on all the actors in our world
-	// But this is like the BeginPlay of GameMode class
-	virtual void StartPlay() override;
 
+/********************************* PROPERTIES ********************************/
 protected:
-	// Logic on TimerHandle_SpawnBots time elapsed, which means a Bot have to spawn
-	UFUNCTION()
-	void SpawnBotTimeElapsed();
-
-	/** Called when SpawnBotQuery is finished */
-	UFUNCTION()
-	void OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
-
-	/** Returns the max number of alive bots (enemies) in the world based on the CurveFloat */
-	float GetMaxNumOfBots(const float Seconds) const;
-	
 	/** This property set the time between a spawn bot and the next one */
 	UPROPERTY(EditDefaultsOnly, Category=AI)
 	float SpawnTimerInterval;
@@ -54,4 +37,30 @@ protected:
 	
 	// Timers
 	FTimerHandle TimerHandle_SpawnBots;
+
+	
+/*********************************** METHODS *********************************/
+public:
+	// Sets default values
+	ASGameModeBase();
+	
+	// GameMode class doesn't have BeginPlay() bc GM class is the responsible for calling BeginPlay on all the actors in our world
+	// But this is like the BeginPlay of GameMode class
+	virtual void StartPlay() override;
+
+	
+protected:
+	// Logic on TimerHandle_SpawnBots time elapsed, which means a Bot have to spawn
+	UFUNCTION()
+	void SpawnBotTimeElapsed();
+
+	/** Called when SpawnBotQuery is finished */
+	UFUNCTION()
+	void OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
+
+	/** Check the number of alive bots (enemies) is under the maximum (curve). Return true only if the number is below the max */
+	bool CheckNumberAliveBotsUnderMax() const;
+
+	/** Returns the max number of alive bots (enemies) in the world based on the CurveFloat */
+	float GetMaxNumOfBots(const float Seconds) const;
 };

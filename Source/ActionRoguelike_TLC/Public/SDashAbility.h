@@ -13,15 +13,10 @@ UCLASS()
 class ACTIONROGUELIKE_TLC_API ASDashAbility : public ASProjectileBase
 {
 	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
-	ASDashAbility();
 
+
+/********************************* PROPERTIES ********************************/
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
 	/** Particle system for explosion visuals */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UParticleSystemComponent* ParticleEnterTeleportComponent;
@@ -29,6 +24,24 @@ protected:
 	/** Particle system for explosion visuals */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UParticleSystemComponent* ParticleExitTeleportComponent;
+
+	
+private:
+	// Timer handle for Actor Life Span
+	FTimerHandle TimerHandle_DashLifeSpan;
+	// Timer handle for explosion wait anim
+	FTimerHandle TimerHandle_WaitExplosionAnim;
+
+
+/*********************************** METHODS *********************************/
+public:	
+	// Sets default values for this actor's properties
+	ASDashAbility();
+
+	
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 	// _Implementation from it being marked as BlueprintNativeEvent 
 	virtual void Explode_Implementation() override;
@@ -46,9 +59,4 @@ private:
 	
 	// Time beyond end of teleport and teleport detonation
 	float DetonationDelay;
-	
-	// Timer handle for Actor Life Span
-	FTimerHandle TimerHandle_DashLifeSpan;
-	// Timer handle for explosion wait anim
-	FTimerHandle TimerHandle_WaitExplosionAnim;
 };

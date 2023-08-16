@@ -13,6 +13,22 @@ class ACTIONROGUELIKE_TLC_API ASPickUpItem : public AActor, public ISGameplayInt
 	GENERATED_BODY()
 
 
+/********************************* PROPERTIES ********************************/
+protected:
+	/** Mesh Component for PickUpItem */
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* MeshComponent;
+
+	/** When true: respawn after RespawnSeconds. When false: Destroy on use */
+	UPROPERTY(VisibleAnywhere, Category=Values)
+	bool IsReSpawnable;
+
+	/** Time to respawn the item if IsReSpawnable */
+	UPROPERTY(VisibleAnywhere, Category=Values)
+	float RespawnSeconds;
+
+	
+/*********************************** METHODS *********************************/
 public:	
 	// Sets default values for this actor's properties
 	ASPickUpItem();
@@ -29,19 +45,6 @@ protected:
 	void Enable();
 	void Disable();
 	
-
-	/** Mesh Component for PickUpItem */
-	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* MeshComponent;
-
-	/** When true: respawn after RespawnSeconds. When false: Destroy on use */
-	UPROPERTY(VisibleAnywhere, Category=Values)
-	bool IsReSpawnable;
-
-	/** Time to respawn the item if IsReSpawnable */
-	UPROPERTY(VisibleAnywhere, Category=Values)
-	float RespawnSeconds;
-
 
 private:
 	//Timers

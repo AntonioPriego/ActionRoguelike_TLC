@@ -14,14 +14,18 @@ class ACTIONROGUELIKE_TLC_API USBTService_CheckAttackRange : public UBTService
 {
 	GENERATED_BODY()
 
+	
+/********************************* PROPERTIES ********************************/
+protected:
+	/** Select the key to set attack range status */
+	UPROPERTY(EditAnywhere, Category=AI)
+	FBlackboardKeySelector AttackRangeKey;
+
+/*********************************** METHODS *********************************/
 protected:
 	/** update next tick interval
 	 * this function should be considered as const (don't modify state of object) if node is not instanced!
 	 * bNotifyTick must be set to true for this function to be called 
 	 * Calling INIT_SERVICE_NODE_NOTIFY_FLAGS in the constructor of the service will set this flag automatically */
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
-
-	/** Select the key to set attack range status */
-	UPROPERTY(EditAnywhere, Category=AI)
-	FBlackboardKeySelector AttackRangeKey;
 };

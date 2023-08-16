@@ -15,16 +15,16 @@ class ACTIONROGUELIKE_TLC_API ASMagicProjectile : public ASProjectileBase
 {
 	GENERATED_BODY()
 
-	
+
+/********************************* PROPERTIES ********************************/
+// ...
+/*********************************** METHODS *********************************/
 public:	
 	// Sets default values for this actor's properties
 	ASMagicProjectile();
 
 	
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
 	// Internal function between Constructor and BeginPlay
 	virtual void PostInitializeComponents() override;
 

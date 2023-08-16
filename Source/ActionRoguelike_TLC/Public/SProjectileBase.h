@@ -15,19 +15,9 @@ class ACTIONROGUELIKE_TLC_API ASProjectileBase : public AActor
 {
 	GENERATED_BODY()
 
-	
-public:	
-	// Sets default values for this actor's properties
-	ASProjectileBase();
 
-	
+/********************************* PROPERTIES ********************************/
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-	// Internal function between Constructor and BeginPlay
-	virtual void PostInitializeComponents() override;
-	
 	/** Sphere root component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Mesh)
 	USphereComponent* SphereComponent;
@@ -76,8 +66,22 @@ protected:
 	/** Name of the attach point of the SKMesh where CastVFX is going to spawn */
 	UPROPERTY(EditAnywhere, Category=Effects)
 	FName CastAttachPointName;
-	
 
+	
+/*********************************** METHODS *********************************/
+public:	
+	// Sets default values for this actor's properties
+	ASProjectileBase();
+
+	
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+	// Internal function between Constructor and BeginPlay
+	virtual void PostInitializeComponents() override;
+	
+	
 	// 'virtual' so we can override ths in child-classes
 	UFUNCTION()
 	virtual void OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
@@ -87,6 +91,4 @@ protected:
 	// Not required for assigment, useful for expanding in BP later on
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Explode();
-
-	
 };
