@@ -26,9 +26,13 @@ ASCharacter::ASCharacter()
 	SpringArmComponent->bUsePawnControlRotation = true;			// Some constructor values  /-
 	bUseControllerRotationYaw = false;							// Some constructor values { https://drive.google.com/file/d/1QDxeYIUHOry3bJtOwmN2_SAaEdPWIXTy/view?usp=sharing
 	GetCharacterMovement()->bOrientRotationToMovement = true;	// Some constructor values  \_
-	HitAttackRange = 10000.0f;                                  // Some Constructor values
+	HitAttackRange = 3700.0f;									// Some Constructor values
 	HandSocketName = "Muzzle_01";
 
+	// Set FName material variables
+	TimeToHitParamName = "TimeToHit";
+	IsHealParamName    = "IsHeal";
+	
 	// Activate OverlapEvents on player mesh
 	GetMesh()->SetGenerateOverlapEvents(true);
 }
@@ -171,7 +175,7 @@ void ASCharacter::PrimaryAttack()
 	{
 		PlayAnimMontage(AttackAnim);
 		
-		GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_TimeElapsed, 0.17f);
+		GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_TimeElapsed, 0.12f);
 	}
 }
 
@@ -290,17 +294,17 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributesComponent
 	// Damaged
 	if (Delta < 0)
 	{
-		GetMesh()->SetScalarParameterValueOnMaterials("IsHeal", false);
+		GetMesh()->SetScalarParameterValueOnMaterials(IsHealParamName, false);
 	}
 		
 	// Healed
 	if (Delta > 0)
 	{
-		GetMesh()->SetScalarParameterValueOnMaterials("IsHeal", true);
+		GetMesh()->SetScalarParameterValueOnMaterials(IsHealParamName, true);
 	}
 
 	// TimeToHit act over the flash color when damaged or heal
-	GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->TimeSeconds);
+	GetMesh()->SetScalarParameterValueOnMaterials(TimeToHitParamName, GetWorld()->TimeSeconds);
 
 	// Death if
 	if (NewHealth == 0.0f  &&  Delta < 0.0f)
@@ -332,4 +336,11 @@ bool ASCharacter::IsAnyAttackTimerPending()
 
 		
 	return (IsPrimaryAttackTimerActive  ||  IsSecondaryAttackTimerActive  ||  IsDashTimerActive);
+}
+
+
+// DEBUG: To quick heal on testing
+void ASCharacter::HealSelf(const float Amount /* =1000*/)
+{
+	AttributesComponent->ApplyHealthChange(this, Amount);
 }

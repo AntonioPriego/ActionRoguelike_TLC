@@ -9,14 +9,12 @@
 
 // Sets default values
 ASMagicProjectile::ASMagicProjectile()
-{
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	//PrimaryActorTick.bCanEverTick = true;
-	
+{	
 	SphereComponent->IgnoreActorWhenMoving(GetInstigator(), true);
 
-	// Damage value
+	// Set up some specific values for MagicProjectile
 	Damage = 20.0f;
+	MovementComponent->InitialSpeed = 7000.0f;
 }
 
 
@@ -54,7 +52,7 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 
 		if (USAttributesComponent* AttributeComp = Cast<USAttributesComponent>(Component))
 		{
-			AttributeComp->ApplyHealthChange(-Damage);
+			AttributeComp->ApplyHealthChange(GetInstigator(), -Damage);
 		}
 		
 		Explode();

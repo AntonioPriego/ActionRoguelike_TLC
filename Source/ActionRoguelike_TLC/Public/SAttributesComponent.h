@@ -47,9 +47,17 @@ public:
 	// Sets default values for this component's properties
 	USAttributesComponent();
 
+	/** Static function that returns AttributesComponent from an Actor */
+	UFUNCTION(BlueprintCallable, Category=Attributes)
+	static USAttributesComponent* GetAttributes(const AActor* FromActor);
+
+	/** Static function that returns if an Actor is currently Alive. If it fails, it will return also false */
+	UFUNCTION(BlueprintCallable, Category=Attributes, meta=(DisplayName="IsAlive"))
+	static bool IsActorAlive(const AActor* ActorToCheck);
+
 	/** Apply the Delta increment/decrement to Health and return true if it was successful */
 	UFUNCTION(BlueprintCallable, Category=Attributes)
-	bool ApplyHealthChange(const float Delta);
+	bool ApplyHealthChange(AActor* InstigatorActor, const float Delta);
 
 	/** Return if Health is greater than 0 */
 	UFUNCTION(BlueprintCallable)
@@ -66,4 +74,11 @@ public:
 	/** Return MaxHealth */
 	UFUNCTION(BlueprintCallable)
 	float GetMaxHealth() const;
+
+	
+/************************************ DEBUG **********************************/
+public:
+	/** DEBUG: To kill the actor with this AttributesComponent during testing */
+	UFUNCTION(Exec)
+	void Kill(AActor* InstigatorActor);
 };

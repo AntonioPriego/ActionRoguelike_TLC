@@ -17,14 +17,50 @@ USAttributesComponent::USAttributesComponent()
 }
 
 
-// Apply the Delta increment/decrement to Health and return true if it was successful
-bool USAttributesComponent::ApplyHealthChange(const float Delta)
+// Static function that returns AttributesComponent from an Actor
+USAttributesComponent* USAttributesComponent::GetAttributes(const AActor* FromActor)
 {
+	if (FromActor)
+	{
+		return Cast<USAttributesComponent>(FromActor->GetComponentByClass(USAttributesComponent::StaticClass()));
+	}
+
+	return nullptr;
+}
+
+
+// Static function that returns if an Actor is currently Alive. If it fails, it will return also false
+bool USAttributesComponent::IsActorAlive(const AActor* ActorToCheck)
+{
+	if (ActorToCheck)
+	{
+		const USAttributesComponent* AttComponent = GetAttributes(ActorToCheck);
+
+		if (AttComponent)
+		{
+			return AttComponent->IsAlive();
+		}
+	}
+
+	return false;
+}
+
+
+// Apply the Delta increment/decrement to Health and return true if it was successful
+bool USAttributesComponent::ApplyHealthChange(AActor* InstigatorActor, const float Delta)
+{
+	// Check if (unreal internal) pawn could be damaged
+	// bCanBeDamaged is a internal Pawn variable for testing modes like god-mode and stuff like that
+	if (!GetOwner()->CanBeDamaged())
+	{
+		return false;
+	}
+	
 	const float PreviousHealth = Health;
 	Health = FMath::Clamp(Health + Delta, 0, MaxHealth);;	
 
 	const float ClampedDelta = Health - PreviousHealth;
-	OnHealthChanged.Broadcast(nullptr, this, Health, ClampedDelta);
+	OnHealthChanged.Broadcast(InstigatorActor, this, Health, ClampedDelta);
 
 	return true;
 }
@@ -35,3 +71,10 @@ bool USAttributesComponent::IsAlive() const       { return Health > 0.0f;       
 bool USAttributesComponent::IsFullHealth() const  { return Health == MaxHealth; }
 float USAttributesComponent::GetHealth() const    { return Health;              }
 float USAttributesComponent::GetMaxHealth() const { return MaxHealth;           }
+
+
+// DEBUG: To kill the actor with this AttributesComponent during testing
+void USAttributesComponent::Kill(AActor* InstigatorActor)
+{
+	ApplyHealthChange(InstigatorActor, -GetMaxHealth());
+}

@@ -75,8 +75,8 @@ bool ASGameModeBase::CheckNumberAliveBotsUnderMax() const
 	{
 		const ASAICharacter* Bot = *It;
 
-		const USAttributesComponent* AttributeComponent = Cast<USAttributesComponent>(Bot->GetComponentByClass(USAttributesComponent::StaticClass()));		
-		if (ensure(AttributeComponent) && AttributeComponent->IsAlive())
+		const USAttributesComponent* AttributesComponent = USAttributesComponent::GetAttributes(Bot);		
+		if (ensure(AttributesComponent) && AttributesComponent->IsAlive())
 		{
 			NumOfAliveBots++;
 		}
@@ -107,4 +107,20 @@ float ASGameModeBase::GetMaxNumOfBots(const float Seconds) const
 
 
 	return -1;
+}
+
+
+// DEBUG: To quick kill all on testing
+void ASGameModeBase::KillAll()
+{
+		for (TActorIterator<ASAICharacter> It(GetWorld()); It; ++It)
+    	{
+    		const ASAICharacter* Bot = *It;
+    
+    		USAttributesComponent* AttributesComponent = USAttributesComponent::GetAttributes(Bot);		
+    		if (ensure(AttributesComponent) && AttributesComponent->IsAlive())
+    		{
+    			AttributesComponent->Kill(this);
+    		}
+    	}
 }

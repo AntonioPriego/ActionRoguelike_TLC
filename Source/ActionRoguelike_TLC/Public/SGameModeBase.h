@@ -63,4 +63,12 @@ protected:
 
 	/** Returns the max number of alive bots (enemies) in the world based on the CurveFloat */
 	float GetMaxNumOfBots(const float Seconds) const;
+
+	
+/************************************ DEBUG **********************************/
+public:
+	/** DEBUG: To quick kill all on testing */
+	UFUNCTION(Exec)
+	void KillAll();
+
 };

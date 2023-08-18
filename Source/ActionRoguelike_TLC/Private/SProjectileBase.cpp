@@ -36,7 +36,7 @@ ASProjectileBase::ASProjectileBase()
 
 	// Set up MovementComponent and some initial values
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComponent");
-	MovementComponent->InitialSpeed                 = 3000.0f;
+	MovementComponent->InitialSpeed                 = 4000.0f;
 	MovementComponent->bRotationFollowsVelocity     = true;
 	MovementComponent->bInitialVelocityInLocalSpace = true;
 	Damage = 0.0f;
@@ -53,9 +53,9 @@ void ASProjectileBase::BeginPlay()
 	{
 		FlightLoopAudioComponent = UGameplayStatics::SpawnSoundAttached(FlightLoopSound, SphereComponent);
 	}
-		
-	// Spawn Particle effect attached to SCharacter hand ("Muzzle_01")
-	if (GetInstigator())
+
+	// Spawn Particle effect attached to SCharacter (PlayerCharacter_C) hand ("Muzzle_01")
+	if (GetInstigator()  &&  GetInstigator()->GetClass()->GetFName() == FName("PlayerCharacter_C"))
 	{
 		if (USkeletalMeshComponent* SkeletalMesh = Cast<ASCharacter>(GetInstigator())->GetSKMesh())
 		{

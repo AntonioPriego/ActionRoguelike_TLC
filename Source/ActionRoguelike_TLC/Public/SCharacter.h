@@ -94,6 +94,14 @@ protected:
 	/** Manage the max distance to check hit actor on projectile trajectory */
 	UPROPERTY(VisibleAnywhere, Category=Attack)
 	FName HandSocketName;
+	
+	/** FName for material variable that controls hit cue */
+	UPROPERTY(VisibleAnywhere, Category=Effects)
+	FName TimeToHitParamName;
+	
+	/** FName for material variable that controls hit marked as Heal or as Damage */
+	UPROPERTY(VisibleAnywhere, Category=Effects)
+	FName IsHealParamName;
 
 
 	
@@ -174,4 +182,12 @@ protected:
 private:
 	// Return true if any attack timer handle is pending
 	bool IsAnyAttackTimerPending();
+
+	
+/************************************ DEBUG **********************************/
+public:
+	/** DEBUG: To quick heal on testing */
+	UFUNCTION(Exec)
+	void HealSelf(const float Amount=1000);
+	
 };
