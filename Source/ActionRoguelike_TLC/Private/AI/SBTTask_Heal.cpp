@@ -24,7 +24,7 @@ EBTNodeResult::Type USBTTask_Heal::ExecuteTask(UBehaviorTreeComponent& OwnerComp
 			// The task itself is only this, apply the heal
 			if (AttributesComponent)
 			{
-				AttributesComponent->ApplyHealthChange(HealAmount);
+				AttributesComponent->ApplyHealthChange(nullptr, HealAmount);
 				TaskPassedSuccessfully = true;
 			}
 		}

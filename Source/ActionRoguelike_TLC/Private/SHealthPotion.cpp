@@ -37,7 +37,7 @@ void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 		// Ignores when Health is Full
 		if (!AttributesComponent->IsFullHealth())
 		{
-			AttributesComponent->ApplyHealthChange(DeltaHealthChange);
+			AttributesComponent->ApplyHealthChange(this, DeltaHealthChange);
 
 			Super::Interact_Implementation(InstigatorPawn); // Manages respawn or destroy logic
 		}

@@ -21,8 +21,17 @@ protected:
 	UPROPERTY(EditAnywhere, Category=AI)
 	TSubclassOf<AActor> ProjectileClass;
 
+	/** Set maximum spread for the shoots. The bigger the number, the higher the chance of failure */
+	UPROPERTY(EditAnywhere, Category=AI)
+	float MaxRangedAttackSpread;
+
 
 /*********************************** METHODS *********************************/
+public:
+	/** Sets default values */
+	USBTTask_RangedAttack();
+	
+	
 protected:
 	/** starts this task, should return Succeeded, Failed or InProgress
 	 *  (use FinishLatentTask() when returning InProgress)
