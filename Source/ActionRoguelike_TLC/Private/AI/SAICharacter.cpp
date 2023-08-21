@@ -7,6 +7,8 @@
 #include "BrainComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 
 // Sets default values
@@ -22,6 +24,10 @@ ASAICharacter::ASAICharacter()
 
 	// Activate AI behavior on spawn and on placed actor (Default is only placed actor)
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	// Collision setup for directional impulse on projectiles impact
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+	GetMesh()->SetGenerateOverlapEvents(true);
 }
 
 
@@ -90,19 +96,7 @@ void ASAICharacter::OnCharacterDamaged(AActor* InstigatorActor, USAttributesComp
 		
 	if (NewHealth <= 0)
 	{
-		// Stop BehaviorTree
-		AAIController* AIController = Cast<AAIController>(GetController());
-		if (AIController)
-		{
-			AIController->GetBrainComponent()->StopLogic("Killed"); // BrainComponent is the base class of BTComponent
-		}
-
-		// Start Ragdoll
-		GetMesh()->SetCollisionProfileName("Ragdoll");
-		GetMesh()->SetAllBodiesSimulatePhysics(true);
-
-		// Set lifespan
-		SetLifeSpan(10.0f);
+		Dead();
 	}
 }
 
@@ -123,6 +117,29 @@ void ASAICharacter::SetTargetActor(AActor* NewTarget)
 		UBlackboardComponent* BBComponent = AIController->GetBlackboardComponent();
 		BBComponent->SetValueAsObject("TargetActor", NewTarget);
 	}
+}
+
+
+// Logic when (this) character dies
+void ASAICharacter::Dead()
+{
+	// Stop BehaviorTree
+	AAIController* AIController = Cast<AAIController>(GetController());
+	if (AIController)
+	{
+		AIController->GetBrainComponent()->StopLogic("Killed"); // BrainComponent is the base class of BTComponent
+	}
+
+	// Start Ragdoll
+	GetMesh()->SetCollisionProfileName("Ragdoll");
+	GetMesh()->SetAllBodiesSimulatePhysics(true);
+
+	// Set lifespan
+	SetLifeSpan(10.0f);
+
+	// Deactivate collisions
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCharacterMovement()->DisableMovement(); // Without this line, the character just falls from anywhere bc collisions are disabled
 }
 
 

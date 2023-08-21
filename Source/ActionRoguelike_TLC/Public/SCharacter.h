@@ -113,75 +113,80 @@ protected:
 	
 /*********************************** METHODS *********************************/
 public:
-	// Sets default values for this character's properties
+	/** Sets default values for this character's properties */
 	ASCharacter();
 	
-	// Called every frame
+	/** Called every frame */
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
+	/** Called to bind functionality to input */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	// Getter for Mesh
+	/** Getter for Mesh */
 	USkeletalMeshComponent* GetSKMesh() const;
 
 
 protected:
-	// Called when the game starts or when spawned
+	/** Called when the game starts or when spawned */
 	virtual void BeginPlay() override;
 	
-	// Internal function between Constructor and BeginPlay
+	/** Internal function between Constructor and BeginPlay */
 	virtual void PostInitializeComponents() override;
 	
-	// Called when inputs move is triggered
+	/** Called when inputs move is triggered */
 	void Move(const FInputActionValue& Value);
 	
-	// Called when inputs look (move camera) is triggered
+	/** Called when inputs look (move camera) is triggered */
 	void Look(const FInputActionValue& Value);
 	
-	// Primary attack method
+	/** Primary attack method */
 	void PrimaryAttack();
 	
-	// Secondary attack method
+	/** Secondary attack method */
 	void SecondaryAttack();
 	
-	// Dash ability method
+	/** Dash ability method */
 	void DashCast();
 	
-	// Called when TimerHandle_PrimaryAttack time is elapsed 
+	/** Called when TimerHandle_PrimaryAttack time is elapsed */
 	void PrimaryAttack_TimeElapsed();
 
-	// Called when TimerHandle_SecondaryAttack time is elapsed 
+	/** Called when TimerHandle_SecondaryAttack time is elapsed */
 	void SecondaryAttack_TimeElapsed();
 
-	// Called when TimerHandle_Dash time is elapsed 
+	/** Called when TimerHandle_Dash time is elapsed */
 	void DashAbility_TimeElapsed();
 
-	// Called to spawn projectiles from player
+	/** Called to spawn projectiles from player */
 	void SpawnProjectile(TSubclassOf<AActor> ClassToSpawn);	
 	
-	// Called when inputs primary interact is triggered
+	/** Called when inputs primary interact is triggered */
 	void PrimaryInteract();
 	
-	// Called when inputs jump is triggered
+	/** Called when inputs jump is triggered */
 	void JumpTriggered();
 	
-	// Called when inputs jump is canceled
+	/** Called when inputs jump is canceled */
 	void JumpCanceled();
 
 
-	// The broadcast function that notifies when Health changes on AttributesComponent
+	/** The broadcast function that notifies when Health changes on AttributesComponent */
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, USAttributesComponent* OwningComp, float NewHealth, float Delta);
 
-	// Method called when Mesh begin overlap with another collision actor
+	/** Method called when Mesh begin overlap with another collision actor */
 	UFUNCTION()
 	void OnActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 		                     int32 OtherBodyIndex, bool bFromSweep, const FHitResult &HitResult);
 
-private:
-	// Return true if any attack timer handle is pending
+	/** Logic when (this) character dies */
+	void Dead();
+
+	/** Return true if any attack timer handle is pending */
 	bool IsAnyAttackTimerPending();
+
+	/** Override for Pawn method to set the PawnView we want */
+	virtual FVector GetPawnViewLocation() const override;
 
 	
 /************************************ DEBUG **********************************/

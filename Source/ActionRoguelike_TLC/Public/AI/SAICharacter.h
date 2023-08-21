@@ -68,6 +68,9 @@ protected:
 
 	/** Set NewTarget as current TargetActor */
 	void SetTargetActor(AActor* NewTarget);
+
+	/** Logic when (this) character dies */
+	void Dead();
 	
 
 /*********************************** DEBUG ***********************************/

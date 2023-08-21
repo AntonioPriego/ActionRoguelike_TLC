@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "SCharacter.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "DrawDebugHelpers.h"
 #include "EnhancedInputSubsystems.h"
@@ -309,8 +310,7 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributesComponent
 	// Death if
 	if (NewHealth == 0.0f  &&  Delta < 0.0f)
 	{
-		APlayerController* PlayerController = Cast<APlayerController>(GetController());
-		DisableInput(PlayerController);
+		Dead();
 	}
 }
 
@@ -327,6 +327,19 @@ void ASCharacter::OnActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 }
 
 
+// Logic when (this) character dies
+void ASCharacter::Dead()
+{
+	// Disable input
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	DisableInput(PlayerController);
+	
+	// Disable collisions
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCharacterMovement()->DisableMovement(); // Without this line, the character just falls from anywhere bc collisions are disabled
+}
+
+
 // Return true if any attack timer handle is active
 bool ASCharacter::IsAnyAttackTimerPending()
 {
@@ -336,6 +349,13 @@ bool ASCharacter::IsAnyAttackTimerPending()
 
 		
 	return (IsPrimaryAttackTimerActive  ||  IsSecondaryAttackTimerActive  ||  IsDashTimerActive);
+}
+
+
+// Override for Pawn method to set the PawnView we want
+FVector ASCharacter::GetPawnViewLocation() const
+{
+	return CameraComponent->GetComponentLocation();
 }
 
 
