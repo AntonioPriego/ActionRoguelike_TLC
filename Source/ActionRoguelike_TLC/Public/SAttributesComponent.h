@@ -57,7 +57,7 @@ public:
 
 	/** Apply the Delta increment/decrement to Health and return true if it was successful */
 	UFUNCTION(BlueprintCallable, Category=Attributes)
-	bool ApplyHealthChange(AActor* InstigatorActor, const float Delta);
+	bool ApplyHealthChange(AActor* InstigatorActor, float Delta);
 
 	/** Return if Health is greater than 0 */
 	UFUNCTION(BlueprintCallable)
@@ -74,6 +74,11 @@ public:
 	/** Return MaxHealth */
 	UFUNCTION(BlueprintCallable)
 	float GetMaxHealth() const;
+
+
+protected:
+	/** Manages owner killed calling game-mode */
+	void OnOwnerKilled(AActor* Killer) const;
 
 	
 /************************************ DEBUG **********************************/

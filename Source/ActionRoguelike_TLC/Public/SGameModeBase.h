@@ -48,6 +48,10 @@ public:
 	// But this is like the BeginPlay of GameMode class
 	virtual void StartPlay() override;
 
+	/** Manages actor killed event */
+	UFUNCTION()
+	virtual void OnActorKilled(AActor* VictimActor, AActor* Killer);
+
 	
 protected:
 	// Logic on TimerHandle_SpawnBots time elapsed, which means a Bot have to spawn
@@ -57,6 +61,10 @@ protected:
 	/** Called when SpawnBotQuery is finished */
 	UFUNCTION()
 	void OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
+
+	/** */
+	UFUNCTION()
+	void RespawnPlayerElapsed(AController* Controller);
 
 	/** Check the number of alive bots (enemies) is under the maximum (curve). Return true only if the number is below the max */
 	bool CheckNumberAliveBotsUnderMax() const;
@@ -70,5 +78,5 @@ public:
 	/** DEBUG: To quick kill all on testing */
 	UFUNCTION(Exec)
 	void KillAll();
-
 };
+

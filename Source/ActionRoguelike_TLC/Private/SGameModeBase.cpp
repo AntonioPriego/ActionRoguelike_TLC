@@ -3,7 +3,13 @@
 
 #include "SGameModeBase.h"
 #include "EngineUtils.h"
+#include "SCharacter.h"
 #include "AI/SAICharacter.h"
+
+
+// CVars
+static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true, TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
+
 
 
 // Sets default values
@@ -25,9 +31,34 @@ void ASGameModeBase::StartPlay()
 }
 
 
+// Manages actor killed event
+void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
+{
+	ASCharacter* Player = Cast<ASCharacter>(VictimActor);
+	if (Player)
+	{
+		FTimerHandle TimerHandle_RespawnDelay;
+
+		FTimerDelegate Delegate;
+		Delegate.BindUFunction(this, "RespawnPlayerElapsed", Player->GetController());
+
+		float RespawnDelay = 2.0f;
+		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, RespawnDelay, false);
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("OnActorKilled: Victim %s, Killer: %s"), *GetNameSafe(VictimActor), *GetNameSafe(Killer));
+}
+
+
 // Logic on TimerHandle_SpawnBots time elapsed, which means a Bot have to spawn
 void ASGameModeBase::SpawnBotTimeElapsed()
 {
+	if (!CVarSpawnBots.GetValueOnGameThread())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Bot spawning disabled via cvar 'CVarSpawnBots'"));
+		return;
+	}
+	
 	// Run queries is expensive, so check if it is necessary to query before doing it
 	if (!CheckNumberAliveBotsUnderMax())
 	{
@@ -62,6 +93,18 @@ void ASGameModeBase::OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryIn
 	{
 		GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator());
 		DrawDebugCapsule(GetWorld(),Locations[0],50,20,FQuat().Identity,FColor::Blue, false, 60);
+	}
+}
+
+
+//
+void ASGameModeBase::RespawnPlayerElapsed(AController* Controller)
+{
+	if (ensure(Controller))
+	{
+		Controller->UnPossess();
+		
+		RestartPlayer(Controller);
 	}
 }
 
