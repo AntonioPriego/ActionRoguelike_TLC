@@ -18,6 +18,7 @@ ASBlackholeProjectile::ASBlackholeProjectile()
 	SphereComponent->SetSphereRadius(15.f, true);
 	MovementComponent->ProjectileGravityScale = 0.0f;
 	MovementComponent->InitialSpeed = 3000.0f;
+	SphereInhaleCollision->SetSphereRadius(140);
 	LifeTime = 5.0f;
 }
 
@@ -105,7 +106,7 @@ void ASBlackholeProjectile::ShrinkTrappedActors(const float DeltaSeconds)
 		{
 			if (TrappedActor->IsOverlappingActor(this))
 			{
-				const float RelativeScaleToApply = GetRelativeScaleCurveValue(5-GetLifeSpan()) * (1-DeltaSeconds);
+				const float RelativeScaleToApply = GetRelativeScaleCurveValue(5-GetLifeSpan());
 				
 				TrappedActor->SetActorRelativeScale3D(FVector(RelativeScaleToApply));				
 			}
@@ -139,7 +140,7 @@ void ASBlackholeProjectile::DeshrinkReleasedActors(const float DeltaSeconds)
 		
 		if (IsValid(ReleasedActor))
 		{
-			float RelativeScaleToApply = 1 / (GetRelativeScaleCurveValue(5-GetLifeSpan()) * (1-DeltaSeconds));
+			float RelativeScaleToApply = 1 / (GetRelativeScaleCurveValue(5-GetLifeSpan()));
 
 			if (RelativeScaleToApply > 1.0f)
 			{
@@ -166,12 +167,12 @@ float ASBlackholeProjectile::GetRelativeScaleCurveValue(const float Seconds) con
 {
 	if (ensure(RelativeScaleCurve))
 	{		
-		if (Seconds > 0.0f  &&  Seconds < LifeTime)
+		if (Seconds >= 0.0f  &&  Seconds < LifeTime)
 		{
 			return RelativeScaleCurve->GetFloatValue(Seconds);
 		}
 	
-		UE_LOG(LogTemp, Error, TEXT("[ASBlackholeProjectile::GetRelativeScaleCurveValue] Seconds out of expected range"));
+		UE_LOG(LogTemp, Error, TEXT("[ASBlackholeProjectile::GetRelativeScaleCurveValue] Seconds out of expected range (%f s)"), Seconds);
 		
 		return 0.0f;
 	}

@@ -5,6 +5,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "DrawDebugHelpers.h"
 #include "EnhancedInputSubsystems.h"
+#include "SPlayerState.h"
 
 
 // Sets default values
@@ -13,11 +14,10 @@ ASCharacter::ASCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Set up Interaction Interface Component
+	// Set up Actor Components
 	InteractionComponent = CreateDefaultSubobject<USInteractionComponent>("InteractionComponent");
-
-	// Set up Attributes Component
-	AttributesComponent = CreateDefaultSubobject<USAttributesComponent>("AttributesComponent");
+	AttributesComponent  = CreateDefaultSubobject<USAttributesComponent> ("AttributesComponent" );
+	CreditsComponent     = CreateDefaultSubobject<USCreditsComponent>    ("CreditsComponent"    );
 
 	// Set up CameraComponent (So, SpringArmComponent too)
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent"); // SpringArm
@@ -33,9 +33,9 @@ ASCharacter::ASCharacter()
 	// Set FName material variables
 	TimeToHitParamName = "TimeToHit";
 	IsHealParamName    = "IsHeal";
-	
-	// Activate OverlapEvents on player mesh
-	GetMesh()->SetGenerateOverlapEvents(true);
+
+    // Activate OverlapEvents on player mesh
+    GetMesh()->SetGenerateOverlapEvents(true);
 }
 
 
@@ -70,23 +70,6 @@ void ASCharacter::PostInitializeComponents()
 void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	/* DEBUG TO SEE WHAT IS DOING ON REAL GAMEPLAY THIS VARIABLES
-	if (GetLocalViewingPlayerController()->WasInputKeyJustPressed(EKeys::One))
-		SpringArmComponent->bUsePawnControlRotation = !SpringArmComponent->bUsePawnControlRotation;
-		GEngine->AddOnScreenDebugMessage(-1,4,FColor::Yellow, FString::Printf(TEXT("bUseControllerRotationYaw to %s"), (SpringArmComponent->bUsePawnControlRotation) ? TEXT("true") : TEXT("false")));
-	}
-
-	if (GetLocalViewingPlayerController()->WasInputKeyJustPressed(EKeys::Two))
-		bUseControllerRotationYaw = !bUseControllerRotationYaw;
-		GEngine->AddOnScreenDebugMessage(-1,4,FColor::Yellow, FString::Printf(TEXT("bUseControllerRotationYaw to %s"), (bUseControllerRotationYaw) ? TEXT("true") : TEXT("false")));
-	}
-
-	if (GetLocalViewingPlayerController()->WasInputKeyJustPressed(EKeys::Three)) {
-		GetCharacterMovement()->bOrientRotationToMovement = !GetCharacterMovement()->bOrientRotationToMovement;
-		GEngine->AddOnScreenDebugMessage(-1,4,FColor::Yellow, FString::Printf(TEXT("bUseControllerRotationYaw to %s"), (GetCharacterMovement()->bOrientRotationToMovement) ? TEXT("true") : TEXT("false")));
-	}
-	*/
 
 	// -- Rotation Visualization -- //
 	const float DrawScale = 100.0f;
@@ -129,6 +112,13 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 USkeletalMeshComponent* ASCharacter::GetSKMesh() const
 {
 	return GetMesh();
+}
+
+
+// Get our ASPlayerState
+ASPlayerState* ASCharacter::GetSPlayerState() const
+{
+	return Cast<ASPlayerState>(GetPlayerState());
 }
 
 

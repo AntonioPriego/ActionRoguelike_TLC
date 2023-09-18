@@ -28,6 +28,16 @@ ASAICharacter::ASAICharacter()
 	// Collision setup for directional impulse on projectiles impact
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
 	GetMesh()->SetGenerateOverlapEvents(true);
+
+	// Credits default value
+	CreditsValue = 20;
+}
+
+
+// Get credits amount that killer players receive when this actor is killed
+int32 ASAICharacter::GetCreditsValue() const
+{
+	return CreditsValue;
 }
 
 

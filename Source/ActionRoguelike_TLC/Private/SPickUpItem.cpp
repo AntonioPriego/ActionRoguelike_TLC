@@ -2,6 +2,7 @@
 
 
 #include "SPickUpItem.h"
+#include "SCharacter.h"
 
 
 // Sets default values
@@ -15,6 +16,7 @@ ASPickUpItem::ASPickUpItem()
 	// Set up some values
 	RespawnSeconds    = 10.0f;
 	IsReSpawnable     = true;
+	CreditsCost       = 0; // Default value is free! :O
 }
 
 
@@ -22,9 +24,29 @@ ASPickUpItem::ASPickUpItem()
 // On parent only logic to manage respawn or destroy (generic logic)
 void ASPickUpItem::Interact_Implementation(APawn* InstigatorPawn)
 {
-	ISGameplayInterface::Interact_Implementation(InstigatorPawn);
+	// Get CreditsComponent and check if it is enough to pick up this item
+	USCreditsComponent* CreditsComponent = InstigatorPawn->FindComponentByClass<USCreditsComponent>();
+	if (CreditsComponent)
+	{
+		if (CreditsComponent->HaveEnoughCredits(CreditsCost))
+		{
+			if (OnPickUpBehavior(InstigatorPawn))
+			{
+				CreditsComponent->RemoveCredits(CreditsCost);
+				PickUp();
+			}
+		}
+	}
+}
 
 
+// The actual behavior of the pick up item
+bool ASPickUpItem::OnPickUpBehavior(APawn* InstigatorPawn) { return true; }
+
+
+// When object is picked up logic
+void ASPickUpItem::PickUp()
+{
 	if (IsReSpawnable)
 	{
 		// Disabled and reEnabled in RespawnSeconds seconds

@@ -24,7 +24,6 @@ ASItemChest::ASItemChest()
 // Definition of Interact function of SGameplayInterface on SItemChest
 void ASItemChest::Interact_Implementation(APawn* InstigatorPawn)
 {
+	LidMesh->SetRelativeRotation(FRotator(TargetPitch, 0, 0));
 	ISGameplayInterface::Interact_Implementation(InstigatorPawn);
-
-	LidMesh->SetRelativeRotation(FRotator(TargetPitch,0,0));
 }

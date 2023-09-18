@@ -8,7 +8,9 @@
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
 #include "SAttributesComponent.h"
+#include "SCreditsComponent.h"
 #include "SInteractionComponent.h"
+#include "SPlayerState.h"
 #include "Components/InputComponent.h"
 #include "SCharacter.generated.h"
 
@@ -36,6 +38,10 @@ protected:
 	/** The component for attributes management */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USAttributesComponent* AttributesComponent;
+
+	/** The component for credits management */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	USCreditsComponent* CreditsComponent;
 
 	
 	/** Context input for player */
@@ -124,6 +130,10 @@ public:
 
 	/** Getter for Mesh */
 	USkeletalMeshComponent* GetSKMesh() const;
+
+	/** Get our ASPlayerState */
+	UFUNCTION(BlueprintCallable, Category=PlayerState)
+	ASPlayerState* GetSPlayerState() const;
 
 
 protected:

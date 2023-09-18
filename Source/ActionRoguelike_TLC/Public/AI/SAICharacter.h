@@ -37,14 +37,22 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category=Effects)
 	FName IsHealParamName;
 
+	/** Credits amount that killer players receive when this actor is killed */
+	UPROPERTY(EditDefaultsOnly, Category=Credits)
+	int32 CreditsValue;
+	
 	/** A reference of the created widget for health bar */
 	USWorldUserWidget* ActiveHealthBar;
 	
 
 /*********************************** METHODS *********************************/
 public:
-	// Sets default values for this character's properties
+	/** Sets default values for this character's properties */
 	ASAICharacter();
+
+	/** Get credits amount that killer players receive when this actor is killed */
+	int32 GetCreditsValue() const;
+	
 
 protected:
 	/**  Internal function between Constructor and BeginPlay */

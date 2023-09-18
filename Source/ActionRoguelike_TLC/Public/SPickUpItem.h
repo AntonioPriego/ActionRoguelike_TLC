@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SCreditsComponent.h"
 #include "SInteractionComponent.h"
 #include "GameFramework/Actor.h"
 #include "SPickUpItem.generated.h"
@@ -20,12 +21,16 @@ protected:
 	UStaticMeshComponent* MeshComponent;
 
 	/** When true: respawn after RespawnSeconds. When false: Destroy on use */
-	UPROPERTY(VisibleAnywhere, Category=Values)
+	UPROPERTY(VisibleAnywhere, Category=Respawn)
 	bool IsReSpawnable;
 
 	/** Time to respawn the item if IsReSpawnable */
-	UPROPERTY(VisibleAnywhere, Category=Values)
+	UPROPERTY(VisibleAnywhere, Category=Respawn)
 	float RespawnSeconds;
+
+	/** Price for picking up this item */
+	UPROPERTY(VisibleAnywhere, Category=Credits)
+	int32 CreditsCost;
 
 	
 /*********************************** METHODS *********************************/
@@ -37,10 +42,17 @@ public:
 protected:
 	/* When interface function declared as BlueprintNativeEvent on UFUNCTION
     we have to add "_Implementation", bc we are using it on C++ but on BLUEPRINTS too */
-	// Definition of Interact function of SGameplayInterface on PickUpItem
+	/** Definition of Interact function of SGameplayInterface on PickUpItem */
 	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
+	
+	/** @return True when behaviour needs object pickup. If false, player does not need object pickup
+	 * The actual behavior of the pick up item */
+	virtual bool OnPickUpBehavior(APawn* InstigatorPawn);
 
-	// Set Actor enabled or disabled: visibility and collisions
+	/** When object is picked up logic */
+	void PickUp();
+
+	/** Set Actor enabled or disabled: visibility and collisions */
 	void SetActiveStatus(const bool Active);
 	void Enable();
 	void Disable();

@@ -2,8 +2,8 @@
 
 
 #include "SHealthPotion.h"
-
 #include "SAttributesComponent.h"
+#include "Components/AudioComponent.h"
 
 
 // Sets default values
@@ -12,34 +12,34 @@ ASHealthPotion::ASHealthPotion()
 	// Set up some values
 	DeltaHealthChange = 20.0f;
 	RespawnSeconds    = 10.0f;
+	CreditsCost       = 20   ;
 	IsReSpawnable     = true;
 }
 
 
-// Definition of Interact function of SGameplayInterface on PickUpItem
-void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
+// The actual behavior of the pick up item
+// RETURN true if needed object to be picked up
+bool ASHealthPotion::OnPickUpBehavior(APawn* InstigatorPawn)
 {
 	// Error management
 	if (!ensure(InstigatorPawn))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("InstigatorPawn not found on SHealthPotion Interact"));
-		return;
+		return false;
 	}
-	
-	
-	// Get Attribute Component
-	UActorComponent*       ActorComponent      = InstigatorPawn->GetComponentByClass(USAttributesComponent::StaticClass());
-	USAttributesComponent* AttributesComponent = Cast<USAttributesComponent>(ActorComponent);
 
 	// Cast and apply healthChange if correct
-	if (ensure(ActorComponent))
+	USAttributesComponent* AttributesComponent = InstigatorPawn->FindComponentByClass<USAttributesComponent>();
+	if (ensure(AttributesComponent))
 	{
 		// Ignores when Health is Full
 		if (!AttributesComponent->IsFullHealth())
 		{
 			AttributesComponent->ApplyHealthChange(this, DeltaHealthChange);
-
-			Super::Interact_Implementation(InstigatorPawn); // Manages respawn or destroy logic
+			
+			return true;
 		}
 	}
+
+	return false;
 }

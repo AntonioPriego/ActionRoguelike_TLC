@@ -17,6 +17,9 @@ ASGameModeBase::ASGameModeBase()
 {
 	// Set some values
 	SpawnTimerInterval = 2.0f;
+
+	// Changing PlayerState class to our custom one
+	PlayerStateClass = ASPlayerState::StaticClass();
 }
 
 
@@ -34,16 +37,25 @@ void ASGameModeBase::StartPlay()
 // Manages actor killed event
 void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 {
-	ASCharacter* Player = Cast<ASCharacter>(VictimActor);
-	if (Player)
+	// Respawn management
+	ASCharacter* PlayerKilled = Cast<ASCharacter>(VictimActor);
+	if (PlayerKilled)
 	{
 		FTimerHandle TimerHandle_RespawnDelay;
 
 		FTimerDelegate Delegate;
-		Delegate.BindUFunction(this, "RespawnPlayerElapsed", Player->GetController());
+		Delegate.BindUFunction(this, "RespawnPlayerElapsed", PlayerKilled->GetController());
 
 		float RespawnDelay = 2.0f;
 		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, RespawnDelay, false);
+	}
+
+	// Credits for kill enemies management
+	ASAICharacter* EnemyKilled  = Cast<ASAICharacter>(VictimActor);
+	USCreditsComponent* CreditsComponent = GetCreditsComponent(Cast<APawn>(Killer));
+	if (EnemyKilled && CreditsComponent)
+	{
+		CreditsComponent->AddCredits(EnemyKilled->GetCreditsValue());
 	}
 
 	UE_LOG(LogTemp, Log, TEXT("OnActorKilled: Victim %s, Killer: %s"), *GetNameSafe(VictimActor), *GetNameSafe(Killer));
@@ -150,6 +162,15 @@ float ASGameModeBase::GetMaxNumOfBots(const float Seconds) const
 
 
 	return -1;
+}
+
+
+// Get CreditsComponent from actor
+USCreditsComponent* ASGameModeBase::GetCreditsComponent(const APawn* Character) const
+{
+	const ACharacter* PlayerCharacter = Cast<ACharacter>(Character);
+	
+	return Cast<USCreditsComponent>(PlayerCharacter->GetComponentByClass(USCreditsComponent::StaticClass()));	
 }
 
 
