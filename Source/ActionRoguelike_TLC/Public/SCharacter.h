@@ -7,6 +7,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
+#include "SActionComponent.h"
 #include "SAttributesComponent.h"
 #include "SCreditsComponent.h"
 #include "SInteractionComponent.h"
@@ -43,6 +44,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USCreditsComponent* CreditsComponent;
 
+	/** The component for credits management */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	USActionComponent* ActionComponent;
+
 	
 	/** Context input for player */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
@@ -72,34 +77,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
 	UInputAction* JumpAction;
 	
+	/** Sprint input action for player */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
+	UInputAction* SprintAction;
+	
 	/** Dash input action for player */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
 	UInputAction* DashAction;
-	
-	
-	/** To set primary project from editor */
-	UPROPERTY(EditAnywhere, Category=Attack)
-	TSubclassOf<AActor> PrimaryProjectileClass;
-	
-	/** To set secondary project from editor */
-	UPROPERTY(EditAnywhere, Category=Attack)
-	TSubclassOf<AActor> SecondaryProjectileClass;
-	
-	/** To set secondary project from editor */
-	UPROPERTY(EditAnywhere, Category=Attack)
-	TSubclassOf<AActor> DashProjectileClass;
-	
-	/** To set attack anim from editor */
-	UPROPERTY(EditAnywhere, Category=Attack)
-	UAnimMontage* AttackAnim;
-	
-	/** Manage the max distance to check hit actor on projectile trajectory */
-	UPROPERTY(EditAnywhere, Category=Attack)
-	float HitAttackRange;
-
-	/** Manage the max distance to check hit actor on projectile trajectory */
-	UPROPERTY(VisibleAnywhere, Category=Attack)
-	FName HandSocketName;
 	
 	/** FName for material variable that controls hit cue */
 	UPROPERTY(VisibleAnywhere, Category=Effects)
@@ -111,10 +95,10 @@ protected:
 
 
 	
-	// Timer handles for attacks and abilities
-	FTimerHandle TimerHandle_PrimaryAttack;
-	FTimerHandle TimerHandle_SecondaryAttack;
-	FTimerHandle TimerHandle_Dash;
+	// // Timer handles for attacks and abilities
+	// FTimerHandle TimerHandle_PrimaryAttack;
+	// FTimerHandle TimerHandle_SecondaryAttack;
+	// FTimerHandle TimerHandle_Dash;
 
 	
 /*********************************** METHODS *********************************/
@@ -134,12 +118,15 @@ public:
 	/** Get our ASPlayerState */
 	UFUNCTION(BlueprintCallable, Category=PlayerState)
 	ASPlayerState* GetSPlayerState() const;
-
-
-protected:
-	/** Called when the game starts or when spawned */
-	virtual void BeginPlay() override;
 	
+	/** Override for Pawn method to set the PawnView we want */
+	virtual FVector GetPawnViewLocation() const override;
+	
+	/** Return Camera forward vector */
+	FVector GetPawnViewForwardVector() const;
+
+
+protected:	
 	/** Internal function between Constructor and BeginPlay */
 	virtual void PostInitializeComponents() override;
 	
@@ -158,18 +145,6 @@ protected:
 	/** Dash ability method */
 	void DashCast();
 	
-	/** Called when TimerHandle_PrimaryAttack time is elapsed */
-	void PrimaryAttack_TimeElapsed();
-
-	/** Called when TimerHandle_SecondaryAttack time is elapsed */
-	void SecondaryAttack_TimeElapsed();
-
-	/** Called when TimerHandle_Dash time is elapsed */
-	void DashAbility_TimeElapsed();
-
-	/** Called to spawn projectiles from player */
-	void SpawnProjectile(TSubclassOf<AActor> ClassToSpawn);	
-	
 	/** Called when inputs primary interact is triggered */
 	void PrimaryInteract();
 	
@@ -178,6 +153,12 @@ protected:
 	
 	/** Called when inputs jump is canceled */
 	void JumpCanceled();
+
+	/** Character will move faster */
+	void SprintStart();
+	
+	/** Character return to normal moving velocity */
+	void SprintStop();
 
 
 	/** The broadcast function that notifies when Health changes on AttributesComponent */
@@ -191,12 +172,6 @@ protected:
 
 	/** Logic when (this) character dies */
 	void Dead();
-
-	/** Return true if any attack timer handle is pending */
-	bool IsAnyAttackTimerPending();
-
-	/** Override for Pawn method to set the PawnView we want */
-	virtual FVector GetPawnViewLocation() const override;
 
 	
 /************************************ DEBUG **********************************/

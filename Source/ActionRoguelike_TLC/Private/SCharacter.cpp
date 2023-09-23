@@ -18,17 +18,18 @@ ASCharacter::ASCharacter()
 	InteractionComponent = CreateDefaultSubobject<USInteractionComponent>("InteractionComponent");
 	AttributesComponent  = CreateDefaultSubobject<USAttributesComponent> ("AttributesComponent" );
 	CreditsComponent     = CreateDefaultSubobject<USCreditsComponent>    ("CreditsComponent"    );
+	ActionComponent      = CreateDefaultSubobject<USActionComponent>     ("ActionComponent"     );
 
 	// Set up CameraComponent (So, SpringArmComponent too)
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent"); // SpringArm
 	CameraComponent    = CreateDefaultSubobject<UCameraComponent>("CameraComponent");		// Camera
 	SpringArmComponent->SetupAttachment(RootComponent);									// Attachment SpringArm->RootComponent
 	CameraComponent->SetupAttachment(SpringArmComponent);									// Attachment Camera->SpringArm
-	SpringArmComponent->bUsePawnControlRotation = true;			// Some constructor values  /-
-	bUseControllerRotationYaw = false;							// Some constructor values { https://drive.google.com/file/d/1QDxeYIUHOry3bJtOwmN2_SAaEdPWIXTy/view?usp=sharing
-	GetCharacterMovement()->bOrientRotationToMovement = true;	// Some constructor values  \_
-	HitAttackRange = 3700.0f;									// Some Constructor values
-	HandSocketName = "Muzzle_01";
+
+	// Some constructor values
+	SpringArmComponent->bUsePawnControlRotation = true;			///  
+	bUseControllerRotationYaw = false;							// https://drive.google.com/file/d/1QDxeYIUHOry3bJtOwmN2_SAaEdPWIXTy/view?usp=sharing
+	GetCharacterMovement()->bOrientRotationToMovement = true;	///
 
 	// Set FName material variables
 	TimeToHitParamName = "TimeToHit";
@@ -36,23 +37,6 @@ ASCharacter::ASCharacter()
 
     // Activate OverlapEvents on player mesh
     GetMesh()->SetGenerateOverlapEvents(true);
-}
-
-
-// Called when the game starts or when spawned
-void ASCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// Set up Input
-	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
-	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
-			Subsystem->AddMappingContext(PlayerContext,0);
-		}
-	}
-	
 }
 
 
@@ -72,8 +56,8 @@ void ASCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// -- Rotation Visualization -- //
-	const float DrawScale = 100.0f;
-	const float Thickness = 5.0f;
+	constexpr float DrawScale = 100.0f;
+	constexpr float Thickness = 5.0f;
 
 	FVector LineStart = GetActorLocation();
 	// Offset to the right of pawn
@@ -81,11 +65,13 @@ void ASCharacter::Tick(float DeltaTime)
 	// Set line end in direction of the actor's forward
 	const FVector ActorDirection_LineEnd = LineStart + (GetActorForwardVector() * 100.0f);
 	// Draw Actor's Direction
-	DrawDebugDirectionalArrow(GetWorld(), LineStart, ActorDirection_LineEnd, DrawScale, FColor::Yellow, false, 0.0f, 0, Thickness);
+	DrawDebugDirectionalArrow(GetWorld(), LineStart, ActorDirection_LineEnd, DrawScale, FColor::Yellow,
+		                      false, 0.0f, 0, Thickness);
 
 	const FVector ControllerDirection_LineEnd = LineStart + (GetControlRotation().Vector() * 100.0f);
 	// Draw 'Controller' Rotation ('PlayerController' that 'possessed' this character)
-	DrawDebugDirectionalArrow(GetWorld(), LineStart, ControllerDirection_LineEnd, DrawScale, FColor::Green, false, 0.0f, 0, Thickness);
+	DrawDebugDirectionalArrow(GetWorld(), LineStart, ControllerDirection_LineEnd, DrawScale, FColor::Green,
+	                          false, 0.0f, 0, Thickness);
 }
 
 
@@ -93,6 +79,18 @@ void ASCharacter::Tick(float DeltaTime)
 void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	// Set up Input
+	const APlayerController* PlayerController = GetController<APlayerController>();
+	if (PlayerController)
+	{
+		const ULocalPlayer* LocalPlayer = PlayerController->GetLocalPlayer();
+		UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
+		if (Subsystem)
+		{
+			Subsystem->AddMappingContext(PlayerContext,0);
+		}
+	}
 
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
@@ -102,7 +100,9 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		EnhancedInputComponent->BindAction(SecondaryAttackAction, ETriggerEvent::Started,   this, &ASCharacter::SecondaryAttack);
 		EnhancedInputComponent->BindAction(PrimaryInteractAction, ETriggerEvent::Started,   this, &ASCharacter::PrimaryInteract);
 		EnhancedInputComponent->BindAction(JumpAction,            ETriggerEvent::Started,   this, &ASCharacter::JumpTriggered  );		
-		EnhancedInputComponent->BindAction(JumpAction,            ETriggerEvent::Canceled,  this, &ASCharacter::JumpCanceled   );		
+		EnhancedInputComponent->BindAction(JumpAction,            ETriggerEvent::Canceled,  this, &ASCharacter::JumpCanceled   );	
+		EnhancedInputComponent->BindAction(SprintAction,          ETriggerEvent::Started,   this, &ASCharacter::SprintStart    );		
+		EnhancedInputComponent->BindAction(SprintAction,          ETriggerEvent::Completed, this, &ASCharacter::SprintStop     );		
 		EnhancedInputComponent->BindAction(DashAction,            ETriggerEvent::Started,   this, &ASCharacter::DashCast       );
 	}
 }
@@ -162,96 +162,21 @@ void ASCharacter::Look(const FInputActionValue& Value)
 // Primary attack method
 void ASCharacter::PrimaryAttack()
 {
-	if (!IsAnyAttackTimerPending())
-	{
-		PlayAnimMontage(AttackAnim);
-		
-		GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_TimeElapsed, 0.12f);
-	}
+	ActionComponent->StartActionByName(this, "PrimaryAttack");
 }
 
 
 // Secondary attack method
 void ASCharacter::SecondaryAttack()
 {
-	if (!IsAnyAttackTimerPending())
-	{
-		PlayAnimMontage(AttackAnim);
-		
-		GetWorldTimerManager().SetTimer(TimerHandle_SecondaryAttack, this, &ASCharacter::SecondaryAttack_TimeElapsed, 0.2f);
-	}
+	ActionComponent->StartActionByName(this, "Blackhole");
 }
 
 
 // Dash ability method
 void ASCharacter::DashCast()
 {
-	if (!IsAnyAttackTimerPending())
-	{
-		PlayAnimMontage(AttackAnim);
-		
-		GetWorldTimerManager().SetTimer(TimerHandle_SecondaryAttack, this, &ASCharacter::DashAbility_TimeElapsed, 0.2f);
-	}
-}
-
-
-// Called when TimerHandle_PrimaryAttack time is elapsed 
-void ASCharacter::PrimaryAttack_TimeElapsed()
-{
-	SpawnProjectile(PrimaryProjectileClass);
-}
-
-
-// Called when TimerHandle_SecondaryAttack time is elapsed 
-void ASCharacter::SecondaryAttack_TimeElapsed()
-{
-	SpawnProjectile(SecondaryProjectileClass);
-}
-
-
-// Called when TimerHandle_Dash time is elapsed 
-void ASCharacter::DashAbility_TimeElapsed()
-{
-	SpawnProjectile(DashProjectileClass);
-}
-
-
-// Called to spawn projectiles from player
-void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
-{
-	// Getting some parameters for sweep raycast projectile trajectory searching hit points 
-	const FVector HandLocation = GetMesh()->GetSocketLocation(HandSocketName);
-	FHitResult HitResult;
-	FCollisionObjectQueryParams ObjectQueryParams;
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_PhysicsBody);
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_Pawn);
-
-	// To ignore Player
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActor(this);	
-
-	// Calculation of the projectile trajectory and possible hit point
-	const FVector SweepStartPoint = CameraComponent->GetComponentLocation();
-	const FVector SweepEndPoint   = CameraComponent->GetComponentLocation() + CameraComponent->GetForwardVector()*HitAttackRange;
-	const bool bBlockingHit = GetWorld()->LineTraceSingleByObjectType(HitResult, SweepStartPoint, SweepEndPoint, ObjectQueryParams, Params);
-	
-	// Calculation of the projectile spawn rotation from the hand (HandLocation to ProjectileEndLocation)
-	const FVector ProjectileEndLocation = bBlockingHit ? HitResult.Location : SweepEndPoint;
-	const FRotator ProjectileRotation = (ProjectileEndLocation - HandLocation).Rotation();
-
-	// Setting some parameters for projectile spawn
-	const FTransform SpawnTM = FTransform(ProjectileRotation, HandLocation);
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParams.Instigator = this;
-
-	// Projectile Spawn
-	GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTM, SpawnParams);
-
-	// DEBUG: Draw sphere on ProjectileEndLocation
-	DrawDebugSphere(GetWorld(),ProjectileEndLocation,32.0f,32.f,FColor::Black,false,3.0f);
+	ActionComponent->StartActionByName(this, "Dash");
 }
 
 
@@ -268,14 +193,28 @@ void ASCharacter::PrimaryInteract()
 // Called when inputs primary attack is triggered
 void ASCharacter::JumpTriggered()
 {
-	Jump();
+	ActionComponent->StartActionByName(this, "Jump");
 }
 
 
 // Called when inputs primary attack is canceled
 void ASCharacter::JumpCanceled()
 {
-	StopJumping();
+	ActionComponent->StopActionByName(this, "Jump");
+}
+
+
+// Character will move faster
+void ASCharacter::SprintStart()
+{
+	ActionComponent->StartActionByName(this, "Sprint");
+}
+
+
+// Character return to normal moving velocity
+void ASCharacter::SprintStop()
+{
+	ActionComponent->StopActionByName(this, "Sprint");
 }
 
 
@@ -327,25 +266,23 @@ void ASCharacter::Dead()
 	// Disable collisions
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetCharacterMovement()->DisableMovement(); // Without this line, the character just falls from anywhere bc collisions are disabled
+	
+	SetLifeSpan(5.0f);
 }
 
-
-// Return true if any attack timer handle is active
-bool ASCharacter::IsAnyAttackTimerPending()
-{
-	const bool IsPrimaryAttackTimerActive   = GetWorldTimerManager().IsTimerActive(TimerHandle_PrimaryAttack  );
-	const bool IsSecondaryAttackTimerActive = GetWorldTimerManager().IsTimerActive(TimerHandle_SecondaryAttack);
-	const bool IsDashTimerActive            = GetWorldTimerManager().IsTimerActive(TimerHandle_Dash           );
-
-		
-	return (IsPrimaryAttackTimerActive  ||  IsSecondaryAttackTimerActive  ||  IsDashTimerActive);
-}
 
 
 // Override for Pawn method to set the PawnView we want
 FVector ASCharacter::GetPawnViewLocation() const
 {
 	return CameraComponent->GetComponentLocation();
+}
+
+
+// Return Camera forward vector
+FVector ASCharacter::GetPawnViewForwardVector() const
+{
+	return CameraComponent->GetForwardVector();
 }
 
 

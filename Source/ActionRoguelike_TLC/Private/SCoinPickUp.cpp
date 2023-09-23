@@ -10,11 +10,12 @@ ASCoinPickUp::ASCoinPickUp()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	
+
 	// Set some default values
 	CreditsEarned = 1;
-	CreditsCost   = 0;
+	CreditsCost = 0;
 	IsReSpawnable = false;
+	Adder = 0;
 }
 
 

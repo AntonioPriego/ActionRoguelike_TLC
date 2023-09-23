@@ -31,9 +31,15 @@ protected:
 	
 /*********************************** METHODS *********************************/
 public:
+	virtual void InitializeComponent() override;
+	
 	/** Called when the game starts or when spawned */
 	virtual void BeginPlay() override;
-	
+
+	/** Method to initialize PlayerState for component behavior */
+	UFUNCTION()
+	void InitializePlayerState();
+
 	/** [SPlayerState] Get credits */
 	UFUNCTION(BlueprintCallable, Category=Credits)
 	int32 GetCredits() const;

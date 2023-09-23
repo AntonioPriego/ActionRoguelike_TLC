@@ -13,7 +13,7 @@ static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true, TEXT
 
 
 // Sets default values
-ASGameModeBase::ASGameModeBase()
+ASGameModeBase::ASGameModeBase(): SpawnBotQuery(nullptr), MaxNumOfBotsCurve(nullptr)
 {
 	// Set some values
 	SpawnTimerInterval = 2.0f;
@@ -45,9 +45,8 @@ void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 
 		FTimerDelegate Delegate;
 		Delegate.BindUFunction(this, "RespawnPlayerElapsed", PlayerKilled->GetController());
-
-		float RespawnDelay = 2.0f;
-		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, RespawnDelay, false);
+		
+		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, SpawnTimerInterval, false);
 	}
 
 	// Credits for kill enemies management
@@ -115,7 +114,7 @@ void ASGameModeBase::RespawnPlayerElapsed(AController* Controller)
 	if (ensure(Controller))
 	{
 		Controller->UnPossess();
-		
+			
 		RestartPlayer(Controller);
 	}
 }

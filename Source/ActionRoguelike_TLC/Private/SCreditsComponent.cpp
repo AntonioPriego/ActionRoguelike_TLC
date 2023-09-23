@@ -2,21 +2,40 @@
 
 
 #include "SCreditsComponent.h"
-#include "GameFramework/Character.h"
+
+#include "SCharacter.h"
 
 
+void USCreditsComponent::InitializeComponent()
+{
+	Super::InitializeComponent();
+}
 
 // Called when the game starts or when spawned
 void USCreditsComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	InitializePlayerState();
+}
 
+
+// Method to initialize PlayerState for component behavior
+void USCreditsComponent::InitializePlayerState()
+{
 	// Check player have ASPlayerState as PlayerState
 	PlayerState = nullptr;
-	ACharacter* Owner = Cast<ACharacter>(GetOwner());
+	const ASCharacter* Owner = Cast<ASCharacter>(GetOwner());
 	if (IsValid(Owner))
 	{
 		ASPlayerState* CompatiblePlayerState = Cast<ASPlayerState>(Owner->GetPlayerState());
+		APlayerController* APC = Owner->GetLocalViewingPlayerController();
+		
+		if(APC)
+		{
+			//
+		}
+
 		if (CompatiblePlayerState)
 		{
 			PlayerState = CompatiblePlayerState;

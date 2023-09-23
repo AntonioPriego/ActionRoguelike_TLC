@@ -82,8 +82,8 @@ bool USAttributesComponent::ApplyHealthChange(AActor* InstigatorActor, float Del
 
 
 // Getters and simple conditions
-bool USAttributesComponent::IsAlive() const       { return Health > 0.0f;       }
-bool USAttributesComponent::IsFullHealth() const  { return Health == MaxHealth; }
+bool  USAttributesComponent::IsAlive() const      { return Health > 0.0f;       }
+bool  USAttributesComponent::IsFullHealth() const { return Health == MaxHealth; }
 float USAttributesComponent::GetHealth() const    { return Health;              }
 float USAttributesComponent::GetMaxHealth() const { return MaxHealth;           }
 

@@ -37,13 +37,13 @@ EBTNodeResult::Type USBTTask_RangedAttack::ExecuteTask(UBehaviorTreeComponent& O
 		const AActor* TargetActor = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("TargetActor"));
 		if (!TargetActor)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Black, TEXT("Fail"));
+			GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Black, TEXT("Failed casting TargetActor"));
 			return EBTNodeResult::Failed;
 		}
 		
 		if (!USAttributesComponent::IsActorAlive(TargetActor))
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Black, TEXT("Fail"));
+			GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Black, TEXT("Failed checking TargetActor is alive"));
 			return EBTNodeResult::Failed;
 		}
 		
