@@ -24,7 +24,7 @@ public:
 
 	/** Vertical offset between AttachedActor and the actual widget (this) */
 	UPROPERTY(EditAnywhere, Category=UI)
-	float WorldOffset;
+	FVector WorldOffset;
 
 protected:
 	UPROPERTY(meta=(BindWidget))

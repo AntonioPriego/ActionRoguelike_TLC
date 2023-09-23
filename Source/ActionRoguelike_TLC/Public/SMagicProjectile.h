@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "SProjectileBase.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
@@ -17,7 +18,12 @@ class ACTIONROGUELIKE_TLC_API ASMagicProjectile : public ASProjectileBase
 
 
 /********************************* PROPERTIES ********************************/
-// ...
+protected:
+	/** */
+	UPROPERTY(EditAnywhere, Category=Damage)
+	FGameplayTag ParryTag;
+
+	
 /*********************************** METHODS *********************************/
 public:	
 	// Sets default values for this actor's properties

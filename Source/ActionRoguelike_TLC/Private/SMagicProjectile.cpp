@@ -2,6 +2,8 @@
 
 #include "SMagicProjectile.h"
 
+#include "SAction.h"
+#include "SActionComponent.h"
 #include "SAttributesComponent.h"
 #include "SGameplayFunctionLibrary.h"
 #include "Components/SphereComponent.h"
@@ -46,8 +48,20 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 						               UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 						               bool bFromSweep, const FHitResult& SweepResult)
 {
+	static FGameplayTag Tag = FGameplayTag::RequestGameplayTag("Status.Parrying");
+	
 	if (OtherActor  &&  OtherActor!=GetInstigator())
 	{
+		USActionComponent* ActionComponent = OtherActor->FindComponentByClass<USActionComponent>();
+		if (ActionComponent && ActionComponent->ActiveGameplayTags.HasTag(ParryTag))
+		{
+			MovementComponent->Velocity = -MovementComponent->Velocity;
+
+			SetInstigator(Cast<APawn>(OtherActor));
+
+			return;
+		}
+		
 	 	DrawDebugSphere(GetWorld(), GetActorLocation(), 10.0f, 12, FColor::Red, false, 1.0f);
 
 		if ( USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, Damage, SweepResult) )

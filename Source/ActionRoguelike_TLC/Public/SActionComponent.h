@@ -17,14 +17,16 @@ class ACTIONROGUELIKE_TLC_API USActionComponent : public UActorComponent
 
 	
 /********************************* PROPERTIES ********************************/
+public:
+	/** Contain current active tags */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Tags)
+	FGameplayTagContainer ActiveGameplayTags;
+
+	
 protected:
 	/**  */
 	UPROPERTY()
 	TArray<USAction*> Actions;
-
-	/**  */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Tags)
-	FGameplayTagContainer ActiveGameplayTags;;
 
 	/** Granted abilities at game start */
 	UPROPERTY(EditAnywhere, Category=Actions)

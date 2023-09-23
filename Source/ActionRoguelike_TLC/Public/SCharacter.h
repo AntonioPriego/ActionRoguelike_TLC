@@ -84,6 +84,10 @@ protected:
 	/** Dash input action for player */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
 	UInputAction* DashAction;
+
+	/** Parry input action for player */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
+	UInputAction* ParryAction;
 	
 	/** FName for material variable that controls hit cue */
 	UPROPERTY(VisibleAnywhere, Category=Effects)
@@ -92,13 +96,6 @@ protected:
 	/** FName for material variable that controls hit marked as Heal or as Damage */
 	UPROPERTY(VisibleAnywhere, Category=Effects)
 	FName IsHealParamName;
-
-
-	
-	// // Timer handles for attacks and abilities
-	// FTimerHandle TimerHandle_PrimaryAttack;
-	// FTimerHandle TimerHandle_SecondaryAttack;
-	// FTimerHandle TimerHandle_Dash;
 
 	
 /*********************************** METHODS *********************************/

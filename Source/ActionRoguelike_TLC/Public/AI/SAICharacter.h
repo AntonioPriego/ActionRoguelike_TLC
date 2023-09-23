@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Perception/PawnSensingComponent.h"
 #include "SAttributesComponent.h"
+#include "SActionComponent.h"
 #include "SWorldUserWidget.h"
 #include "SAICharacter.generated.h"
 
@@ -20,6 +21,10 @@ protected:
 	/** The component for attributes management */
 	UPROPERTY(VisibleAnywhere, Category=Components)
 	USAttributesComponent* AttributesComponent;
+
+	/** The component for action management */
+	UPROPERTY(VisibleAnywhere, Category=Components)
+	USActionComponent* ActionComponent;
 	
 	/** Component to retrieve perception senses */
 	UPROPERTY(VisibleAnywhere, Category=Components)

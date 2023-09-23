@@ -103,7 +103,8 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		EnhancedInputComponent->BindAction(JumpAction,            ETriggerEvent::Canceled,  this, &ASCharacter::JumpCanceled   );	
 		EnhancedInputComponent->BindAction(SprintAction,          ETriggerEvent::Started,   this, &ASCharacter::SprintStart    );		
 		EnhancedInputComponent->BindAction(SprintAction,          ETriggerEvent::Completed, this, &ASCharacter::SprintStop     );		
-		EnhancedInputComponent->BindAction(DashAction,            ETriggerEvent::Started,   this, &ASCharacter::DashCast       );
+		EnhancedInputComponent->BindAction(DashAction,            ETriggerEvent::Started,   this, &ASCharacter::DashCast       );	
+		EnhancedInputComponent->BindAction(ParryAction,          ETriggerEvent::Completed, this, &ASCharacter::SprintStop      );
 	}
 }
 
@@ -162,7 +163,7 @@ void ASCharacter::Look(const FInputActionValue& Value)
 // Primary attack method
 void ASCharacter::PrimaryAttack()
 {
-	ActionComponent->StartActionByName(this, "PrimaryAttack");
+	ActionComponent->StartActionByName(this, FName("PrimaryAttack"));
 }
 
 

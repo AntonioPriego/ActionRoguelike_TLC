@@ -17,6 +17,7 @@ ASAICharacter::ASAICharacter()
 	// Default components
 	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComponent");
 	AttributesComponent  = CreateDefaultSubobject<USAttributesComponent>("AttributesComponent");
+	ActionComponent      = CreateDefaultSubobject<USActionComponent>("ActionComponent");
 
 	// Set FName material variables
 	TimeToHitParamName = "TimeToHit";
