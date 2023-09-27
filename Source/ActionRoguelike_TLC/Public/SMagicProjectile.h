@@ -5,11 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "SProjectileBase.h"
-#include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
-#include "GameFramework/ProjectileMovementComponent.h"
 #include "Camera/CameraShakeBase.h"
 #include "SMagicProjectile.generated.h"
+
+class USActionEffect;
+
+
 
 UCLASS()
 class ACTIONROGUELIKE_TLC_API ASMagicProjectile : public ASProjectileBase
@@ -19,9 +21,13 @@ class ACTIONROGUELIKE_TLC_API ASMagicProjectile : public ASProjectileBase
 
 /********************************* PROPERTIES ********************************/
 protected:
-	/** */
+	/** Tag name for parry */
 	UPROPERTY(EditAnywhere, Category=Damage)
 	FGameplayTag ParryTag;
+
+	/** Burning secondary effect on impact */
+	UPROPERTY(EditDefaultsOnly, Category=Damage)
+	TSubclassOf<USActionEffect> BurningActionClass;
 
 	
 /*********************************** METHODS *********************************/

@@ -17,7 +17,6 @@ ASCharacter::ASCharacter()
 	// Set up Actor Components
 	InteractionComponent = CreateDefaultSubobject<USInteractionComponent>("InteractionComponent");
 	AttributesComponent  = CreateDefaultSubobject<USAttributesComponent> ("AttributesComponent" );
-	CreditsComponent     = CreateDefaultSubobject<USCreditsComponent>    ("CreditsComponent"    );
 	ActionComponent      = CreateDefaultSubobject<USActionComponent>     ("ActionComponent"     );
 
 	// Set up CameraComponent (So, SpringArmComponent too)
@@ -72,6 +71,11 @@ void ASCharacter::Tick(float DeltaTime)
 	// Draw 'Controller' Rotation ('PlayerController' that 'possessed' this character)
 	DrawDebugDirectionalArrow(GetWorld(), LineStart, ControllerDirection_LineEnd, DrawScale, FColor::Green,
 	                          false, 0.0f, 0, Thickness);
+
+	if (GetController())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 0, FColor::Orange, FString::Printf(TEXT("[SCharacter] Controller: %s"), *GetController()->GetName()));
+	}
 }
 
 
@@ -261,8 +265,8 @@ void ASCharacter::OnActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 void ASCharacter::Dead()
 {
 	// Disable input
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	DisableInput(PlayerController);
+	//APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	//DisableInput(PlayerController);
 	
 	// Disable collisions
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);

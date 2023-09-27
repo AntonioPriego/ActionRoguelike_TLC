@@ -17,7 +17,7 @@ void USActionComponent::InitializeDefaultActions()
 {
 	for (const TSubclassOf<USAction> Action : DefaultActions)
 	{
-		AddAction(Action);
+		AddAction(GetOwner(), Action);
 	}
 }
 
@@ -41,8 +41,8 @@ void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 }
 
 
-//
-void USActionComponent::AddAction(TSubclassOf<USAction> ActionClass)
+// Component "learn" a new action
+void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> ActionClass)
 {
 	if (!ensure(ActionClass))
 	{
@@ -53,11 +53,28 @@ void USActionComponent::AddAction(TSubclassOf<USAction> ActionClass)
 	if (ensure(NewAction))
 	{
 		Actions.Add(NewAction);
+
+		if (NewAction->bAutoStart && ensure(NewAction->CanStart(Instigator)))
+		{
+			NewAction->StartAction(Instigator);
+		}
 	}
 }
 
 
-//
+// Component "forget" an action from Actions
+void USActionComponent::RemoveAction(USAction* ActionToRemove)
+{
+	if (!ensure(ActionToRemove && !ActionToRemove->IsRunning()))
+	{
+		return;
+	}
+	
+	Actions.Remove(ActionToRemove);
+}
+
+
+// Call to start the action by its name
 bool USActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 {
 	for (USAction* Action : Actions)
@@ -81,7 +98,7 @@ bool USActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 }
 
 
-//
+// Call to stop the action by its name
 bool USActionComponent::StopActionByName(AActor* Instigator, FName ActionName)
 {
 	for (USAction* Action : Actions)

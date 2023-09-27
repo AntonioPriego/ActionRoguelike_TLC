@@ -34,22 +34,26 @@ protected:
 	
 	
 /*********************************** METHODS *********************************/
-public:
+public:	
 	/** Sets default values for this component's properties */
 	USActionComponent();
 
 	/** Where DefaultActions array meets Actions array */
 	void InitializeDefaultActions();
 
-	/** */
+	/** Component "learn" a new action */
 	UFUNCTION(BlueprintCallable, Category=Actions)
-	void AddAction(TSubclassOf<USAction> ActionClass);
+	void AddAction(AActor* Instigator, TSubclassOf<USAction> ActionClass);
 	
-	/** */
+	/** Component "forget" an action from Actions */
+	UFUNCTION(BlueprintCallable, Category=Actions)
+	void RemoveAction(USAction* ActionToRemove);
+	
+	/** Call to start the action by its name */
 	UFUNCTION(BlueprintCallable, Category=Actions)
 	bool StartActionByName (AActor* Instigator, FName ActionName);
 
-	/** */
+	/** Call to stop the action by its name */
 	UFUNCTION(BlueprintCallable, Category=Actions)
 	bool StopActionByName(AActor* Instigator, FName ActionName);
 

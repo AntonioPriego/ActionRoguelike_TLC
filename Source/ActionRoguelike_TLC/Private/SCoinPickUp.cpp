@@ -3,6 +3,7 @@
 
 #include "SCoinPickUp.h"
 
+#include "SCharacter.h"
 
 
 // Sets default values
@@ -22,15 +23,18 @@ ASCoinPickUp::ASCoinPickUp()
 // The actual behavior of the pick up item
 bool ASCoinPickUp::OnPickUpBehavior(APawn* InstigatorPawn)
 {
-	USCreditsComponent* CreditsComponent = InstigatorPawn->FindComponentByClass<USCreditsComponent>();	
+	const ASCharacter* CastedInstigator = Cast<ASCharacter>(InstigatorPawn);	
 
-	if (CreditsComponent)
+	if (CastedInstigator)
 	{
-		CreditsComponent->AddCredits(CreditsEarned);
-		
-		return true;
-	}
+		ASPlayerState* InstigatorPlayerState = CastedInstigator->GetSPlayerState();
 
+		if (InstigatorPlayerState)
+		{
+			InstigatorPlayerState->AddCredits(CreditsEarned);
+			return true;
+		}
+	}
 	return false;
 }
 

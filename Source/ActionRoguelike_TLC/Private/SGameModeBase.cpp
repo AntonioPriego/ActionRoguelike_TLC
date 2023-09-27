@@ -16,7 +16,7 @@ static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true, TEXT
 ASGameModeBase::ASGameModeBase(): SpawnBotQuery(nullptr), MaxNumOfBotsCurve(nullptr)
 {
 	// Set some values
-	SpawnTimerInterval = 2.0f;
+	SpawnTimerInterval = 4.0f;
 
 	// Changing PlayerState class to our custom one
 	PlayerStateClass = ASPlayerState::StaticClass();
@@ -38,23 +38,31 @@ void ASGameModeBase::StartPlay()
 void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 {
 	// Respawn management
-	ASCharacter* PlayerKilled = Cast<ASCharacter>(VictimActor);
+	const ASCharacter* PlayerKilled = Cast<ASCharacter>(VictimActor);
 	if (PlayerKilled)
 	{
 		FTimerHandle TimerHandle_RespawnDelay;
 
+		TObjectPtr<AController> PlayerKilledController = PlayerKilled->GetController();
+
+		if (ensure(PlayerKilledController))
+		{			
+			UE_LOG(LogTemp, Log, TEXT("PlayerKilled: %s"), *GetNameSafe(PlayerKilledController));
+		}
+		
 		FTimerDelegate Delegate;
-		Delegate.BindUFunction(this, "RespawnPlayerElapsed", PlayerKilled->GetController());
+		Delegate.BindUFunction(this, "RespawnPlayerElapsed", PlayerKilledController);
 		
 		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, SpawnTimerInterval, false);
 	}
 
 	// Credits for kill enemies management
 	ASAICharacter* EnemyKilled  = Cast<ASAICharacter>(VictimActor);
-	USCreditsComponent* CreditsComponent = GetCreditsComponent(Cast<APawn>(Killer));
-	if (EnemyKilled && CreditsComponent)
+	ASCharacter* PlayerKiller = Cast<ASCharacter>(Killer);
+	if (EnemyKilled && PlayerKiller)
 	{
-		CreditsComponent->AddCredits(EnemyKilled->GetCreditsValue());
+		ASPlayerState* KillerPlayerState = PlayerKiller->GetSPlayerState();
+		KillerPlayerState->AddCredits(EnemyKilled->GetCreditsValue());
 	}
 
 	UE_LOG(LogTemp, Log, TEXT("OnActorKilled: Victim %s, Killer: %s"), *GetNameSafe(VictimActor), *GetNameSafe(Killer));
@@ -161,15 +169,6 @@ float ASGameModeBase::GetMaxNumOfBots(const float Seconds) const
 
 
 	return -1;
-}
-
-
-// Get CreditsComponent from actor
-USCreditsComponent* ASGameModeBase::GetCreditsComponent(const APawn* Character) const
-{
-	const ACharacter* PlayerCharacter = Cast<ACharacter>(Character);
-	
-	return Cast<USCreditsComponent>(PlayerCharacter->GetComponentByClass(USCreditsComponent::StaticClass()));	
 }
 
 

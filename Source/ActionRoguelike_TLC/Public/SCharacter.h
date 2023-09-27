@@ -9,7 +9,6 @@
 #include "EnhancedInputComponent.h"
 #include "SActionComponent.h"
 #include "SAttributesComponent.h"
-#include "SCreditsComponent.h"
 #include "SInteractionComponent.h"
 #include "SPlayerState.h"
 #include "Components/InputComponent.h"
@@ -39,10 +38,6 @@ protected:
 	/** The component for attributes management */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USAttributesComponent* AttributesComponent;
-
-	/** The component for credits management */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	USCreditsComponent* CreditsComponent;
 
 	/** The component for credits management */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

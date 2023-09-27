@@ -22,7 +22,7 @@ class ACTIONROGUELIKE_TLC_API USAction : public UObject
 
 /********************************* PROPERTIES ********************************/
 public:
-	/** */
+	/** Name for Action (Remain it is frequently used, so give it a nice name) */
 	UPROPERTY(EditDefaultsOnly, Category=Action)
 	FName ActionName;
 
@@ -33,6 +33,10 @@ public:
 	/** Action can only start if owningActor has none of these tags applied */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Tags)
 	FGameplayTagContainer BlockedTags;
+
+	/** Start immediately when added to an action component */
+	UPROPERTY(EditDefaultsOnly, Category=Action)
+	bool bAutoStart;
 
 	bool bIsRunning;
 

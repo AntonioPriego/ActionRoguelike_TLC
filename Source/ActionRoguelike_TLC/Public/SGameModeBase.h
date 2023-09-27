@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SCreditsComponent.h"
 #include "GameFramework/GameModeBase.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "SGameModeBase.generated.h"
@@ -72,9 +71,6 @@ protected:
 
 	/** Returns the max number of alive bots (enemies) in the world based on the CurveFloat */
 	float GetMaxNumOfBots(const float Seconds) const;
-	
-	/** Get CreditsComponent from actor */
-	USCreditsComponent* GetCreditsComponent(const APawn* Character) const;
 
 	
 /************************************ DEBUG **********************************/

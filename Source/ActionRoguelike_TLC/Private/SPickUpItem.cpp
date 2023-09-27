@@ -24,15 +24,15 @@ ASPickUpItem::ASPickUpItem()
 // On parent only logic to manage respawn or destroy (generic logic)
 void ASPickUpItem::Interact_Implementation(APawn* InstigatorPawn)
 {
-	// Get CreditsComponent and check if it is enough to pick up this item
-	USCreditsComponent* CreditsComponent = InstigatorPawn->FindComponentByClass<USCreditsComponent>();
-	if (CreditsComponent)
+	// Get PlayerState and removeCredits to apply PickupBehavior
+	const ASCharacter* CastedInstigator = Cast<ASCharacter>(InstigatorPawn);
+	if (CastedInstigator)
 	{
-		if (CreditsComponent->HaveEnoughCredits(CreditsCost))
+		ASPlayerState* InstigatorPlayerState = CastedInstigator->GetSPlayerState();
+		if (InstigatorPlayerState && InstigatorPlayerState->RemoveCredits(CreditsCost))
 		{
 			if (OnPickUpBehavior(InstigatorPawn))
 			{
-				CreditsComponent->RemoveCredits(CreditsCost);
 				PickUp();
 			}
 		}
