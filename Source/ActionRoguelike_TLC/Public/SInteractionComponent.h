@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "SGameplayInterface.h"
+#include "SWorldUserWidget.h"
 #include "SInteractionComponent.generated.h"
+
+class USWorldUserWidget;
 
 
 
@@ -16,9 +18,44 @@ class ACTIONROGUELIKE_TLC_API USInteractionComponent : public UActorComponent
 
 
 /********************************* PROPERTIES ********************************/
-// ...
+protected:
+	/** This actor pointer, target the thing with the component is going to potentially interact */
+	UPROPERTY()
+	TObjectPtr<AActor> FocusedActor;
+
+	/** The distance from the player is going to check the component */
+	UPROPERTY(EditDefaultsOnly, Category=Trace)
+	float TraceDistance;
+	
+	/** The radius of the trace that is going to travel from the player to the TraceDistance position */
+	UPROPERTY(EditDefaultsOnly, Category=Trace)
+	float TraceRadius;
+
+	/** The radius of the trace that is going to travel from the player to the TraceDistance position */
+	UPROPERTY(EditDefaultsOnly, Category=Trace)
+	TEnumAsByte<ECollisionChannel> CollisionChannel; // TEnumAsByte is needed bc we have to deal with it as a raw enum
+
+	/** */
+	UPROPERTY(EditDefaultsOnly, Category=UI)
+	TSubclassOf<USWorldUserWidget> DefaultWidgetClass;
+
+	/** */
+	UPROPERTY()
+	USWorldUserWidget* DefaultWidgetInstance;
+	
+	
 /*********************************** METHODS *********************************/
 public:
+	USInteractionComponent();
+	
 	/** Method to define logic on interaction */
 	void PrimaryInteract();
+
+	/** */
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+
+protected:
+	/**  */
+	void FindBestInteractable();
 };

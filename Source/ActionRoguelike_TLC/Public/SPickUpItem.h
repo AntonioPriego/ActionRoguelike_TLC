@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SInteractionComponent.h"
+#include "SGameplayInterface.h"
 #include "GameFramework/Actor.h"
 #include "SPickUpItem.generated.h"
 
