@@ -117,6 +117,11 @@ public:
 	/** Return Camera forward vector */
 	FVector GetPawnViewForwardVector() const;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void ChangeCrossHairToInteract();
+	UFUNCTION(BlueprintImplementableEvent)
+	void ChangeCrossHairToNormal();
+
 
 protected:	
 	/** Internal function between Constructor and BeginPlay */
@@ -153,6 +158,7 @@ protected:
 	void SprintStop();
 
 
+
 	/** The broadcast function that notifies when Health changes on AttributesComponent */
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, USAttributesComponent* OwningComp, float NewHealth, float Delta);
@@ -161,7 +167,7 @@ protected:
 	UFUNCTION()
 	void OnActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 		                     int32 OtherBodyIndex, bool bFromSweep, const FHitResult &HitResult);
-
+	
 	/** Logic when (this) character dies */
 	void Dead();
 

@@ -5,6 +5,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "DrawDebugHelpers.h"
 #include "EnhancedInputSubsystems.h"
+#include "SGameplayInterface.h"
 #include "SPlayerState.h"
 
 

@@ -13,9 +13,13 @@ static TAutoConsoleVariable<float> CVarDamageMultiplier(TEXT("su.DamageMultiplie
 // Sets default values for this component's properties
 USAttributesComponent::USAttributesComponent()
 {
-	// Health values
+	// Health default values
 	MaxHealth = 100;
 	Health    = MaxHealth;
+	// Rage default values
+	MaxRage = 100;
+	Rage    = 0;
+	RatioDamageRage = 0.1f;
 }
 
 
@@ -70,6 +74,10 @@ bool USAttributesComponent::ApplyHealthChange(AActor* InstigatorActor, float Del
 
 	const float ClampedDelta = Health - PreviousHealth;
 	OnHealthChanged.Broadcast(InstigatorActor, this, Health, ClampedDelta);
+	if (ClampedDelta < 0.0f)
+	{
+		RageIncrease(-ClampedDelta);
+	}
 
 	// Died
 	if (ClampedDelta < 0.0f  &&  Health == 0)
@@ -79,13 +87,6 @@ bool USAttributesComponent::ApplyHealthChange(AActor* InstigatorActor, float Del
 	
 	return (ClampedDelta != 0);
 }
-
-
-// Getters and simple conditions
-bool  USAttributesComponent::IsAlive() const      { return Health > 0.0f;       }
-bool  USAttributesComponent::IsFullHealth() const { return Health == MaxHealth; }
-float USAttributesComponent::GetHealth() const    { return Health;              }
-float USAttributesComponent::GetMaxHealth() const { return MaxHealth;           }
 
 
 // Manages owner killed calling game-mode
@@ -100,8 +101,58 @@ void USAttributesComponent::OnOwnerKilled(AActor* Killer) const
 }
 
 
+// Add Rage amount depending on damage received
+void USAttributesComponent::RageIncrease(const float DamageReceived)
+{
+	if (DamageReceived > 0.0f)
+	{		
+		float ClampedRage  = FMath::Clamp(Rage+DamageReceived*RatioDamageRage, 0, MaxRage);
+		float ClampedDelta = ClampedRage - Rage;
+		
+		Rage = ClampedRage;
+
+		OnRageChanged.Broadcast(this, Rage, -ClampedDelta);
+	}
+}
+
+
+// Decrease Rage amount and return when DecreaseAmount is less than Rage (possible to decrease)
+bool USAttributesComponent::RageDecrease( const float DecreaseAmount)
+{
+	if (DecreaseAmount < Rage)
+	{
+		float ClampedRage  = FMath::Clamp(Rage-DecreaseAmount, 0, MaxRage);
+		float ClampedDelta = Rage - ClampedRage;
+		
+		Rage = ClampedRage;
+
+		OnRageChanged.Broadcast(this, Rage, ClampedDelta);
+		return true;
+	}
+	else if (DecreaseAmount > Rage)
+	{
+		return false;
+	}
+	
+	// DecreaseAmount == 0
+	return true;
+}
+
+
 // DEBUG: To kill the actor with this AttributesComponent during testing
 void USAttributesComponent::Kill(AActor* InstigatorActor)
 {
 	ApplyHealthChange(InstigatorActor, -GetMaxHealth());
 }
+
+
+// Getters/Setters and simple conditions
+bool  USAttributesComponent::IsAlive() const            { return Health > 0.0f;       }
+bool  USAttributesComponent::IsFullHealth() const       { return Health == MaxHealth; }
+float USAttributesComponent::GetHealth() const          { return Health;              }
+float USAttributesComponent::GetMaxHealth() const       { return MaxHealth;           }
+float USAttributesComponent::GetRage() const            { return Rage;                }
+float USAttributesComponent::GetMaxRage() const         { return MaxRage;             }
+float USAttributesComponent::GetRatioDamageRage() const { return RatioDamageRage;     }
+void  USAttributesComponent::SetRatioDamageRage(const float NewRatio) { RatioDamageRage = NewRatio; }
+

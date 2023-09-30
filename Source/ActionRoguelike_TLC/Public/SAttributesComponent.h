@@ -8,6 +8,7 @@
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnHealthChanged, AActor*, InstigatorActor, USAttributesComponent*, OwningComp, float, NewHealth, float, Delta);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnRageChanged, USAttributesComponent*, OwningComp, float, NewRage, float, Delta);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ACTIONROGUELIKE_TLC_API USAttributesComponent : public UActorComponent
@@ -19,20 +20,12 @@ class ACTIONROGUELIKE_TLC_API USAttributesComponent : public UActorComponent
 public:
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged OnHealthChanged;
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnRageChanged OnRageChanged;
 
 	
 protected:
-	// EditAnywhere - edit in BP editor and per-instance in level.
-	// VisibleAnywhere - 'read-only' in editor and level. (Use for Components)
-	// EditDefaultsOnly - hide variable per-instance, edit in BP editor only
-	// VisibleDefaultsOnly - 'read-only' access for variable, only in BP editor (uncommon)
-	// EditInstanceOnly - allow only editing of instance (eg. when placed in level)
-	// --
-	// BlueprintReadOnly - read-only in the Blueprint scripting (does not affect 'details'-panel)
-	// BlueprintReadWrite - read-write access in Blueprints
-	// --
-	// Category = "" - display only for detail panels and blueprint context menu.
-	
 	/** That's it, just the health as a float */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Attributes)
 	float Health;
@@ -40,6 +33,18 @@ protected:
 	/** The max Health value assignable */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Attributes)
 	float MaxHealth;
+
+	/** Rage is an attribute used for certain abilities */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Attributes)
+	float Rage;
+
+	/** The max Rage value assignable */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Attributes)
+	float MaxRage;
+
+	/** The max Rage value assignable */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Attributes)
+	float RatioDamageRage;
 
 	
 /*********************************** METHODS *********************************/
@@ -60,20 +65,44 @@ public:
 	bool ApplyHealthChange(AActor* InstigatorActor, float Delta);
 
 	/** Return if Health is greater than 0 */
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category=Attributes)
 	bool IsAlive() const;
 
 	/** Return if Health is equal to MaxHealth */
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category=Attributes)
 	bool IsFullHealth() const;
 
 	/** Return Health */
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category=Attributes)
 	float GetHealth() const;
 
 	/** Return MaxHealth */
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category=Attributes)
 	float GetMaxHealth() const;
+
+	/** Return Rage */
+	UFUNCTION(BlueprintCallable, Category=Attributes)
+	float GetRage() const;
+
+	/** Return MaxRage */
+	UFUNCTION(BlueprintCallable, Category=Attributes)
+	float GetMaxRage() const;
+
+	/** Set RatioDamageRage */
+	UFUNCTION(BlueprintCallable, Category=Attributes)
+	void SetRatioDamageRage(const float NewRatio);
+
+	/** Return RatioDamageRage */
+	UFUNCTION(BlueprintCallable, Category=Attributes)
+	float GetRatioDamageRage() const;
+	
+	/** Add Rage amount depending on damage received */
+	UFUNCTION(BlueprintCallable, Category=Attributes)
+	void RageIncrease(float DamageReceived);
+	
+	/** Add Rage amount depending on damage received */
+	UFUNCTION(BlueprintCallable, Category=Attributes)
+	bool RageDecrease(const float DecreaseAmount);
 
 
 protected:

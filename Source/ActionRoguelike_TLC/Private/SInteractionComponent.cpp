@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "SInteractionComponent.h"
+
+#include "SCharacter.h"
 #include "SGameplayInterface.h"
 
 
@@ -9,6 +11,8 @@
 USInteractionComponent::USInteractionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+	SetComponentTickInterval(0.12f); // Less frequency than default is enough and better for performance :)
+	
 	
 	// Set some values
 	TraceDistance    = 600.0f;
@@ -60,7 +64,6 @@ void USInteractionComponent::FindBestInteractable()
 				break;
 			}
 		}
-		DrawDebugSphere(GetWorld(), Hit.ImpactPoint, Radius, 32, LineColor, false, 2.0f, 0, 2.0f);
 	}
 
 	if (FocusedActor)
@@ -79,6 +82,7 @@ void USInteractionComponent::FindBestInteractable()
 			if (!DefaultWidgetInstance->IsInViewport())
 			{
 				DefaultWidgetInstance->AddToViewport();
+				Cast<ASCharacter>(GetOwner())->ChangeCrossHairToInteract();
 				DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 2.0f, 0, 2.0f);
 			}
 		}
@@ -86,11 +90,10 @@ void USInteractionComponent::FindBestInteractable()
 	else if (DefaultWidgetInstance)
 	{
 		DefaultWidgetInstance->RemoveFromParent();
+		Cast<ASCharacter>(GetOwner())->ChangeCrossHairToNormal();
 	}
 
 }
-
-
 
 
 // 
