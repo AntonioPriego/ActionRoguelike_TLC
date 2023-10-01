@@ -7,6 +7,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "SGameplayInterface.h"
 #include "SPlayerState.h"
+#include "SThornsEffect.h"
 
 
 // Sets default values

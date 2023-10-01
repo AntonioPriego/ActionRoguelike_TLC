@@ -35,7 +35,7 @@ protected:
 	
 /*********************************** METHODS *********************************/
 public:	
-	/** Sets default values for this component's properties */
+	/** Sets default values for this component properties */
 	USActionComponent();
 
 	/** Where DefaultActions array meets Actions array */

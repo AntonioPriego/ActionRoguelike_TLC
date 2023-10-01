@@ -8,6 +8,7 @@
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
 #include "SActionComponent.h"
+#include "SActionEffect.h"
 #include "SAttributesComponent.h"
 #include "SInteractionComponent.h"
 #include "SPlayerState.h"

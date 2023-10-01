@@ -35,10 +35,10 @@ public:
 	USActionEffect();
 	
 	/** Defines behavior at action effect start */
-	void StartAction_Implementation(AActor* Instigator) override;
+	virtual void StartAction_Implementation(AActor* Instigator) override;
 
 	/** Defines behavior at action effect end */
-	void StopAction_Implementation(AActor* Instigator) override;
+	virtual void StopAction_Implementation(AActor* Instigator) override;
 	
 	
 protected:
