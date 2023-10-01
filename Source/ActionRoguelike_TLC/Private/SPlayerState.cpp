@@ -30,9 +30,21 @@ bool ASPlayerState::RemoveCredits(const int32 Amount)
 	if (Credits >= Amount)
 	{
 		Credits -= Amount;
+		
+		OnCreditsChanged.Broadcast(GetOwner(), Credits, -Amount);
 		return true;
 	}
 	return false;
+}
+
+// Add credits
+void  ASPlayerState::AddCredits(const int32 Amount)
+{
+	if (Amount > 0)
+	{
+		Credits += Amount;
+		OnCreditsChanged.Broadcast(GetOwner(), Credits, Amount);
+	}
 }
 
 
@@ -46,4 +58,3 @@ bool  ASPlayerState::HaveEnoughCredits(const int32 Amount) const
 // Simple methods
 int32 ASPlayerState::GetCredits() const	    				{ return Credits;    }
 void  ASPlayerState::SetCredits       (const int32 Amount)	{ Credits = Amount;  }
-void  ASPlayerState::AddCredits       (const int32 Amount)	{ Credits += Amount; }
