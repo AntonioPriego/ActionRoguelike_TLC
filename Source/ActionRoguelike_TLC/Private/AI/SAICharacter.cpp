@@ -57,7 +57,19 @@ void ASAICharacter::OnPawnSeen(APawn* Pawn)
 {
 	SetTargetActor(Pawn);	
 
-	DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
+	//DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
+	if (PlayerSpottedWidgetClass)
+	{
+		if (!ActivePlayerSpottedWidget || (ActivePlayerSpottedWidget && !ActivePlayerSpottedWidget->IsInViewport()))
+		{
+			ActivePlayerSpottedWidget = CreateWidget<USWorldUserWidget>(GetWorld(), PlayerSpottedWidgetClass);
+			if (ActivePlayerSpottedWidget)
+			{
+				ActivePlayerSpottedWidget->AttachedActor = this;
+				ActivePlayerSpottedWidget->AddToViewport();
+			}
+		}
+	}
 }
 
 
@@ -126,7 +138,10 @@ void ASAICharacter::SetTargetActor(AActor* NewTarget)
 	if (AIController)
 	{
 		UBlackboardComponent* BBComponent = AIController->GetBlackboardComponent();
-		BBComponent->SetValueAsObject("TargetActor", NewTarget);
+		if (BBComponent)
+		{
+			BBComponent->SetValueAsObject("TargetActor", NewTarget);
+		}
 	}
 }
 

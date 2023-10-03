@@ -34,6 +34,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category=UI)
 	TSubclassOf<USWorldUserWidget> HealthBarWidgetClass;
 
+	/** Widget to show player spotted */
+	UPROPERTY(EditDefaultsOnly, Category=UI)
+	TSubclassOf<USWorldUserWidget> PlayerSpottedWidgetClass;
+
 	/** FName for material variable that controls hit cue */
 	UPROPERTY(VisibleAnywhere, Category=Effects)
 	FName TimeToHitParamName;
@@ -47,7 +51,12 @@ protected:
 	int32 CreditsValue;
 	
 	/** A reference of the created widget for health bar */
-	USWorldUserWidget* ActiveHealthBar;
+	UPROPERTY()
+	TObjectPtr<USWorldUserWidget> ActiveHealthBar;
+
+	/** A reference of the created widget for health bar */
+	UPROPERTY()
+	TObjectPtr<USWorldUserWidget> ActivePlayerSpottedWidget;
 	
 
 /*********************************** METHODS *********************************/
