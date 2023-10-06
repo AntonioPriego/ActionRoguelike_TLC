@@ -34,6 +34,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category=AI)
 	UCurveFloat* MaxNumOfBotsCurve;
 
+	/** Set the maximum number of alive bots (enemies) in the world */
+	UPROPERTY(EditDefaultsOnly, Category=AI)
+	bool bSpawnEnemiesEnabled;
+
 	
 	// Timers
 	FTimerHandle TimerHandle_SpawnBots;

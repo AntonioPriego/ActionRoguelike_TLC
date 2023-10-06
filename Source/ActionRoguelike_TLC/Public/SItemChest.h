@@ -23,6 +23,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* LidMesh;
 
+	/** Flag to know if lid is currently open */
+	UPROPERTY(ReplicatedUsing="OnRep_LidOpened", BlueprintReadOnly) // ReplicatedUsing = RepNotify (on BP)
+	bool bLidOpened;
+	
 	
 /*********************************** METHODS *********************************/
 
@@ -35,9 +39,13 @@ public:
 	float TargetPitch;
 
 	
-private:
-	/* When interface function declared as BlueprintNativeEvent on UFUNCTION
-	   we have to add "_Implementation", bc we are using it on C++ but on BLUEPRINTS too */
-	// Definition of Interact function of SGameplayInterface on SItemChest
+protected:
+	// When interface function declared as BlueprintNativeEvent on UFUNCTION
+	// we have to add "_Implementation", bc we are using it on C++ but on BLUEPRINTS too
+	/** Definition of Interact function of SGameplayInterface on SItemChest */
 	void Interact_Implementation(APawn* InstigatorPawn);
+
+	/** This method is auto called by unreal when our bLidOpened updates */
+	UFUNCTION()
+	void OnRep_LidOpened();
 };

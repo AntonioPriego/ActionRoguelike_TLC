@@ -33,7 +33,7 @@ protected:
 	UCameraComponent* CameraComponent;
 
 	/** The component for interaction management */
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USInteractionComponent* InteractionComponent;
 
 	/** The component for attributes management */
@@ -118,8 +118,10 @@ public:
 	/** Return Camera forward vector */
 	FVector GetPawnViewForwardVector() const;
 
+	/** Called to change crosshair widget to interact mode */
 	UFUNCTION(BlueprintImplementableEvent)
 	void ChangeCrossHairToInteract();
+	/** Called to change crosshair widget to normal mode */
 	UFUNCTION(BlueprintImplementableEvent)
 	void ChangeCrossHairToNormal();
 

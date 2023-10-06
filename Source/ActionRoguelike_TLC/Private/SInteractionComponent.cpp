@@ -7,7 +7,7 @@
 
 
 
-//
+// USInteractionComponent
 USInteractionComponent::USInteractionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -26,11 +26,15 @@ void USInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	FindBestInteractable();
+	const APawn* MyPawn = Cast<APawn>(GetOwner());
+	if (MyPawn->IsLocallyControlled())
+	{
+		FindBestInteractable();
+	}
 }
 
 
-//
+// Search for something to interact
 void USInteractionComponent::FindBestInteractable()
 {
 	FCollisionObjectQueryParams ObjectQueryParams;
@@ -46,7 +50,8 @@ void USInteractionComponent::FindBestInteractable()
 	float Radius = TraceRadius;
 	FCollisionShape Shape;
 	Shape.SetSphere(Radius);	
-	bool bBlockingHit = GetWorld()->SweepMultiByObjectType(Hits, EyeLocation, End, FQuat::Identity, ObjectQueryParams, Shape);
+	bool bBlockingHit = GetWorld()->SweepMultiByObjectType(Hits, EyeLocation, End, FQuat::Identity,
+															ObjectQueryParams, Shape);
 	FColor LineColor = bBlockingHit ? FColor::Green : FColor::Red;
 
 	
@@ -96,15 +101,22 @@ void USInteractionComponent::FindBestInteractable()
 }
 
 
-// 
+// Method to define logic on interaction
 void USInteractionComponent::PrimaryInteract()
 {
-	if (FocusedActor == nullptr)
+	ServerInteract(FocusedActor);
+}
+
+
+// Interaction but sync with server
+void USInteractionComponent::ServerInteract_Implementation(AActor* InFocus)
+{
+	if (InFocus == nullptr)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, "[SInteractionComponent] No Focus Actor to Interact");
 		return;
 	}
 	
 	APawn* MyPawn = Cast<APawn>(GetOwner());
-	ISGameplayInterface::Execute_Interact(FocusedActor, MyPawn);
+	ISGameplayInterface::Execute_Interact(InFocus, MyPawn);	
 }

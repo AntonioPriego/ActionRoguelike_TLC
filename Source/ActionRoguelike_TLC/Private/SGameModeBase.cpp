@@ -17,6 +17,7 @@ ASGameModeBase::ASGameModeBase(): SpawnBotQuery(nullptr), MaxNumOfBotsCurve(null
 {
 	// Set some values
 	SpawnTimerInterval = 4.0f;
+	bSpawnEnemiesEnabled = true;
 
 	// Changing PlayerState class to our custom one
 	PlayerStateClass = ASPlayerState::StaticClass();
@@ -30,7 +31,10 @@ void ASGameModeBase::StartPlay()
 	Super::StartPlay();
 
 	// Set up timers
-	GetWorldTimerManager().SetTimer(TimerHandle_SpawnBots, this, &ASGameModeBase::SpawnBotTimeElapsed, SpawnTimerInterval, true);
+	if (bSpawnEnemiesEnabled)
+	{
+		GetWorldTimerManager().SetTimer(TimerHandle_SpawnBots, this, &ASGameModeBase::SpawnBotTimeElapsed,SpawnTimerInterval, true);
+	}
 }
 
 

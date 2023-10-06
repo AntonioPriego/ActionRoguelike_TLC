@@ -31,8 +31,6 @@ protected:
 public:
 	/** Sets default values */
 	ASPlayerState();
-
-	virtual void Tick(float DeltaSeconds) override;
 	
 	/** Get credits */
 	UFUNCTION(BlueprintCallable)

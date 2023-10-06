@@ -20,7 +20,7 @@ class ACTIONROGUELIKE_TLC_API USInteractionComponent : public UActorComponent
 /********************************* PROPERTIES ********************************/
 protected:
 	/** This actor pointer, target the thing with the component is going to potentially interact */
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<AActor> FocusedActor;
 
 	/** The distance from the player is going to check the component */
@@ -48,14 +48,17 @@ protected:
 public:
 	USInteractionComponent();
 	
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	
 	/** Method to define logic on interaction */
 	void PrimaryInteract();
 
-	/** */
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-
+	
 protected:
-	/**  */
+	/** Interaction but sync with server */
+	UFUNCTION(Server, Reliable)
+	void ServerInteract(AActor* InFocus);
+	
+	/** Search for something to interact */
 	void FindBestInteractable();
 };

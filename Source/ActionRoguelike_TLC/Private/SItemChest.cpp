@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "SItemChest.h"
+#include "Net/UnrealNetwork.h"
 
 
 // Sets default values
@@ -16,14 +17,35 @@ ASItemChest::ASItemChest()
 	LidMesh->SetupAttachment(BaseMesh);
 
 	TargetPitch = 110;
+
+	// Server
+	bReplicates = true;
 }
 
 
-/* When interface function declared as BlueprintNativeEvent on UFUNCTION
-   we have to add "_Implementation", bc we are using it on C++ but on BLUEPRINTS too */
 // Definition of Interact function of SGameplayInterface on SItemChest
 void ASItemChest::Interact_Implementation(APawn* InstigatorPawn)
 {
-	LidMesh->SetRelativeRotation(FRotator(TargetPitch, 0, 0));
+	bLidOpened = !bLidOpened;
+	OnRep_LidOpened();
+	
 	ISGameplayInterface::Interact_Implementation(InstigatorPawn);
+}
+
+
+// ENGINE: Returns the properties used for network replication, this needs to be overridden by all actor classes with native replicated properties
+// We do not have to declare in header file bc is auto-declared in SItemChest.generated.h
+void ASItemChest::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASItemChest, bLidOpened); // Whenever chest is opened, send it to all clients
+}
+
+
+// This method is auto called by unreal when our bLidOpened updates
+void ASItemChest::OnRep_LidOpened()
+{	
+	const float CurrentPitch = bLidOpened ? TargetPitch : 0.0f;	
+	LidMesh->SetRelativeRotation(FRotator(CurrentPitch, 0, 0));
 }

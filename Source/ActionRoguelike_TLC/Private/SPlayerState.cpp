@@ -12,17 +12,6 @@ ASPlayerState::ASPlayerState()
 	Credits = 1000;
 }
 
-void ASPlayerState::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-
-	GEngine->AddOnScreenDebugMessage(-1, 0, FColor::Orange, FString::Printf(TEXT("[PlayerState] Owner: %s"), *GetOwner()->GetName()));
-	if (!GetOwner()->GetName().Equals(FString("PlayerControllerBP_C_0")))
-	{
-		FString tmp = GetOwner()->GetName();
-	}
-}
-
 
 // Remove credits
 bool ASPlayerState::RemoveCredits(const int32 Amount)
