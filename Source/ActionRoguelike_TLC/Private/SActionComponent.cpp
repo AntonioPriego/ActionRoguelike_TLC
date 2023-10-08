@@ -9,6 +9,9 @@ USActionComponent::USActionComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.
 	PrimaryComponentTick.bCanEverTick = true;
+
+	// Server replication
+	SetIsReplicatedByDefault(true);
 }
 
 
@@ -28,6 +31,13 @@ void USActionComponent::BeginPlay()
 	Super::BeginPlay();
 
 	InitializeDefaultActions();
+}
+
+
+// Logic needed to stay sync with server
+void USActionComponent::ServerStartAction_Implementation(AActor* Instigator, FName ActionName)
+{
+	StartActionByName(Instigator, ActionName);
 }
 
 
@@ -81,16 +91,21 @@ bool USActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 	{
 		if (Action && Action->ActionName == ActionName)
 		{
-			if (Action->CanStart(Instigator))
-			{
-				Action->StartAction(Instigator);
-				return true;
-			}
-			else
+			if (!Action->CanStart(Instigator))
 			{
 				FString FailedMessage = FString::Printf(TEXT("Failed to run: %s"), *ActionName.ToString());
 				GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, FailedMessage);
+				continue;
 			}
+
+			// Is client? | HasAuthority() returns if this is running on Server
+			if (!GetOwner()->HasAuthority())
+			{
+				ServerStartAction(Instigator, ActionName);
+			}
+
+			Action->StartAction(Instigator);
+			return true;
 		}
 	}
 

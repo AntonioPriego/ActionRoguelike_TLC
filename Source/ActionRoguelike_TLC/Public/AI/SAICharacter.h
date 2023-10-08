@@ -93,6 +93,9 @@ protected:
 
 	/** Logic when (this) character dies */
 	void Dead();
+
+	/** Getter de BlackBoard TargetActor */
+	AActor* GetTargetActor() const;
 	
 
 /*********************************** DEBUG ***********************************/

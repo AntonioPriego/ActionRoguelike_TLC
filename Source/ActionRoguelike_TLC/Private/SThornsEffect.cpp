@@ -42,11 +42,11 @@ void USThornsEffect::StopAction_Implementation(AActor* Instigator)
 
 // Send back DamageBackRate of the damage caused
 void USThornsEffect::ApplyThorns(AActor* InstigatorActor, USAttributesComponent* OwningComp, float NewHealth, float Delta)
-{
-	if (Delta < 0.0f)
+{	
+	ASCharacter* EffectOwner = Cast<ASCharacter>(GetOwningComponent()->GetOwner());
+	if (EffectOwner && InstigatorActor != EffectOwner && Delta < 0.0f)
 	{
 		USAttributesComponent* EnemyAttributesComponent = InstigatorActor->FindComponentByClass<USAttributesComponent>();
-		ASCharacter*           EffectOwner              = Cast<ASCharacter>(GetOwningComponent()->GetOwner());
 		if (EnemyAttributesComponent && EffectOwner)
 		{
 			const int ThornsDamageBack = FMath::RoundToInt(Delta*DamageBackRate);

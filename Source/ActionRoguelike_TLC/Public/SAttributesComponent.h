@@ -27,11 +27,11 @@ public:
 	
 protected:
 	/** That's it, just the health as a float */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Attributes)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category=Attributes)
 	float Health;
 
 	/** The max Health value assignable */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Attributes)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category=Attributes)
 	float MaxHealth;
 
 	/** Rage is an attribute used for certain abilities */
@@ -108,6 +108,10 @@ public:
 protected:
 	/** Manages owner killed calling game-mode */
 	void OnOwnerKilled(AActor* Killer) const;
+	
+	/** Needed for HealthChanged server replication */
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastHealthChanged(AActor* InstigatorActor, float NewHealth, float Delta);
 
 	
 /************************************ DEBUG **********************************/

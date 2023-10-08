@@ -62,6 +62,10 @@ protected:
 	/** Called when the game starts */
 	virtual void BeginPlay() override;
 
+	/** Logic needed to stay sync with server */
+	UFUNCTION(Server, Reliable)
+	void ServerStartAction(AActor* Instigator, FName ActionName);
+
 public:	
 	/** Called every frame */
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

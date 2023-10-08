@@ -17,6 +17,9 @@ ASPickUpItem::ASPickUpItem()
 	RespawnSeconds    = 10.0f;
 	IsReSpawnable     = true;
 	CreditsCost       = 0; // Default value is free! :O
+
+	// Server replication
+	bReplicates = true;
 }
 
 

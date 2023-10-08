@@ -3,6 +3,7 @@
 
 #include "SAttributesComponent.h"
 #include "SGameModeBase.h"
+#include "Net/UnrealNetwork.h"
 
 
 // CVars
@@ -20,6 +21,9 @@ USAttributesComponent::USAttributesComponent()
 	MaxRage = 100;
 	Rage    = 0;
 	RatioDamageRage = 0.1f;
+
+	// Server replication 
+	SetIsReplicatedByDefault(true);
 }
 
 
@@ -70,10 +74,15 @@ bool USAttributesComponent::ApplyHealthChange(AActor* InstigatorActor, float Del
 	}
 	
 	const float PreviousHealth = Health;
-	Health = FMath::Clamp(Health + Delta, 0, MaxHealth);;	
-
+	Health = FMath::Clamp(Health + Delta, 0, MaxHealth);
 	const float ClampedDelta = Health - PreviousHealth;
-	OnHealthChanged.Broadcast(InstigatorActor, this, Health, ClampedDelta);
+
+	if (ClampedDelta != 0.0f)
+	{
+		//OnHealthChanged.Broadcast(InstigatorActor, this, Health, ClampedDelta);	// Local updates
+		MulticastHealthChanged(InstigatorActor, Health, ClampedDelta); // Server updates (so local too)
+	}
+
 	if (ClampedDelta < 0.0f)
 	{
 		RageIncrease(-ClampedDelta);
@@ -143,6 +152,24 @@ bool USAttributesComponent::RageDecrease( const float DecreaseAmount)
 void USAttributesComponent::Kill(AActor* InstigatorActor)
 {
 	ApplyHealthChange(InstigatorActor, -GetMaxHealth());
+}
+
+
+// ENGINE: Returns the properties used for network replication, this needs to be overridden by all actor classes with native replicated properties
+void USAttributesComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(USAttributesComponent, Health);
+	DOREPLIFETIME(USAttributesComponent, MaxHealth);
+	//DOREPLIFETIME_CONDITION(USAttributesComponent, MaxHealth, COND_OwnerOnly); // Optimized option
+}
+
+
+// Needed for HealthChanged server replication
+void USAttributesComponent::MulticastHealthChanged_Implementation(AActor* InstigatorActor, float NewHealth, float Delta)
+{
+	OnHealthChanged.Broadcast(InstigatorActor, this, NewHealth, Delta);
 }
 
 

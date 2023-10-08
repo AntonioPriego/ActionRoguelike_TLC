@@ -19,7 +19,7 @@ class ACTIONROGUELIKE_TLC_API USWorldUserWidget : public UUserWidget
 /********************************* PROPERTIES ********************************/
 public:
 	/** The actor is going to project this widget */
-	UPROPERTY(BlueprintReadOnly, Category=UI)
+	UPROPERTY(BlueprintReadOnly, Category=UI, meta=(ExposeOnSpawn=true))
 	AActor* AttachedActor;
 
 	/** Vertical offset between AttachedActor and the actual widget (this) */

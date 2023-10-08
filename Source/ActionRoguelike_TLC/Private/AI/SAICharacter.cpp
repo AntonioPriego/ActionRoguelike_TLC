@@ -55,18 +55,21 @@ void ASAICharacter::PostInitializeComponents()
 // Called when pawn sees
 void ASAICharacter::OnPawnSeen(APawn* Pawn)
 {
-	SetTargetActor(Pawn);	
-
-	//DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
-	if (PlayerSpottedWidgetClass)
+	if (Pawn != GetTargetActor())
 	{
-		if (!ActivePlayerSpottedWidget || (ActivePlayerSpottedWidget && !ActivePlayerSpottedWidget->IsInViewport()))
+		SetTargetActor(Pawn);
+
+		//DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
+		if (PlayerSpottedWidgetClass)
 		{
-			ActivePlayerSpottedWidget = CreateWidget<USWorldUserWidget>(GetWorld(), PlayerSpottedWidgetClass);
-			if (ActivePlayerSpottedWidget)
+			if (!ActivePlayerSpottedWidget || (ActivePlayerSpottedWidget && !ActivePlayerSpottedWidget->IsInViewport()))
 			{
-				ActivePlayerSpottedWidget->AttachedActor = this;
-				ActivePlayerSpottedWidget->AddToViewport();
+				ActivePlayerSpottedWidget = CreateWidget<USWorldUserWidget>(GetWorld(), PlayerSpottedWidgetClass);
+				if (ActivePlayerSpottedWidget)
+				{
+					ActivePlayerSpottedWidget->AttachedActor = this;
+					ActivePlayerSpottedWidget->AddToViewport(10);
+				}
 			}
 		}
 	}
@@ -166,6 +169,22 @@ void ASAICharacter::Dead()
 	// Deactivate collisions
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetCharacterMovement()->DisableMovement(); // Without this line, the character just falls from anywhere bc collisions are disabled
+}
+
+
+// Getter de BlackBoard TargetActor
+AActor* ASAICharacter::GetTargetActor() const
+{
+	AAIController* AIController = Cast<AAIController>(GetController());
+	if (AIController)
+	{
+		const UBlackboardComponent* BBComponent = AIController->GetBlackboardComponent();
+		if (BBComponent)
+		{
+			return Cast<AActor>(BBComponent->GetValueAsObject("TargetActor"));
+		}
+	}
+	return nullptr;
 }
 
 

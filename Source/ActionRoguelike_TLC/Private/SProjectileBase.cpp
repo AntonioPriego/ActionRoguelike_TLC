@@ -40,6 +40,9 @@ ASProjectileBase::ASProjectileBase()
 	MovementComponent->bRotationFollowsVelocity     = true;
 	MovementComponent->bInitialVelocityInLocalSpace = true;
 	Damage = 0.0f;
+
+	// Server replication
+	bReplicates = true;
 }
 
 
