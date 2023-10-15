@@ -38,11 +38,21 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category=Action)
 	bool bAutoStart;
 
+	/** The amount of range the action costs */
+	UPROPERTY(EditDefaultsOnly, Category=Action)
+	float RageCost;
+
+
+protected:
+	/** The flag which signal the running status for the SAction */
+	UPROPERTY(ReplicatedUsing="OnRep_IsRunning")
 	bool bIsRunning;
 
-	
+		
 /*********************************** METHODS *********************************/
 public:
+	USAction();
+	
 	/** Defines behavior at action start */
 	UFUNCTION(BlueprintNativeEvent, Category=Action)
 	void StartAction(AActor* Instigator);
@@ -63,10 +73,17 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category=Action)
 	bool IsRunning();
 
+	/** ENGINE: By default this return false */
+	virtual bool IsSupportedForNetworking() const override {return true;}
+
 
 protected:
 	/** Owning component getter */
 	UFUNCTION(BlueprintCallable, Category=Action)
 	USActionComponent* GetOwningComponent() const;
+
+	/** Replication method for bIsRunning property */
+	UFUNCTION()
+	void OnRep_IsRunning();
 	
 };

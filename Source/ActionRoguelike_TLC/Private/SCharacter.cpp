@@ -73,11 +73,6 @@ void ASCharacter::Tick(float DeltaTime)
 	// Draw 'Controller' Rotation ('PlayerController' that 'possessed' this character)
 	DrawDebugDirectionalArrow(GetWorld(), LineStart, ControllerDirection_LineEnd, DrawScale, FColor::Green,
 	                          false, 0.0f, 0, Thickness);
-
-	if (GetController())
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 0, FColor::Orange, FString::Printf(TEXT("[SCharacter] Controller: %s"), *GetController()->GetName()));
-	}
 }
 
 
@@ -146,7 +141,7 @@ void ASCharacter::Move(const FInputActionValue& Value)
 		AddMovementInput(ControlRotation.Vector().RotateAngleAxis(90,FVector(0,0,1)), CurrentValue.Y);
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1,0,FColor::Green, FString::Printf(TEXT("%f | %f"), CurrentValue.X, CurrentValue.Y));
+	//GEngine->AddOnScreenDebugMessage(-1,0,FColor::Green, FString::Printf(TEXT("%f | %f"), CurrentValue.X, CurrentValue.Y));
 }
 
 

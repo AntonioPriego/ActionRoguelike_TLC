@@ -126,7 +126,7 @@ void USAttributesComponent::RageIncrease(const float DamageReceived)
 
 
 // Decrease Rage amount and return when DecreaseAmount is less than Rage (possible to decrease)
-bool USAttributesComponent::RageDecrease( const float DecreaseAmount)
+bool USAttributesComponent::RageDecrease(const float DecreaseAmount)
 {
 	if (DecreaseAmount < Rage)
 	{

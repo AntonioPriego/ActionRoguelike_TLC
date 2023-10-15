@@ -24,8 +24,8 @@ public:
 
 	
 protected:
-	/**  */
-	UPROPERTY()
+	/** All the actions this component is able to do */
+	UPROPERTY(Replicated)
 	TArray<USAction*> Actions;
 
 	/** Granted abilities at game start */
@@ -56,6 +56,14 @@ public:
 	/** Call to stop the action by its name */
 	UFUNCTION(BlueprintCallable, Category=Actions)
 	bool StopActionByName(AActor* Instigator, FName ActionName);
+
+	/** ENGINE:
+	* Allows a component to replicate other subobject on the actor.
+	* Must return true if any data gets serialized into the bunch.
+	* This method is used only when bReplicateUsingRegisteredSubObjectList is false.
+	* Otherwise this function is not called and only the ReplicatedSubObjects list is used.
+	*/
+	virtual bool ReplicateSubobjects(class UActorChannel *Channel, class FOutBunch *Bunch, FReplicationFlags *RepFlags) override;
 
 	
 protected:

@@ -2,6 +2,9 @@
 
 
 #include "SActionComponent.h"
+#include "ActionRoguelike_TLC/ActionRoguelike_TLC.h"
+#include "Engine/ActorChannel.h"
+#include "Net/UnrealNetwork.h"
 
 
 // Sets default values for this component's properties
@@ -30,7 +33,11 @@ void USActionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InitializeDefaultActions();
+	// Server only
+	if (GetOwner()->HasAuthority())
+	{
+		InitializeDefaultActions();
+	}
 }
 
 
@@ -46,8 +53,23 @@ void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	const FString DebugMessage = GetNameSafe(GetOwner()) + " : " + ActiveGameplayTags.ToStringSimple();
-	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Emerald, DebugMessage);
+	// const FString DebugMessage = GetNameSafe(GetOwner()) + " : " + ActiveGameplayTags.ToStringSimple();
+	// GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Emerald, DebugMessage);
+
+	// Draw all actions
+	for (USAction* Action : Actions)
+	{
+		const FColor TextColor = Action->IsRunning() ? FColor::Blue : FColor::White;
+
+		const FString ActionMsg = FString::Printf(TEXT("[%s] Action: %s : IsRunning: %s : Outer: %s"),
+			*GetNameSafe(GetOwner()),
+			*Action->ActionName.ToString(),
+			Action->IsRunning() ? TEXT("true") : TEXT("false"),
+			*GetNameSafe(GetOuter())
+		);
+
+		LogOnScreen(this, ActionMsg, TextColor, 0.0f);
+	}
 }
 
 
@@ -97,14 +119,22 @@ bool USActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 				GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, FailedMessage);
 				continue;
 			}
-
+			
 			// Is client? | HasAuthority() returns if this is running on Server
 			if (!GetOwner()->HasAuthority())
 			{
 				ServerStartAction(Instigator, ActionName);
 			}
 
-			Action->StartAction(Instigator);
+			// Bookmark for Unreal Insights
+			TRACE_BOOKMARK(TEXT("StartAction::%s"), *GetNameSafe(Action));
+			{
+				// Scoped within the curly braces. the _FSTRING variant adds additional tracing overhead due to grabbing the class name every time
+				SCOPED_NAMED_EVENT_FSTRING(Action->GetClass()->GetName(), FColor::White);
+
+				Action->StartAction(Instigator);
+			}
+			
 			return true;
 		}
 	}
@@ -129,4 +159,30 @@ bool USActionComponent::StopActionByName(AActor* Instigator, FName ActionName)
 	}
 
 	return false;
+}
+
+
+// ENGINE: Allows a component to replicate other subobject on the actor
+bool USActionComponent::ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags)
+{
+	bool WroteSomething = Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
+	for (USAction* Action : Actions)
+	{
+		if (Action)
+		{
+			WroteSomething |= Channel->ReplicateSubobject(Action, *Bunch, *RepFlags);	// We write into the Boolean only if the ReplicateSubobject returns TRUE.
+																							// That way we can track if any of the function calls returned True and there we "WroteSomething".
+		}
+	}
+
+	return WroteSomething;
+}
+
+
+// ENGINE: Returns the properties used for network replication, this needs to be overridden by all actor classes with native replicated properties
+void USActionComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(USActionComponent, Actions);
 }
