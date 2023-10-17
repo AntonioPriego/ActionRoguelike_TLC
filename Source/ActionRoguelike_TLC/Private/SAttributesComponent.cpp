@@ -74,25 +74,31 @@ bool USAttributesComponent::ApplyHealthChange(AActor* InstigatorActor, float Del
 	}
 	
 	const float PreviousHealth = Health;
-	Health = FMath::Clamp(Health + Delta, 0, MaxHealth);
-	const float ClampedDelta = Health - PreviousHealth;
+	const float NewHealth = FMath::Clamp(Health + Delta, 0, MaxHealth);
+	const float ClampedDelta = NewHealth - PreviousHealth;
 
-	if (ClampedDelta != 0.0f)
+	// Is Server?
+	if (GetOwner()->HasAuthority())
 	{
-		//OnHealthChanged.Broadcast(InstigatorActor, this, Health, ClampedDelta);	// Local updates
-		MulticastHealthChanged(InstigatorActor, Health, ClampedDelta); // Server updates (so local too)
+		Health = NewHealth;
+		if (ClampedDelta != 0.0f)
+		{
+			MulticastHealthChanged(InstigatorActor, Health, ClampedDelta); // Server updates (so local too)
+		}
+		
+		// Died
+		if (ClampedDelta < 0.0f  &&  Health == 0)
+		{
+			OnOwnerKilled(InstigatorActor);
+		}
 	}
+
 
 	if (ClampedDelta < 0.0f)
 	{
 		RageIncrease(-ClampedDelta);
 	}
 
-	// Died
-	if (ClampedDelta < 0.0f  &&  Health == 0)
-	{
-		OnOwnerKilled(InstigatorActor);
-	}
 	
 	return (ClampedDelta != 0);
 }
@@ -115,8 +121,8 @@ void USAttributesComponent::RageIncrease(const float DamageReceived)
 {
 	if (DamageReceived > 0.0f)
 	{		
-		float ClampedRage  = FMath::Clamp(Rage+DamageReceived*RatioDamageRage, 0, MaxRage);
-		float ClampedDelta = ClampedRage - Rage;
+		const float ClampedRage  = FMath::Clamp(Rage+DamageReceived*RatioDamageRage, 0, MaxRage);
+		const float ClampedDelta = ClampedRage - Rage;
 		
 		Rage = ClampedRage;
 
@@ -130,8 +136,8 @@ bool USAttributesComponent::RageDecrease(const float DecreaseAmount)
 {
 	if (DecreaseAmount < Rage)
 	{
-		float ClampedRage  = FMath::Clamp(Rage-DecreaseAmount, 0, MaxRage);
-		float ClampedDelta = Rage - ClampedRage;
+		const float ClampedRage  = FMath::Clamp(Rage-DecreaseAmount, 0, MaxRage);
+		const float ClampedDelta = Rage - ClampedRage;
 		
 		Rage = ClampedRage;
 

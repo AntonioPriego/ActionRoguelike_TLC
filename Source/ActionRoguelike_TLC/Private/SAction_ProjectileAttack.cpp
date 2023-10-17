@@ -23,13 +23,16 @@ void USAction_ProjectileAttack::StartAction_Implementation(AActor* InstigatorAct
 	
 
 	ASCharacter* Character = Cast<ASCharacter>(InstigatorActor);
-	const bool IsAttackTimerPending = GetWorld()->GetTimerManager().IsTimerActive(TimerHandle_ProjectileDelay);
-	if (Character && !IsAttackTimerPending)
-	{
+	if (Character)
+	{		
+		const bool IsAttackTimerPending = GetWorld()->GetTimerManager().IsTimerActive(TimerHandle_ProjectileDelay);
 		Character->PlayAnimMontage(AttackAnim);
-		
-		Delegate.BindUFunction(this, "ProjectileDelay_TimeElapsed", InstigatorActor);
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle_ProjectileDelay, Delegate, AttackAnimDelay, false);
+
+		if (!IsAttackTimerPending && Character->HasAuthority())
+		{	
+			Delegate.BindUFunction(this, "ProjectileDelay_TimeElapsed", InstigatorActor);
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle_ProjectileDelay, Delegate, AttackAnimDelay, false);
+		}
 	}
 }
 

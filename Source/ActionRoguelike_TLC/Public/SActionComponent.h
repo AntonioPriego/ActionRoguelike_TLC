@@ -70,9 +70,13 @@ protected:
 	/** Called when the game starts */
 	virtual void BeginPlay() override;
 
-	/** Logic needed to stay sync with server */
+	/** Logic needed to stay sync with server on start action */
 	UFUNCTION(Server, Reliable)
 	void ServerStartAction(AActor* Instigator, FName ActionName);
+	
+	/** Logic needed to stay sync with server on stop action */
+	UFUNCTION(Server, Reliable)
+	void ServerStopAction(AActor* Instigator, FName ActionName);
 
 public:	
 	/** Called every frame */

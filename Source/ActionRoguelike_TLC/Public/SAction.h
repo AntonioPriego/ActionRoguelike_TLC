@@ -10,9 +10,21 @@ class UWorld;
 class USActionComponent;
 
 
-/**
- * 
- */
+/** To ensure we are passing replicated both elements instead of passing it separately */
+USTRUCT()
+struct FActionRepData
+{
+	GENERATED_BODY();
+
+public:
+	UPROPERTY()
+	bool bIsRunning;
+	
+	UPROPERTY()
+	AActor* Instigator;
+};
+
+
 UCLASS(Blueprintable)
 class ACTIONROGUELIKE_TLC_API USAction : public UObject
 {
@@ -45,8 +57,9 @@ public:
 
 protected:
 	/** The flag which signal the running status for the SAction */
-	UPROPERTY(ReplicatedUsing="OnRep_IsRunning")
-	bool bIsRunning;
+	UPROPERTY(ReplicatedUsing="OnRep_RepData")
+	FActionRepData RepData;
+	//bool bIsRunning;
 
 		
 /*********************************** METHODS *********************************/
@@ -84,6 +97,6 @@ protected:
 
 	/** Replication method for bIsRunning property */
 	UFUNCTION()
-	void OnRep_IsRunning();
+	void OnRep_RepData();
 	
 };
