@@ -7,6 +7,9 @@
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "SGameModeBase.generated.h"
 
+class USSaveGame;
+
+
 /**
  * 
  */
@@ -18,6 +21,11 @@ class ACTIONROGUELIKE_TLC_API ASGameModeBase : public AGameModeBase
 
 /********************************* PROPERTIES ********************************/
 protected:
+	FString SlotName;
+	/** Point to the current SSaveGame */
+	UPROPERTY()
+	USSaveGame* CurrentSaveGame;
+	
 	/** This property set the time between a spawn bot and the next one */
 	UPROPERTY(EditDefaultsOnly, Category=AI)
 	float SpawnTimerInterval;
@@ -47,6 +55,9 @@ protected:
 public:
 	// Sets default values
 	ASGameModeBase();
+
+	/** ENGINE */
+	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 	
 	// GameMode class doesn't have BeginPlay() bc GM class is the responsible for calling BeginPlay on all the actors in our world
 	// But this is like the BeginPlay of GameMode class
@@ -57,8 +68,8 @@ public:
 	virtual void OnActorKilled(AActor* VictimActor, AActor* Killer);
 
 	
-protected:
-	// Logic on TimerHandle_SpawnBots time elapsed, which means a Bot have to spawn
+protected:	
+	/** Logic on TimerHandle_SpawnBots time elapsed, which means a Bot have to spawn */
 	UFUNCTION()
 	void SpawnBotTimeElapsed();
 
@@ -82,5 +93,13 @@ public:
 	/** DEBUG: To quick kill all on testing */
 	UFUNCTION(Exec)
 	void KillAll();
+
+	/** Saves the user current state */
+	UFUNCTION(BlueprintCallable, Category=SaveGame)
+	void WriteSaveGame();
+	
+	/** Loads an user state */
+	UFUNCTION()
+	void LoadSaveGame();
 };
 

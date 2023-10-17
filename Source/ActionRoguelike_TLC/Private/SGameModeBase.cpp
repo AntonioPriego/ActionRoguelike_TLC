@@ -4,7 +4,9 @@
 #include "SGameModeBase.h"
 #include "EngineUtils.h"
 #include "SCharacter.h"
+#include "SSaveGame.h"
 #include "AI/SAICharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // CVars
@@ -18,9 +20,19 @@ ASGameModeBase::ASGameModeBase(): SpawnBotQuery(nullptr), MaxNumOfBotsCurve(null
 	// Set some values
 	SpawnTimerInterval = 4.0f;
 	bSpawnEnemiesEnabled = true;
+	SlotName = "SaveGame-S0";
 
 	// Changing PlayerState class to our custom one
 	PlayerStateClass = ASPlayerState::StaticClass();
+}
+
+
+// ENGINE
+void ASGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
+{
+	Super::InitGame(MapName, Options, ErrorMessage);
+
+	LoadSaveGame();
 }
 
 
@@ -189,4 +201,34 @@ void ASGameModeBase::KillAll()
     			AttributesComponent->Kill(this);
     		}
     	}
+}
+
+
+// Saves the user current state
+void ASGameModeBase::WriteSaveGame()
+{
+	UGameplayStatics::SaveGameToSlot(CurrentSaveGame, SlotName, 0);
+}
+
+
+// Loads an user stats
+void ASGameModeBase::LoadSaveGame()
+{
+	if (UGameplayStatics::DoesSaveGameExist(SlotName, 0))
+	{
+		CurrentSaveGame = Cast<USSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
+		if (!CurrentSaveGame)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to load SaveGame Data."));
+			return;
+		}
+		
+		UE_LOG(LogTemp, Log, TEXT("Loaded SaveGame Data."));
+	}
+	else
+	{
+		CurrentSaveGame = Cast<USSaveGame>(UGameplayStatics::CreateSaveGameObject(USSaveGame::StaticClass()));
+		
+		UE_LOG(LogTemp, Log, TEXT("Created New SaveGame Data."));
+	}
 }
