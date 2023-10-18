@@ -6,6 +6,7 @@
 #include "SCharacter.h"
 #include "SSaveGame.h"
 #include "AI/SAICharacter.h"
+#include "GameFramework/GameStateBase.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -82,6 +83,19 @@ void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 	}
 
 	UE_LOG(LogTemp, Log, TEXT("OnActorKilled: Victim %s, Killer: %s"), *GetNameSafe(VictimActor), *GetNameSafe(Killer));
+}
+
+
+// ENGINE: Signals that a player is ready to enter the game, which may start it up
+void ASGameModeBase::HandleStartingNewPlayer_Implementation_Implementation(APlayerController* NewPlayer)
+{
+	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
+
+	ASPlayerState* PlayerState = NewPlayer->GetPlayerState<ASPlayerState>();
+	if (PlayerState)
+	{
+		PlayerState->LoadPlayerState(CurrentSaveGame);
+	}
 }
 
 
@@ -207,6 +221,15 @@ void ASGameModeBase::KillAll()
 // Saves the user current state
 void ASGameModeBase::WriteSaveGame()
 {
+	for (int32 i=0; i<GameState->PlayerArray.Num(); i++)
+	{
+		ASPlayerState* PlayerState = Cast<ASPlayerState>(GameState->PlayerArray[i]);
+		if (PlayerState)
+		{
+			PlayerState->SavePlayerState(CurrentSaveGame);
+		}
+	}
+	
 	UGameplayStatics::SaveGameToSlot(CurrentSaveGame, SlotName, 0);
 }
 

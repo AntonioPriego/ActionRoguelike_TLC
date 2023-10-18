@@ -6,6 +6,8 @@
 #include "GameFramework/PlayerState.h"
 #include "SPlayerState.generated.h"
 
+class USSaveGame;
+
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCreditsChanged, AActor*, CreditsOwner, float, NewAmount, float, Delta);
 
@@ -24,7 +26,11 @@ public:
 
 
 protected:
+	/** In game credit amount */
 	int32 Credits;
+
+	/** Higher round reach by the player */
+	int32 RoundPersonalBest;
 
 	
 /*********************************** METHODS *********************************/
@@ -51,4 +57,19 @@ public:
 	/** Check if Amount is available */
 	bool HaveEnoughCredits(const int32 Amount) const;
 
+	/** Get RoundPersonalBest */
+	UFUNCTION(BlueprintCallable)
+	int32 GetRoundPersonalBest() const;
+	
+	/** Set RoundPersonalBest */
+	UFUNCTION(BlueprintCallable)
+	void SetRoundPersonalBest(const int32 newPB);
+	
+	/** */
+	UFUNCTION(BlueprintNativeEvent)
+	void SavePlayerState(USSaveGame* SaveObject);
+
+	/** */
+	UFUNCTION(BlueprintNativeEvent)
+	void LoadPlayerState(USSaveGame* SaveObject);
 };

@@ -3,13 +3,16 @@
 
 #include "SPlayerState.h"
 
+#include "SSaveGame.h"
 
 
 // Sets default values
 ASPlayerState::ASPlayerState()
 {
+	// Set some values
 	PrimaryActorTick.bCanEverTick = true;
-	Credits = 1000;
+	Credits           = 1000;
+	RoundPersonalBest = 0;
 }
 
 
@@ -41,6 +44,40 @@ void  ASPlayerState::AddCredits(const int32 Amount)
 bool  ASPlayerState::HaveEnoughCredits(const int32 Amount) const
 {
 	return Credits >= Amount;
+}
+
+
+// Get RoundPersonalBest
+int32 ASPlayerState::GetRoundPersonalBest() const
+{
+	return RoundPersonalBest;
+}
+
+
+// Set RoundPersonalBest
+void ASPlayerState::SetRoundPersonalBest(const int32 newPB)
+{
+	RoundPersonalBest = newPB;
+}
+
+
+// 
+void ASPlayerState::SavePlayerState_Implementation(USSaveGame* SaveObject)
+{
+	if (SaveObject)
+	{
+		SaveObject->RoundPersonalBest = RoundPersonalBest;
+	}
+}
+
+
+// 
+void ASPlayerState::LoadPlayerState_Implementation(USSaveGame* SaveObject)
+{
+	if (SaveObject)
+	{
+		RoundPersonalBest = SaveObject->RoundPersonalBest;
+	}
 }
 
 

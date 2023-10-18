@@ -67,6 +67,10 @@ public:
 	UFUNCTION()
 	virtual void OnActorKilled(AActor* VictimActor, AActor* Killer);
 
+	/** ENGINE: Signals that a player is ready to enter the game, which may start it up */
+	UFUNCTION(BlueprintNativeEvent, Category=Game)
+	void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
+
 	
 protected:	
 	/** Logic on TimerHandle_SpawnBots time elapsed, which means a Bot have to spawn */
