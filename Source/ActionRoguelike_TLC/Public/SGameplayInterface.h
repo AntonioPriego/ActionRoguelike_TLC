@@ -23,6 +23,11 @@ class ACTIONROGUELIKE_TLC_API ISGameplayInterface
 // ...
 /*********************************** METHODS *********************************/
 public:
+	/** To establish the communication between the Instigator and the Actor instigated (that implements this interface) */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Interact(APawn* InstigatorPawn);
+
+	/** Make necessary logic when Actor is loaded */
+	UFUNCTION(BlueprintNativeEvent)
+	void OnActorLoaded();
 };

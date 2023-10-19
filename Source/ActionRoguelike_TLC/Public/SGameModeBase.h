@@ -91,6 +91,13 @@ protected:
 	/** Returns the max number of alive bots (enemies) in the world based on the CurveFloat */
 	float GetMaxNumOfBots(const float Seconds) const;
 
+	/** Method where all the important/interactive actors
+	 * @todo Not working properly with 'Spatially Loaded' (World partition feature) Actors which is default true on UE5; Because Spatially Loaded Actors are not available during GameModeBase::InitGame
+	 * @tmp  I'm executing LoadActors with 0.2s delay to give GameModeBase::InitGame time to finish before trying to get Spatially Loaded Actors 
+	 */
+	UFUNCTION()
+	void LoadActors() const;
+
 	
 /************************************ DEBUG **********************************/
 public:

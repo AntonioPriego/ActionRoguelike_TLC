@@ -23,16 +23,6 @@ ASItemChest::ASItemChest()
 }
 
 
-// Definition of Interact function of SGameplayInterface on SItemChest
-void ASItemChest::Interact_Implementation(APawn* InstigatorPawn)
-{
-	bLidOpened = !bLidOpened;
-	OnRep_LidOpened();
-	
-	ISGameplayInterface::Interact_Implementation(InstigatorPawn);
-}
-
-
 // ENGINE: Returns the properties used for network replication, this needs to be overridden by all actor classes with native replicated properties
 // We do not have to declare in header file bc is auto-declared in SItemChest.generated.h
 void ASItemChest::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -48,4 +38,21 @@ void ASItemChest::OnRep_LidOpened()
 {	
 	const float CurrentPitch = bLidOpened ? TargetPitch : 0.0f;	
 	LidMesh->SetRelativeRotation(FRotator(CurrentPitch, 0, 0));
+}
+
+
+// USGameplayInterface: Definition of Interact function of SGameplayInterface on SItemChest
+void ASItemChest::Interact_Implementation(APawn* InstigatorPawn)
+{
+	bLidOpened = !bLidOpened;
+	OnRep_LidOpened();
+	
+	ISGameplayInterface::Interact_Implementation(InstigatorPawn);
+}
+
+
+// USGameplayInterface: Make necessary logic when Actor is loaded
+void ASItemChest::OnActorLoaded_Implementation(APawn* InstigatorPawn)
+{
+	OnRep_LidOpened();
 }

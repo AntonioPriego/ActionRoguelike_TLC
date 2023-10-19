@@ -4,10 +4,12 @@
 #include "SGameModeBase.h"
 #include "EngineUtils.h"
 #include "SCharacter.h"
+#include "SGameplayInterface.h"
 #include "SSaveGame.h"
 #include "AI/SAICharacter.h"
 #include "GameFramework/GameStateBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 
 
 // CVars
@@ -229,6 +231,37 @@ void ASGameModeBase::WriteSaveGame()
 			PlayerState->SavePlayerState(CurrentSaveGame);
 		}
 	}
+
+	
+	CurrentSaveGame->SavedActors.Empty();
+
+	// Iterate the entire world of actors
+	for (FActorIterator It(GetWorld()); It; ++It)
+	{
+		AActor* Actor = *It;
+
+		//Only interested in our 'gameplay actors'
+		if (!Actor->Implements<USGameplayInterface>())
+		{
+			continue;
+		}
+
+		FActorSaveData ActorData;
+		ActorData.ActorName = Actor->GetFName();
+		ActorData.Transform = Actor->GetTransform();
+
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Turquoise, FString::Printf(TEXT("%s"), *ActorData.ActorName.ToString()));
+
+		// Pass the array to fill with data from Actor
+		FMemoryWriter MemWriter(ActorData.ByteData);
+		FObjectAndNameAsStringProxyArchive Ar(MemWriter, true);
+		// Find only variables with UPROPERTY(SaveGame)
+		Ar.ArIsSaveGame = true;
+		// Convert Actor's SaveGame UPROPERTIES into binary array
+		Actor->Serialize(Ar);
+
+		CurrentSaveGame->SavedActors.Add(ActorData);
+	}
 	
 	UGameplayStatics::SaveGameToSlot(CurrentSaveGame, SlotName, 0);
 }
@@ -247,11 +280,56 @@ void ASGameModeBase::LoadSaveGame()
 		}
 		
 		UE_LOG(LogTemp, Log, TEXT("Loaded SaveGame Data."));
+
+
+		// Temporal solution to LoadActors @todo
+		FTimerHandle TimerHandle;
+		FTimerDelegate TimerDelegate;
+		TimerDelegate.BindUFunction(this, "LoadActors");
+		GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, 0.1f, false);
 	}
 	else
 	{
 		CurrentSaveGame = Cast<USSaveGame>(UGameplayStatics::CreateSaveGameObject(USSaveGame::StaticClass()));
 		
 		UE_LOG(LogTemp, Log, TEXT("Created New SaveGame Data."));
+	}
+}
+
+
+// Method where all the important/interactive actors
+void ASGameModeBase::LoadActors() const
+{
+	// Iterate the entire world of actors
+	for (FActorIterator It(GetWorld()); It; ++It)
+	{
+		AActor* Actor = *It;
+		FString tmp = Actor->GetIsSpatiallyLoaded() ? "true" : "false";
+
+		//Only interested in our 'gameplay actors'
+		if (!Actor->Implements<USGameplayInterface>())
+		{
+			continue;
+		}
+
+		for (FActorSaveData ActorData : CurrentSaveGame->SavedActors)
+		{
+			if (ActorData.ActorName == Actor->GetFName())
+			{
+				Actor->SetActorTransform(ActorData.Transform);
+				
+				// Load the array to fill with data from Actor
+				FMemoryReader MemReader(ActorData.ByteData);
+				FObjectAndNameAsStringProxyArchive Ar(MemReader, true);
+				
+				Ar.ArIsSaveGame = true;
+				// Convert binary array back into Actor's UPROPERTIES 
+				Actor->Serialize(Ar);
+
+				ISGameplayInterface::Execute_OnActorLoaded(Actor);
+				
+				break;
+			}
+		}
 	}
 }

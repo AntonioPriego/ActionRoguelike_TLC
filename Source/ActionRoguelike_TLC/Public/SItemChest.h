@@ -24,7 +24,7 @@ protected:
 	UStaticMeshComponent* LidMesh;
 
 	/** Flag to know if lid is currently open */
-	UPROPERTY(ReplicatedUsing="OnRep_LidOpened", BlueprintReadOnly) // ReplicatedUsing = RepNotify (on BP)
+	UPROPERTY(ReplicatedUsing="OnRep_LidOpened", BlueprintReadOnly, SaveGame) // ReplicatedUsing = RepNotify (on BP)
 	bool bLidOpened;
 	
 	
@@ -44,6 +44,9 @@ protected:
 	// we have to add "_Implementation", bc we are using it on C++ but on BLUEPRINTS too
 	/** Definition of Interact function of SGameplayInterface on SItemChest */
 	void Interact_Implementation(APawn* InstigatorPawn);
+
+	/** Make necessary logic when Actor is loaded */
+	void OnActorLoaded_Implementation(APawn* InstigatorPawn);
 
 	/** This method is auto called by unreal when our bLidOpened updates */
 	UFUNCTION()
