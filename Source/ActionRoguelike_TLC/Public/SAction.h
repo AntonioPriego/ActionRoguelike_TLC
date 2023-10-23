@@ -59,7 +59,18 @@ protected:
 	/** The flag which signal the running status for the SAction */
 	UPROPERTY(ReplicatedUsing="OnRep_RepData")
 	FActionRepData RepData;
-	//bool bIsRunning;
+
+	/** Icon showed on widgets for player clue */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=UI)
+	UTexture2D* Icon;
+
+	/** Color for icon showed on widgets for player clue */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=UI)
+	FColor IconColor;
+
+	/** Saves the TimeSeconds on Action started */
+	UPROPERTY(Replicated)
+	float TimeStarted;
 
 		
 /*********************************** METHODS *********************************/

@@ -8,6 +8,8 @@
 #include "Components/ActorComponent.h"
 #include "SActionComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnActionStateChanged, USActionComponent*, OwningComp, USAction*, Action);
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ACTIONROGUELIKE_TLC_API USActionComponent : public UActorComponent
@@ -22,10 +24,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Tags)
 	FGameplayTagContainer ActiveGameplayTags;
 
+	/** Event triggered when Actions starts */
+	UPROPERTY(BlueprintAssignable)
+	FOnActionStateChanged OnActionStarted;
+	
+	/** Event triggered when Actions stops */
+	UPROPERTY(BlueprintAssignable)
+	FOnActionStateChanged OnActionStop;
+
 	
 protected:
 	/** All the actions this component is able to do */
-	UPROPERTY(Replicated)
+	UPROPERTY(BlueprintReadOnly, Replicated)
 	TArray<USAction*> Actions;
 
 	/** Granted abilities at game start */

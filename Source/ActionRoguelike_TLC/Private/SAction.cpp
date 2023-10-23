@@ -14,6 +14,7 @@ USAction::USAction()
 	RageCost   = 0.0f;
 	bAutoStart = false;
 	RepData.bIsRunning = false;
+	IconColor = FColor(0.028845,0.427103,1.000000,1.000000);
 }
 
 
@@ -23,6 +24,10 @@ void USAction::StartAction_Implementation(AActor* Instigator)
 {
 	//UE_LOG(LogTemp, Log, TEXT("Running: %s"), *GetNameSafe(this));
 	//LogOnScreen(this, FString::Printf(TEXT("Running: %s"), *ActionName.ToString()), FColor::Green);
+	if (GetOwningComponent()->GetOwner()->HasAuthority())
+	{
+		TimeStarted = GetWorld()->TimeSeconds;
+	}
 
 	USActionComponent* ActionComponent = GetOwningComponent();
 
@@ -30,6 +35,8 @@ void USAction::StartAction_Implementation(AActor* Instigator)
 
 	RepData.bIsRunning = true;
 	RepData.Instigator = Instigator;
+
+	GetOwningComponent()->OnActionStarted.Broadcast(GetOwningComponent(), this);
 }
 
 
@@ -48,6 +55,8 @@ void USAction::StopAction_Implementation(AActor* Instigator)
 
 	RepData.bIsRunning = false;
 	RepData.Instigator = Instigator;
+	
+	GetOwningComponent()->OnActionStop.Broadcast(GetOwningComponent(), this);
 }
 
 
@@ -88,6 +97,7 @@ bool USAction::IsRunning_Implementation()
 	return RepData.bIsRunning;
 }
 
+
 // Owning component getter
 USActionComponent* USAction::GetOwningComponent() const
 {
@@ -115,4 +125,5 @@ void USAction::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLi
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(USAction, RepData);
+	DOREPLIFETIME(USAction, TimeStarted);
 }

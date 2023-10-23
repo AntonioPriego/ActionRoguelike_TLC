@@ -4,6 +4,7 @@
 #include "SActionEffect.h"
 
 #include "SActionComponent.h"
+#include "GameFramework/GameStateBase.h"
 
 
 USActionEffect::USActionEffect()
@@ -63,4 +64,18 @@ void USActionEffect::StopAction_Implementation(AActor* Instigator)
 	{
 		ActionComponent->RemoveAction(this);
 	}
+}
+
+
+// Return the remaining replicated time of active effect
+float USActionEffect::GetTimeRemaining() const
+{
+	const AGameStateBase* GameState = GetWorld()->GetGameState<AGameStateBase>();
+	if (GameState)
+	{
+		const float EndTime = TimeStarted + Duration;
+		return EndTime - GameState->GetServerWorldTimeSeconds();
+	}
+
+	return Duration;
 }

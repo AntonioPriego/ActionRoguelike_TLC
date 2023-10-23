@@ -39,6 +39,10 @@ public:
 
 	/** Defines behavior at action effect end */
 	virtual void StopAction_Implementation(AActor* Instigator) override;
+
+	/** Return the remaining replicated time of active effect */
+	UFUNCTION(BlueprintCallable, Category=Action)
+	float GetTimeRemaining() const;
 	
 	
 protected:

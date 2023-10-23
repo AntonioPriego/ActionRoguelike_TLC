@@ -23,7 +23,7 @@ public:
 	AActor* AttachedActor;
 
 	/** Vertical offset between AttachedActor and the actual widget (this) */
-	UPROPERTY(EditAnywhere, Category=UI)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=UI)
 	FVector WorldOffset;
 
 protected:
