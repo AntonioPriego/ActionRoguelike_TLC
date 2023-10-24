@@ -43,8 +43,11 @@ protected:
 	// When interface function declared as BlueprintNativeEvent on UFUNCTION
 	// we have to add "_Implementation", bc we are using it on C++ but on BLUEPRINTS too
 	/** Definition of Interact function of SGameplayInterface on SItemChest */
-	void Interact_Implementation(APawn* InstigatorPawn);
+	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
 
+	/** Get the message is going to show on screen to interact */
+	virtual FText GetInteractMessage_Implementation(APawn* InstigatorPawn) override;
+	
 	/** Make necessary logic when Actor is loaded */
 	void OnActorLoaded_Implementation(APawn* InstigatorPawn);
 

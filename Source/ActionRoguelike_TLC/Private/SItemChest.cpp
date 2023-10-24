@@ -51,6 +51,13 @@ void ASItemChest::Interact_Implementation(APawn* InstigatorPawn)
 }
 
 
+// Get the message is going to show on screen to interact
+FText ASItemChest::GetInteractMessage_Implementation(APawn* InstigatorPawn)
+{
+	return FText::GetEmpty();
+}
+
+
 // USGameplayInterface: Make necessary logic when Actor is loaded
 void ASItemChest::OnActorLoaded_Implementation(APawn* InstigatorPawn)
 {

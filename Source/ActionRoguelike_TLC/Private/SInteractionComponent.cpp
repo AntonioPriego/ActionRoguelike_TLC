@@ -39,6 +39,7 @@ void USInteractionComponent::FindBestInteractable()
 {
 	FCollisionObjectQueryParams ObjectQueryParams;
 	ObjectQueryParams.AddObjectTypesToQuery(CollisionChannel);
+	ObjectQueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
 	AActor* MyOwner = GetOwner();
 	FVector EyeLocation;
 	FRotator EyeRotation;	

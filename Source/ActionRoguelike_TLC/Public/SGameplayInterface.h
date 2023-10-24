@@ -17,7 +17,6 @@ class USGameplayInterface : public UInterface
 class ACTIONROGUELIKE_TLC_API ISGameplayInterface
 {
 	GENERATED_BODY()
-
 	
 /********************************* PROPERTIES ********************************/
 // ...
@@ -26,6 +25,10 @@ public:
 	/** To establish the communication between the Instigator and the Actor instigated (that implements this interface) */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Interact(APawn* InstigatorPawn);
+	
+	/** Get the message is going to show on screen to interact */
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FText GetInteractMessage(APawn* InstigatorPawn);
 
 	/** Make necessary logic when Actor is loaded */
 	UFUNCTION(BlueprintNativeEvent)

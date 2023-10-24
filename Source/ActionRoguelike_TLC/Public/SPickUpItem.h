@@ -31,6 +31,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category=Credits)
 	int32 CreditsCost;
 
+	/** With this set to true, we ensure the player press the interaction button to pick it up */
+	UPROPERTY(EditAnywhere, Category=Credits)
+	bool SecurePickUp;
+
 	
 /*********************************** METHODS *********************************/
 public:	
