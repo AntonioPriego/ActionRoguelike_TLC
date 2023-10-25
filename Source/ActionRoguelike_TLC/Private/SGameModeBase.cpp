@@ -5,8 +5,11 @@
 #include "EngineUtils.h"
 #include "SCharacter.h"
 #include "SGameplayInterface.h"
+#include "SMonsterData.h"
 #include "SSaveGame.h"
+#include "ActionRoguelike_TLC/ActionRoguelike_TLC.h"
 #include "AI/SAICharacter.h"
+#include "Engine/AssetManager.h"
 #include "GameFramework/GameStateBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
@@ -142,13 +145,61 @@ void ASGameModeBase::OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryIn
 	// Check a location is the expected
 	if (Locations.IsValidIndex(0))
 	{
-		GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator());
-		DrawDebugCapsule(GetWorld(),Locations[0],50,20,FQuat().Identity,FColor::Blue, false, 60);
+		if (MonsterTable)
+		{
+			TArray<FMonsterInfoRow*> Rows;
+			MonsterTable->GetAllRows("", Rows);
+		
+			// Get random enemy
+			const int32 RandomIndex = FMath::RandRange(0, Rows.Num()-1);
+			const FMonsterInfoRow* SelectedRow = Rows[RandomIndex];
+
+			UAssetManager* Manager = UAssetManager::GetIfValid();
+			if (Manager)
+			{
+				TArray<FName> Bundles;
+				FStreamableDelegate Delegate = FStreamableDelegate::CreateUObject(this, &ASGameModeBase::OnMonsterLoaded, SelectedRow->MonsterId, Locations[0]);
+				
+				Manager->LoadPrimaryAsset(SelectedRow->MonsterId, Bundles, Delegate);
+			}
+		}
 	}
 }
 
 
-//
+// Called when Monster is loaded from DataTable
+void ASGameModeBase::OnMonsterLoaded(FPrimaryAssetId MonsterId, FVector Location)
+{
+	LogOnScreen(this, "Finished loading", FColor::Blue);
+	
+	UAssetManager* Manager = UAssetManager::GetIfValid();
+	if (Manager)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Loading monster..."));
+		USMonsterData* MonsterData = Cast<USMonsterData>(Manager->GetPrimaryAssetObject(MonsterId));
+		if (MonsterData)
+		{
+			AActor* NewBot = GetWorld()->SpawnActor<AActor>(MonsterData->MonsterClass, Location, FRotator());
+			if (NewBot)
+			{
+				LogOnScreen(this, FString::Printf(TEXT("Spawned enemy: %s (%s)"), *GetNameSafe(NewBot), *GetNameSafe(MonsterData)), FColor::Blue);
+	
+				// Grant special actions, buffs, etc
+				USActionComponent* ActionComponent = NewBot->FindComponentByClass<USActionComponent>();
+				if (ActionComponent)
+				{
+					for (const TSubclassOf<USAction> ActionClass : MonsterData->Actions)
+					{
+						ActionComponent->AddAction(NewBot, ActionClass);
+					}
+				}
+			}
+		}
+	}
+}
+
+
+// Called when timer for respawn is elapsed
 void ASGameModeBase::RespawnPlayerElapsed(AController* Controller)
 {
 	if (ensure(Controller))
@@ -304,7 +355,6 @@ void ASGameModeBase::LoadActors() const
 	for (FActorIterator It(GetWorld()); It; ++It)
 	{
 		AActor* Actor = *It;
-		FString tmp = Actor->GetIsSpatiallyLoaded() ? "true" : "false";
 
 		//Only interested in our 'gameplay actors'
 		if (!Actor->Implements<USGameplayInterface>())

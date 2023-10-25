@@ -62,7 +62,7 @@ protected:
 
 	/** Icon showed on widgets for player clue */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=UI)
-	UTexture2D* Icon;
+	TSoftObjectPtr<UTexture2D> Icon;
 
 	/** Color for icon showed on widgets for player clue */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=UI)

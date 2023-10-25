@@ -61,5 +61,8 @@ FText ASItemChest::GetInteractMessage_Implementation(APawn* InstigatorPawn)
 // USGameplayInterface: Make necessary logic when Actor is loaded
 void ASItemChest::OnActorLoaded_Implementation(APawn* InstigatorPawn)
 {
-	OnRep_LidOpened();
+	if (InstigatorPawn)
+	{		
+		OnRep_LidOpened();
+	}
 }

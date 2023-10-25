@@ -7,21 +7,22 @@
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "SGameModeBase.generated.h"
 
+class USMonsterData;
 class USSaveGame;
 
 
-/**
- * 
- */
 UCLASS()
 class ACTIONROGUELIKE_TLC_API ASGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 
 
-/********************************* PROPERTIES ********************************/
+	/********************************* PROPERTIES ********************************/
 protected:
-	FString SlotName;
+	/** All available monsters */
+	UPROPERTY(EditDefaultsOnly, Category=AI)
+	UDataTable* MonsterTable;
+	
 	/** Point to the current SSaveGame */
 	UPROPERTY()
 	USSaveGame* CurrentSaveGame;
@@ -45,13 +46,14 @@ protected:
 	/** Set the maximum number of alive bots (enemies) in the world */
 	UPROPERTY(EditDefaultsOnly, Category=AI)
 	bool bSpawnEnemiesEnabled;
-
+	
+	FString SlotName;
 	
 	// Timers
 	FTimerHandle TimerHandle_SpawnBots;
 
 	
-/*********************************** METHODS *********************************/
+	/*********************************** METHODS *********************************/
 public:
 	// Sets default values
 	ASGameModeBase();
@@ -80,10 +82,14 @@ protected:
 	/** Called when SpawnBotQuery is finished */
 	UFUNCTION()
 	void OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
-
-	/** */
+	
+	/** Called when timer for respawn is elapsed */
 	UFUNCTION()
 	void RespawnPlayerElapsed(AController* Controller);
+
+	/** Called when Monster is loaded from DataTable */
+	UFUNCTION()
+	void OnMonsterLoaded(FPrimaryAssetId MonsterId, FVector Location);
 
 	/** Check the number of alive bots (enemies) is under the maximum (curve). Return true only if the number is below the max */
 	bool CheckNumberAliveBotsUnderMax() const;
@@ -99,7 +105,7 @@ protected:
 	void LoadActors() const;
 
 	
-/************************************ DEBUG **********************************/
+	/************************************ DEBUG **********************************/
 public:
 	/** DEBUG: To quick kill all on testing */
 	UFUNCTION(Exec)
@@ -114,3 +120,29 @@ public:
 	void LoadSaveGame();
 };
 
+/** DataTable Row for spawning monsters in game mode */
+USTRUCT(BlueprintType)
+struct FMonsterInfoRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+	FMonsterInfoRow()
+	: Weight(1.0f), SpawnCost(5.0f), KillReward(20.0f) {}
+	
+	/** Monster class and some of its properties */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FPrimaryAssetId MonsterId;
+
+	/** Relative chance to pick this monster */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float Weight;
+
+	/** Points required by GameMode to spawn this unit */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float SpawnCost;
+
+	/** Amount of credits awarded to killer of this unit */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float KillReward;
+};

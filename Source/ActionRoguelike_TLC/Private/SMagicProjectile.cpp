@@ -18,6 +18,9 @@ ASMagicProjectile::ASMagicProjectile()
 	// Set up some specific values for MagicProjectile
 	Damage = 20.0f;
 	MovementComponent->InitialSpeed = 7000.0f;
+
+	// LifeSpan
+	InitialLifeSpan = 20.0f;
 }
 
 
