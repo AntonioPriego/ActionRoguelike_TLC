@@ -17,7 +17,11 @@ class ACTIONROGUELIKE_TLC_API ASPickUpItem : public AActor, public ISGameplayInt
 protected:
 	/** Mesh Component for PickUpItem */
 	UPROPERTY(ReplicatedUsing="OnRep_CoinPickedUp", VisibleAnywhere)
-	UStaticMeshComponent* MeshComponent;
+	TObjectPtr<UStaticMeshComponent> MeshComponent;
+
+	/** With this set to true, we ensure the player press the interaction button to pick it up */
+	UPROPERTY(EditAnywhere, Category=PickUp)
+	bool bSecurePickUp;
 
 	/** When true: respawn after RespawnSeconds. When false: Destroy on use */
 	UPROPERTY(EditAnywhere, Category=Respawn)
@@ -31,17 +35,16 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category=Credits)
 	int32 CreditsCost;
 
-	/** With this set to true, we ensure the player press the interaction button to pick it up */
-	UPROPERTY(EditAnywhere, Category=Credits)
-	bool SecurePickUp;
-
 	
 /*********************************** METHODS *********************************/
 public:	
 	// Sets default values for this actor's properties
 	ASPickUpItem();
-	
 
+	/** Get of bSecurePickUp (bSecurePickUp: With this set to true, we ensure the player press the interaction button to pick it up) */
+	bool HasSecurePickUp() const;
+
+	
 protected:
 	/* When interface function declared as BlueprintNativeEvent on UFUNCTION
     we have to add "_Implementation", bc we are using it on C++ but on BLUEPRINTS too */

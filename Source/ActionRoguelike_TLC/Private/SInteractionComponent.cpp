@@ -4,7 +4,7 @@
 
 #include "SCharacter.h"
 #include "SGameplayInterface.h"
-
+#include "SPickUpItem.h"
 
 
 // USInteractionComponent
@@ -66,6 +66,10 @@ void USInteractionComponent::FindBestInteractable()
 		{
 			if (HitActor->Implements<USGameplayInterface>())
 			{
+				if (!Cast<ASPickUpItem>(HitActor)->HasSecurePickUp())
+				{
+					continue;
+				}
 				FocusedActor = HitActor;
 				break;
 			}

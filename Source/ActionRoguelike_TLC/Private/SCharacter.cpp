@@ -56,6 +56,7 @@ void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+/*
 	// -- Rotation Visualization -- //
 	constexpr float DrawScale = 100.0f;
 	constexpr float Thickness = 5.0f;
@@ -73,6 +74,7 @@ void ASCharacter::Tick(float DeltaTime)
 	// Draw 'Controller' Rotation ('PlayerController' that 'possessed' this character)
 	DrawDebugDirectionalArrow(GetWorld(), LineStart, ControllerDirection_LineEnd, DrawScale, FColor::Green,
 	                          false, 0.0f, 0, Thickness);
+*/
 }
 
 
@@ -262,8 +264,8 @@ void ASCharacter::OnActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 void ASCharacter::Dead()
 {
 	// Disable input
-	//APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	//DisableInput(PlayerController);
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	DisableInput(PlayerController);
 	
 	// Disable collisions
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);

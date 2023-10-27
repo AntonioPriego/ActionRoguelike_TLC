@@ -15,9 +15,9 @@ ASPickUpItem::ASPickUpItem()
 	MeshComponent->SetCollisionProfileName("PickUp");
 
 	// Set up some values
-	RespawnSeconds    = 10.0f;
-	IsReSpawnable     = true;
-	CreditsCost       = 0; // Default value is free! :O
+	RespawnSeconds = 10.0f;
+	IsReSpawnable  = true;
+	CreditsCost    = 0; // Default value is free! :O
 
 	// Server replication
 	bReplicates = true;
@@ -28,6 +28,11 @@ ASPickUpItem::ASPickUpItem()
 // On parent only logic to manage respawn or destroy (generic logic)
 void ASPickUpItem::Interact_Implementation(APawn* InstigatorPawn)
 {
+	if (IsOverlappingActor(InstigatorPawn) && bSecurePickUp) // ensure not making interaction on overlap
+	{
+		return;
+	}
+	
 	// Get PlayerState and removeCredits to apply PickupBehavior
 	const ASCharacter* CastedInstigator = Cast<ASCharacter>(InstigatorPawn);
 	if (CastedInstigator)
@@ -96,6 +101,6 @@ void ASPickUpItem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 }
 
 
-// Unreal C++ standards recommends avoid using inline, so I just leave it at one line to earn space and that's all
 void ASPickUpItem::Enable()  { SetActiveStatus(true ); }
 void ASPickUpItem::Disable() { SetActiveStatus(false); }
+bool ASPickUpItem::HasSecurePickUp() const { return bSecurePickUp; }
