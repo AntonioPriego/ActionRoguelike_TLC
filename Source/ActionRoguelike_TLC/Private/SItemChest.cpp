@@ -23,16 +23,6 @@ ASItemChest::ASItemChest()
 }
 
 
-// ENGINE: Returns the properties used for network replication, this needs to be overridden by all actor classes with native replicated properties
-// We do not have to declare in header file bc is auto-declared in SItemChest.generated.h
-void ASItemChest::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(ASItemChest, bLidOpened); // Whenever chest is opened, send it to all clients
-}
-
-
 // This method is auto called by unreal when our bLidOpened updates
 void ASItemChest::OnRep_LidOpened()
 {	
@@ -65,4 +55,14 @@ void ASItemChest::OnActorLoaded_Implementation(APawn* InstigatorPawn)
 	{		
 		OnRep_LidOpened();
 	}
+}
+
+
+// ENGINE: Returns the properties used for network replication, this needs to be overridden by all actor classes with native replicated properties
+// We do not have to declare in header file bc is auto-declared in SItemChest.generated.h
+void ASItemChest::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASItemChest, bLidOpened); // Whenever chest is opened, send it to all clients
 }

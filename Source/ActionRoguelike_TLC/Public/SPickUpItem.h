@@ -16,15 +16,15 @@ class ACTIONROGUELIKE_TLC_API ASPickUpItem : public AActor, public ISGameplayInt
 /********************************* PROPERTIES ********************************/
 protected:
 	/** Mesh Component for PickUpItem */
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(ReplicatedUsing="OnRep_CoinPickedUp", VisibleAnywhere)
 	UStaticMeshComponent* MeshComponent;
 
 	/** When true: respawn after RespawnSeconds. When false: Destroy on use */
-	UPROPERTY(VisibleAnywhere, Category=Respawn)
+	UPROPERTY(EditAnywhere, Category=Respawn)
 	bool IsReSpawnable;
 
 	/** Time to respawn the item if IsReSpawnable */
-	UPROPERTY(VisibleAnywhere, Category=Respawn)
+	UPROPERTY(EditAnywhere, Category=Respawn)
 	float RespawnSeconds;
 
 	/** Price for picking up this item */
@@ -54,6 +54,10 @@ protected:
 
 	/** When object is picked up logic */
 	void PickUp();
+
+	/** Replicated pick up */
+	UFUNCTION()
+	void OnRep_CoinPickedUp();
 
 	/** Set Actor enabled or disabled: visibility and collisions */
 	void SetActiveStatus(const bool Active);

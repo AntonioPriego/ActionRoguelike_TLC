@@ -3,6 +3,7 @@
 
 #include "SPickUpItem.h"
 #include "SCharacter.h"
+#include "Net/UnrealNetwork.h"
 
 
 // Sets default values
@@ -50,18 +51,7 @@ bool ASPickUpItem::OnPickUpBehavior(APawn* InstigatorPawn) { return true; }
 // When object is picked up logic
 void ASPickUpItem::PickUp()
 {
-	if (IsReSpawnable)
-	{
-		// Disabled and reEnabled in RespawnSeconds seconds
-		Disable();		
-		GetWorldTimerManager().SetTimer(TimerHandle_Respawn, this, &ASPickUpItem::Enable, RespawnSeconds);
-	}
-	else
-	{
-		// Clear timer due to possible inconsistencies and destroy bc is not respawnable
-		GetWorldTimerManager().ClearTimer(TimerHandle_Respawn);		
-		Destroy();
-	}
+	OnRep_CoinPickedUp();
 }
 
 
@@ -77,6 +67,34 @@ void ASPickUpItem::SetActiveStatus(const bool Active)
 	// Collisions
 	SetActorEnableCollision(Active);
 }
+
+
+// Replicated pick up
+void ASPickUpItem::OnRep_CoinPickedUp()
+{
+	if (IsReSpawnable)
+	{
+		// Disabled and reEnabled in RespawnSeconds seconds
+		Disable();		
+		GetWorldTimerManager().SetTimer(TimerHandle_Respawn, this, &ASPickUpItem::Enable, RespawnSeconds);
+	}
+	else
+	{
+		// Clear timer due to possible inconsistencies and destroy bc is not respawnable
+		GetWorldTimerManager().ClearTimer(TimerHandle_Respawn);		
+		Destroy();
+	}
+}
+
+
+//
+void ASPickUpItem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASPickUpItem, MeshComponent);
+}
+
 
 // Unreal C++ standards recommends avoid using inline, so I just leave it at one line to earn space and that's all
 void ASPickUpItem::Enable()  { SetActiveStatus(true ); }

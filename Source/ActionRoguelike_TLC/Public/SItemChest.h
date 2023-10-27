@@ -17,11 +17,11 @@ class ACTIONROGUELIKE_TLC_API ASItemChest : public AActor, public ISGameplayInte
 protected:
 	/** Base mesh for chest, the bottom static part */
 	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* BaseMesh;
+	TObjectPtr<UStaticMeshComponent> BaseMesh;
 	
 	/** Lid mesh for chest, the top movable part */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UStaticMeshComponent* LidMesh;
+	TObjectPtr<UStaticMeshComponent> LidMesh;
 
 	/** Flag to know if lid is currently open */
 	UPROPERTY(ReplicatedUsing="OnRep_LidOpened", BlueprintReadOnly, SaveGame) // ReplicatedUsing = RepNotify (on BP)
@@ -29,7 +29,6 @@ protected:
 	
 	
 /*********************************** METHODS *********************************/
-
 public:	
 	// Sets default values for this actor's properties
 	ASItemChest();
@@ -40,8 +39,6 @@ public:
 
 	
 protected:
-	// When interface function declared as BlueprintNativeEvent on UFUNCTION
-	// we have to add "_Implementation", bc we are using it on C++ but on BLUEPRINTS too
 	/** Definition of Interact function of SGameplayInterface on SItemChest */
 	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
 
