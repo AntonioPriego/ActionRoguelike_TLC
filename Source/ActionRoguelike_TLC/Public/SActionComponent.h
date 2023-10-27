@@ -79,6 +79,9 @@ public:
 protected:
 	/** Called when the game starts */
 	virtual void BeginPlay() override;
+	
+	/** ENGINE: Ends gameplay for this component */
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	/** Logic needed to stay sync with server on start action */
 	UFUNCTION(Server, Reliable)

@@ -41,6 +41,22 @@ void USActionComponent::BeginPlay()
 }
 
 
+// ENGINE: Ends gameplay for this component
+void USActionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	TArray<USAction*> ActionsCopy = Actions;
+	for (USAction* Action : ActionsCopy)
+	{
+		if (Action && Action->IsRunning())
+		{
+			Action->StopAction(GetOwner());
+		}
+	}
+	
+	Super::EndPlay(EndPlayReason);
+}
+
+
 // Logic needed to stay sync with server on start action 
 void USActionComponent::ServerStartAction_Implementation(AActor* Instigator, FName ActionName)
 {

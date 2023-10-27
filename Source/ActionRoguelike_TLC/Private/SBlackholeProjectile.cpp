@@ -146,7 +146,6 @@ void ASBlackholeProjectile::DeshrinkReleasedActors(const float DeltaSeconds)
 			{
 				RelativeScaleToApply = 1.0f;
 				ReleasedActors.Remove(ReleasedActor);
-				UE_LOG(LogTemp, Error, TEXT("Actor reach to its original scale"));
 			}
 			
 			ReleasedActor->SetActorRelativeScale3D(FVector(RelativeScaleToApply));

@@ -110,7 +110,6 @@ void USAttributesComponent::OnOwnerKilled(AActor* Killer) const
 	ASGameModeBase* GameMode = GetWorld()->GetAuthGameMode<ASGameModeBase>();
 	if (GameMode)
 	{
-		UE_LOG(LogTemp, Error, TEXT("NOMBRE: %s"), *GetOwner()->GetName());
 		GameMode->OnActorKilled(GetOwner(), Killer);
 	}
 }

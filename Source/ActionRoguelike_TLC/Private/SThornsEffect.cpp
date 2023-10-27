@@ -62,6 +62,6 @@ void USThornsEffect::ApplyThorns(AActor* InstigatorActor, USAttributesComponent*
 // Get casted owner attributes component
 USAttributesComponent* USThornsEffect::GetOwnerAttComponent() const
 {
-	const ASCharacter* EffectOwner = Cast<ASCharacter>(GetOwningComponent()->GetOwner());
+	const AActor* EffectOwner = GetOwningComponent()->GetOwner();
 	return EffectOwner->FindComponentByClass<USAttributesComponent>();
 }

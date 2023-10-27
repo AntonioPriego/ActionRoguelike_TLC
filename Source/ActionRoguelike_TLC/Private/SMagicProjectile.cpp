@@ -20,7 +20,7 @@ ASMagicProjectile::ASMagicProjectile()
 	MovementComponent->InitialSpeed = 7000.0f;
 
 	// LifeSpan
-	InitialLifeSpan = 20.0f;
+	InitialLifeSpan = 8.0f;
 }
 
 

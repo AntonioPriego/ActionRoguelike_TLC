@@ -38,7 +38,43 @@ void ASGameModeBase::InitGame(const FString& MapName, const FString& Options, FS
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
 
+	FString SelectedSaveSlot = UGameplayStatics::ParseOption(Options, "SaveGame");
+	if (SelectedSaveSlot.Len() > 0)
+	{
+		SlotName = SelectedSaveSlot;
+	}
+		
 	LoadSaveGame();
+}
+
+
+// Loads an user stats
+void ASGameModeBase::LoadSaveGame()
+{
+	if (UGameplayStatics::DoesSaveGameExist(SlotName, 0))
+	{
+		CurrentSaveGame = Cast<USSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
+		if (!CurrentSaveGame)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to load SaveGame Data."));
+			return;
+		}
+		
+		UE_LOG(LogTemp, Log, TEXT("Loaded SaveGame Data."));
+
+
+		// Temporal solution to LoadActors @todo
+		FTimerHandle TimerHandle;
+		FTimerDelegate TimerDelegate;
+		TimerDelegate.BindUFunction(this, "LoadActors");
+		GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, 0.1f, false);
+	}
+	else
+	{
+		CurrentSaveGame = Cast<USSaveGame>(UGameplayStatics::CreateSaveGameObject(USSaveGame::StaticClass()));
+		
+		UE_LOG(LogTemp, Log, TEXT("Created New SaveGame Data."));
+	}
 }
 
 
@@ -315,36 +351,6 @@ void ASGameModeBase::WriteSaveGame()
 	}
 	
 	UGameplayStatics::SaveGameToSlot(CurrentSaveGame, SlotName, 0);
-}
-
-
-// Loads an user stats
-void ASGameModeBase::LoadSaveGame()
-{
-	if (UGameplayStatics::DoesSaveGameExist(SlotName, 0))
-	{
-		CurrentSaveGame = Cast<USSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
-		if (!CurrentSaveGame)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Failed to load SaveGame Data."));
-			return;
-		}
-		
-		UE_LOG(LogTemp, Log, TEXT("Loaded SaveGame Data."));
-
-
-		// Temporal solution to LoadActors @todo
-		FTimerHandle TimerHandle;
-		FTimerDelegate TimerDelegate;
-		TimerDelegate.BindUFunction(this, "LoadActors");
-		GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, 0.1f, false);
-	}
-	else
-	{
-		CurrentSaveGame = Cast<USSaveGame>(UGameplayStatics::CreateSaveGameObject(USSaveGame::StaticClass()));
-		
-		UE_LOG(LogTemp, Log, TEXT("Created New SaveGame Data."));
-	}
 }
 
 

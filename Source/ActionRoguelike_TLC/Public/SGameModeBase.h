@@ -65,6 +65,14 @@ public:
 	// But this is like the BeginPlay of GameMode class
 	virtual void StartPlay() override;
 
+	/** Saves the user current state */
+	UFUNCTION(BlueprintCallable, Category=SaveGame)
+	void WriteSaveGame();
+	
+	/** Loads an user state */
+	UFUNCTION()
+	void LoadSaveGame();
+
 	/** Manages actor killed event */
 	UFUNCTION()
 	virtual void OnActorKilled(AActor* VictimActor, AActor* Killer);
@@ -110,14 +118,6 @@ public:
 	/** DEBUG: To quick kill all on testing */
 	UFUNCTION(Exec)
 	void KillAll();
-
-	/** Saves the user current state */
-	UFUNCTION(BlueprintCallable, Category=SaveGame)
-	void WriteSaveGame();
-	
-	/** Loads an user state */
-	UFUNCTION()
-	void LoadSaveGame();
 };
 
 /** DataTable Row for spawning monsters in game mode */
