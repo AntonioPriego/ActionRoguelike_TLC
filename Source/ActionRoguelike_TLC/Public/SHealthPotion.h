@@ -19,7 +19,7 @@ class ACTIONROGUELIKE_TLC_API ASHealthPotion : public ASPickUpItem
 protected:
 	/** The health value increased on HealthPotion cure */
 	UPROPERTY(VisibleAnywhere, Category=Values)
-	float DeltaHealthChange;
+	float HealAmount;
 
 	
 /*********************************** METHODS *********************************/

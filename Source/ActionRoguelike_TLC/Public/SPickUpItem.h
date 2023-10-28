@@ -16,8 +16,12 @@ class ACTIONROGUELIKE_TLC_API ASPickUpItem : public AActor, public ISGameplayInt
 /********************************* PROPERTIES ********************************/
 protected:
 	/** Mesh Component for PickUpItem */
-	UPROPERTY(ReplicatedUsing="OnRep_CoinPickedUp", VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UStaticMeshComponent> MeshComponent;
+
+	/** Replication property to sync availability of the pickup item */
+	UPROPERTY(ReplicatedUsing="OnRep_PickedUp", BlueprintReadOnly)
+	bool bIsEnabled;
 
 	/** With this set to true, we ensure the player press the interaction button to pick it up */
 	UPROPERTY(EditAnywhere, Category=PickUp)
@@ -25,7 +29,7 @@ protected:
 
 	/** When true: respawn after RespawnSeconds. When false: Destroy on use */
 	UPROPERTY(EditAnywhere, Category=Respawn)
-	bool IsReSpawnable;
+	bool bIsReSpawnable;
 
 	/** Time to respawn the item if IsReSpawnable */
 	UPROPERTY(EditAnywhere, Category=Respawn)
@@ -56,11 +60,11 @@ protected:
 	virtual bool OnPickUpBehavior(APawn* InstigatorPawn);
 
 	/** When object is picked up logic */
-	void PickUp();
+	void VisualPickUp();
 
 	/** Replicated pick up */
 	UFUNCTION()
-	void OnRep_CoinPickedUp();
+	void OnRep_PickedUp();
 
 	/** Set Actor enabled or disabled: visibility and collisions */
 	void SetActiveStatus(const bool Active);

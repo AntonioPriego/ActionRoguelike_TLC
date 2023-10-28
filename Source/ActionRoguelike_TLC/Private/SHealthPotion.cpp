@@ -10,10 +10,10 @@
 ASHealthPotion::ASHealthPotion()
 {
 	// Set up some values
-	DeltaHealthChange = 20.0f;
-	RespawnSeconds    = 10.0f;
-	CreditsCost       = 20   ;
-	IsReSpawnable     = true;
+	HealAmount     = 20.0f;
+	RespawnSeconds = 10.0f;
+	CreditsCost    = 20   ;
+	bIsReSpawnable  = true ;
 }
 
 
@@ -35,7 +35,7 @@ bool ASHealthPotion::OnPickUpBehavior(APawn* InstigatorPawn)
 		// Ignores when Health is Full
 		if (!AttributesComponent->IsFullHealth())
 		{
-			AttributesComponent->ApplyHealthChange(this, DeltaHealthChange);
+			AttributesComponent->ApplyHealthChange(this, HealAmount);
 			
 			return true;
 		}

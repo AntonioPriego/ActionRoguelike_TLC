@@ -14,9 +14,9 @@ ASCoinPickUp::ASCoinPickUp()
 
 	// Set some default values
 	CreditsEarned = 1;
-	CreditsCost = 0;
-	IsReSpawnable = false;
-	Adder = 0;
+	CreditsCost   = 0;
+	bIsReSpawnable = false;
+	Adder         = 0;
 }
 
 

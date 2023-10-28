@@ -16,7 +16,9 @@ ASPickUpItem::ASPickUpItem()
 
 	// Set up some values
 	RespawnSeconds = 10.0f;
-	IsReSpawnable  = true;
+	bIsEnabled     = true;
+	bIsReSpawnable = true;
+	bSecurePickUp  = false;
 	CreditsCost    = 0; // Default value is free! :O
 
 	// Server replication
@@ -42,7 +44,8 @@ void ASPickUpItem::Interact_Implementation(APawn* InstigatorPawn)
 		{
 			if (OnPickUpBehavior(InstigatorPawn))
 			{
-				PickUp();
+				bIsEnabled = false;
+				VisualPickUp();
 			}
 		}
 	}
@@ -54,9 +57,9 @@ bool ASPickUpItem::OnPickUpBehavior(APawn* InstigatorPawn) { return true; }
 
 
 // When object is picked up logic
-void ASPickUpItem::PickUp()
+void ASPickUpItem::VisualPickUp()
 {
-	OnRep_CoinPickedUp();
+	OnRep_PickedUp();
 }
 
 
@@ -71,23 +74,33 @@ void ASPickUpItem::SetActiveStatus(const bool Active)
 
 	// Collisions
 	SetActorEnableCollision(Active);
+
+	bIsEnabled = Active;
 }
 
 
 // Replicated pick up
-void ASPickUpItem::OnRep_CoinPickedUp()
+void ASPickUpItem::OnRep_PickedUp()
 {
-	if (IsReSpawnable)
+	if (!bIsEnabled) // If bIsEnabled is false now, we must to update to picked up status
 	{
-		// Disabled and reEnabled in RespawnSeconds seconds
-		Disable();		
-		GetWorldTimerManager().SetTimer(TimerHandle_Respawn, this, &ASPickUpItem::Enable, RespawnSeconds);
+		if (bIsReSpawnable) 
+		{
+			// Disabled and reEnabled in RespawnSeconds seconds
+			Disable();
+			GetWorldTimerManager().SetTimer(TimerHandle_Respawn, this, &ASPickUpItem::Enable, RespawnSeconds);
+		}
+		else
+		{
+			// Clear timer due to possible inconsistencies and destroy bc is not respawnable
+			GetWorldTimerManager().ClearTimer(TimerHandle_Respawn);
+			Destroy();
+		}
 	}
 	else
 	{
-		// Clear timer due to possible inconsistencies and destroy bc is not respawnable
-		GetWorldTimerManager().ClearTimer(TimerHandle_Respawn);		
-		Destroy();
+		GetWorldTimerManager().ClearTimer(TimerHandle_Respawn);
+		Enable();
 	}
 }
 
@@ -97,10 +110,13 @@ void ASPickUpItem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(ASPickUpItem, MeshComponent);
+	DOREPLIFETIME(ASPickUpItem, bIsEnabled);
 }
 
 
+// 
 void ASPickUpItem::Enable()  { SetActiveStatus(true ); }
 void ASPickUpItem::Disable() { SetActiveStatus(false); }
+
+
 bool ASPickUpItem::HasSecurePickUp() const { return bSecurePickUp; }

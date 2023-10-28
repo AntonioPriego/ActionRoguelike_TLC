@@ -64,11 +64,14 @@ void USInteractionComponent::FindBestInteractable()
 	{
 		if (AActor* HitActor = Hit.GetActor())
 		{
-			if (HitActor->Implements<USGameplayInterface>())
+			if (HitActor->Implements<USGameplayInterface>() && !GetOwner()->IsOverlappingActor(HitActor))
 			{
-				if (!Cast<ASPickUpItem>(HitActor)->HasSecurePickUp())
+				if (ASPickUpItem* PickedUpItem = Cast<ASPickUpItem>(HitActor))
 				{
-					continue;
+					if (!PickedUpItem->HasSecurePickUp())	//  HasSecurePickUp() => Interaction by this FindBestInteractable() 
+					{										// !HasSecurePickUp() => Interaction by overlaps with player
+						continue;
+					}
 				}
 				FocusedActor = HitActor;
 				break;
