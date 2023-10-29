@@ -41,7 +41,7 @@ protected:
 
 	/** */
 	UPROPERTY()
-	USWorldUserWidget* DefaultWidgetInstance;
+	TObjectPtr<USWorldUserWidget> DefaultWidgetInstance;
 	
 	
 /*********************************** METHODS *********************************/

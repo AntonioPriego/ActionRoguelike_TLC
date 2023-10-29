@@ -6,8 +6,12 @@
 #include "DrawDebugHelpers.h"
 #include "EnhancedInputSubsystems.h"
 #include "SGameplayInterface.h"
+#include "Camera/CameraComponent.h"
+#include "SActionComponent.h"
+#include "SAttributesComponent.h"
+#include "SInteractionComponent.h"
+#include "Components/InputComponent.h"
 #include "SPlayerState.h"
-#include "SThornsEffect.h"
 
 
 // Sets default values

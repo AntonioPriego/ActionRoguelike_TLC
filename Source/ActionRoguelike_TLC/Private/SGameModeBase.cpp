@@ -3,6 +3,8 @@
 
 #include "SGameModeBase.h"
 #include "EngineUtils.h"
+#include "SActionComponent.h"
+#include "SAttributesComponent.h"
 #include "SCharacter.h"
 #include "SGameplayInterface.h"
 #include "SMonsterData.h"
@@ -110,13 +112,20 @@ void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 		
 		FTimerDelegate Delegate;
 		Delegate.BindUFunction(this, "RespawnPlayerElapsed", PlayerKilledController);
-		
-		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, SpawnTimerInterval, false);
+
+		if (!GetWorldTimerManager().IsTimerPending(TimerHandle_RespawnDelay)) // @fix sometimes spawn two characters twice
+		{
+			GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, SpawnTimerInterval, false);
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Blue, TEXT("Fixed twice spawn player"));
+		}
 	}
 
 	// Credits for kill enemies management
-	ASAICharacter* EnemyKilled  = Cast<ASAICharacter>(VictimActor);
-	ASCharacter* PlayerKiller = Cast<ASCharacter>(Killer);
+	const ASAICharacter* EnemyKilled  = Cast<ASAICharacter>(VictimActor);
+	const ASCharacter*   PlayerKiller = Cast<ASCharacter>(Killer);
 	if (EnemyKilled && PlayerKiller)
 	{
 		ASPlayerState* KillerPlayerState = PlayerKiller->GetSPlayerState();
@@ -130,13 +139,13 @@ void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 // ENGINE: Signals that a player is ready to enter the game, which may start it up
 void ASGameModeBase::HandleStartingNewPlayer_Implementation_Implementation(APlayerController* NewPlayer)
 {
-	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
-
 	ASPlayerState* PlayerState = NewPlayer->GetPlayerState<ASPlayerState>();
 	if (PlayerState)
 	{
 		PlayerState->LoadPlayerState(CurrentSaveGame);
 	}
+	
+	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
 }
 
 

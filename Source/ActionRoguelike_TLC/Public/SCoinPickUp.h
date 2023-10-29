@@ -27,10 +27,14 @@ protected:
 protected:
 	/** Sets default values */
 	ASCoinPickUp();
+
+	/** */
+	virtual void BeginPlay() override;
+
+	/** */
+	UFUNCTION(BlueprintImplementableEvent)
+	void TwistAnim();
 	
 	/** The actual behavior of the pick up item */
 	virtual bool OnPickUpBehavior(APawn* InstigatorPawn) override;
-
-	/** Called every frame */
-	virtual void Tick(float DeltaSeconds) override;
 };

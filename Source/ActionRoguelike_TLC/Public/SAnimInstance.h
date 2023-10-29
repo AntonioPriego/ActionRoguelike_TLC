@@ -18,7 +18,7 @@ class ACTIONROGUELIKE_TLC_API USAnimInstance : public UAnimInstance
 protected:
 	/** */
 	UPROPERTY(BlueprintReadOnly, Category=Animation)
-	USActionComponent* ActionComponent;
+	TObjectPtr<USActionComponent> ActionComponent;
 	
 	/** Is Pawn Stunned based on GameplayTag data */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Animation)

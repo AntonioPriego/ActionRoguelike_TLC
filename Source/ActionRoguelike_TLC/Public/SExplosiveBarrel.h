@@ -16,10 +16,10 @@ class ACTIONROGUELIKE_TLC_API AExplosiveBarrel : public AActor
 /********************************* PROPERTIES ********************************/
 protected:
 	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* StaticMeshComponent;
+	TObjectPtr<UStaticMeshComponent> StaticMeshComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	URadialForceComponent* RadialForceComponent;
+	TObjectPtr<URadialForceComponent> RadialForceComponent;
 
 	
 /*********************************** METHODS *********************************/

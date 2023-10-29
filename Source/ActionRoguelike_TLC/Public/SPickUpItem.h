@@ -16,7 +16,7 @@ class ACTIONROGUELIKE_TLC_API ASPickUpItem : public AActor, public ISGameplayInt
 /********************************* PROPERTIES ********************************/
 protected:
 	/** Mesh Component for PickUpItem */
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TObjectPtr<UStaticMeshComponent> MeshComponent;
 
 	/** Replication property to sync availability of the pickup item */

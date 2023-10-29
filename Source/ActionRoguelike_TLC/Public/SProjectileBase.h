@@ -20,23 +20,23 @@ class ACTIONROGUELIKE_TLC_API ASProjectileBase : public AActor
 protected:
 	/** Sphere root component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Mesh)
-	USphereComponent* SphereComponent;
+	TObjectPtr<USphereComponent> SphereComponent;
 
 	/** Movement component for projectiles */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Movement)
-	UProjectileMovementComponent* MovementComponent;
+	TObjectPtr<UProjectileMovementComponent> MovementComponent;
 
 	/** Particle system for ability visuals */
 	UPROPERTY(EditDefaultsOnly, Category=Effects)
-	UParticleSystemComponent* EffectComponent;
+	TObjectPtr<UParticleSystemComponent> EffectComponent;
 	
 	/** Particle system for impact visuals */
 	UPROPERTY(EditDefaultsOnly, Category=Effects)
-	UParticleSystem* ImpactVfx; // UParticleSystem is just an asset of particle, so !=UParticleSystemComponent
+	TObjectPtr<UParticleSystem> ImpactVfx; // UParticleSystem is just an asset of particle, so !=UParticleSystemComponent
 	
 	/** Particle system for cast visuals */
 	UPROPERTY(EditDefaultsOnly, Category=Effects)
-	UParticleSystem* CastVfx; // UParticleSystem is just an asset of particle, so !=UParticleSystemComponent
+	TObjectPtr<UParticleSystem> CastVfx; // UParticleSystem is just an asset of particle, so !=UParticleSystemComponent
 	
 	/** CameraShake used on impact */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Effects|Shake")
@@ -44,15 +44,15 @@ protected:
 	
 	/** The looped sound of projectile on air */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Sounds)
-	USoundCue* FlightLoopSound;
+	TObjectPtr<USoundCue> FlightLoopSound;
 
 	/** Component for in air sound attached to projectile */
 	UPROPERTY(EditDefaultsOnly, Category=Sounds)
-	UAudioComponent* FlightLoopAudioComponent; // The AudioComponent attached to actor that plays FlightLoopSound
+	TObjectPtr<UAudioComponent> FlightLoopAudioComponent; // The AudioComponent attached to actor that plays FlightLoopSound
 
 	/** The sound of MagicProjectile impact */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Sounds)
-	USoundCue* ImpactSound;
+	TObjectPtr<USoundCue> ImpactSound;
 
 	
 	/** Movement component for projectiles */

@@ -41,6 +41,10 @@ public:
 	/** Higher round reach by the player */
 	UPROPERTY()
 	int RoundPersonalBest;
+
+	/** Credits amount */
+	UPROPERTY()
+	int Credits;
 	
 	
 /*********************************** METHODS *********************************/

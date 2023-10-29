@@ -26,8 +26,9 @@ ASItemChest::ASItemChest()
 // This method is auto called by unreal when our bLidOpened updates
 void ASItemChest::OnRep_LidOpened()
 {	
-	const float CurrentPitch = bLidOpened ? TargetPitch : 0.0f;	
-	LidMesh->SetRelativeRotation(FRotator(CurrentPitch, 0, 0));
+	//const float CurrentPitch = bLidOpened ? TargetPitch : 0.0f;	
+	//LidMesh->SetRelativeRotation(FRotator(CurrentPitch, 0, 0));
+	OpenAnim(bLidOpened);
 }
 
 

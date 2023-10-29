@@ -2,8 +2,8 @@
 
 
 #include "SPlayerState.h"
-
 #include "SSaveGame.h"
+#include "Net/UnrealNetwork.h"
 
 
 // Sets default values
@@ -60,12 +60,18 @@ void ASPlayerState::SetRoundPersonalBest(const int32 newPB)
 	RoundPersonalBest = newPB;
 }
 
+void ASPlayerState::OnRep_Credits(const int32 OldCredits)
+{
+	OnCreditsChanged.Broadcast(this, Credits, Credits - OldCredits);
+}
+
 
 // 
 void ASPlayerState::SavePlayerState_Implementation(USSaveGame* SaveObject)
 {
 	if (SaveObject)
 	{
+		SaveObject->Credits           = Credits;
 		SaveObject->RoundPersonalBest = RoundPersonalBest;
 	}
 }
@@ -76,11 +82,20 @@ void ASPlayerState::LoadPlayerState_Implementation(USSaveGame* SaveObject)
 {
 	if (SaveObject)
 	{
+		AddCredits(SaveObject->Credits);
 		RoundPersonalBest = SaveObject->RoundPersonalBest;
 	}
 }
 
 
+//
+void ASPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ASPlayerState, Credits);
+}
+
+
 // Simple methods
-int32 ASPlayerState::GetCredits() const	    				{ return Credits;    }
-void  ASPlayerState::SetCredits       (const int32 Amount)	{ Credits = Amount;  }
+int32 ASPlayerState::GetCredits() const	    		 { return Credits;    }
+void  ASPlayerState::SetCredits (const int32 Amount) { Credits = Amount;  }

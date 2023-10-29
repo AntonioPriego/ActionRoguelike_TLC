@@ -48,6 +48,10 @@ protected:
 	/** Make necessary logic when Actor is loaded */
 	void OnActorLoaded_Implementation(APawn* InstigatorPawn);
 
+	/** To make open anim with Timeline on BP */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OpenAnim(bool LidOpened);
+
 	/** This method is auto called by unreal when our bLidOpened updates */
 	UFUNCTION()
 	void OnRep_LidOpened();

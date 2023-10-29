@@ -23,7 +23,7 @@ protected:
 	
 	/** To set attack anim from editor */
 	UPROPERTY(EditAnywhere, Category=Attack)
-	UAnimMontage* AttackAnim;
+	TObjectPtr<UAnimMontage> AttackAnim;
 	
 	/** Manage the max distance to check hit actor on projectile trajectory */
 	UPROPERTY(EditAnywhere, Category=Attack)

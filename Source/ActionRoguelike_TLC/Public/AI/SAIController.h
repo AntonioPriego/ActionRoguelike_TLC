@@ -18,7 +18,7 @@ class ACTIONROGUELIKE_TLC_API ASAIController : public AAIController
 /********************************* PROPERTIES ********************************/
 protected:
 	UPROPERTY(EditDefaultsOnly, Category=AI)
-	UBehaviorTree* BehaviorTree;
+	TObjectPtr<UBehaviorTree> BehaviorTree;
 
 	
 /*********************************** METHODS *********************************/

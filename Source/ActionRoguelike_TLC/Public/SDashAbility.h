@@ -19,11 +19,11 @@ class ACTIONROGUELIKE_TLC_API ASDashAbility : public ASProjectileBase
 protected:
 	/** Particle system for explosion visuals */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UParticleSystemComponent* ParticleEnterTeleportComponent;
+	TObjectPtr<UParticleSystemComponent> ParticleEnterTeleportComponent;
 
 	/** Particle system for explosion visuals */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UParticleSystemComponent* ParticleExitTeleportComponent;
+	TObjectPtr<UParticleSystemComponent> ParticleExitTeleportComponent;
 
 	
 private:

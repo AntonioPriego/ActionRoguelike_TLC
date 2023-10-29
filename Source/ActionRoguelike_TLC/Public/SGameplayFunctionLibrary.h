@@ -15,7 +15,7 @@ class ACTIONROGUELIKE_TLC_API USGameplayFunctionLibrary : public UBlueprintFunct
 	GENERATED_BODY()
 
 
-	/*********************************** METHODS *********************************/
+/*********************************** METHODS *********************************/
 	public:
 	/** Make a damage amount to an actor */
 	UFUNCTION(BlueprintCallable, Category=Gameplay)

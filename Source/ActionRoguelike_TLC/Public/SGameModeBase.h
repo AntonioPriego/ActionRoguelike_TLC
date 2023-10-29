@@ -17,15 +17,15 @@ class ACTIONROGUELIKE_TLC_API ASGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 
 
-	/********************************* PROPERTIES ********************************/
+/********************************* PROPERTIES ********************************/
 protected:
 	/** All available monsters */
 	UPROPERTY(EditDefaultsOnly, Category=AI)
-	UDataTable* MonsterTable;
+	TObjectPtr<UDataTable> MonsterTable;
 	
 	/** Point to the current SSaveGame */
 	UPROPERTY()
-	USSaveGame* CurrentSaveGame;
+	TObjectPtr<USSaveGame> CurrentSaveGame;
 	
 	/** This property set the time between a spawn bot and the next one */
 	UPROPERTY(EditDefaultsOnly, Category=AI)
@@ -33,7 +33,7 @@ protected:
 
 	/** Custom query to spawn bot */
 	UPROPERTY(EditDefaultsOnly, Category=AI)
-	UEnvQuery* SpawnBotQuery;
+	TObjectPtr<UEnvQuery> SpawnBotQuery;
 
 	/** Set the class to spawn as minion */
 	UPROPERTY(EditDefaultsOnly, Category=AI)
@@ -41,7 +41,7 @@ protected:
 
 	/** Set the maximum number of alive bots (enemies) in the world */
 	UPROPERTY(EditDefaultsOnly, Category=AI)
-	UCurveFloat* MaxNumOfBotsCurve;
+	TObjectPtr<UCurveFloat> MaxNumOfBotsCurve;
 
 	/** Set the maximum number of alive bots (enemies) in the world */
 	UPROPERTY(EditDefaultsOnly, Category=AI)
@@ -53,7 +53,7 @@ protected:
 	FTimerHandle TimerHandle_SpawnBots;
 
 	
-	/*********************************** METHODS *********************************/
+/*********************************** METHODS *********************************/
 public:
 	// Sets default values
 	ASGameModeBase();

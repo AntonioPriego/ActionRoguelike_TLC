@@ -4,11 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Perception/PawnSensingComponent.h"
-#include "SAttributesComponent.h"
-#include "SActionComponent.h"
 #include "SWorldUserWidget.h"
 #include "SAICharacter.generated.h"
+
+class USActionComponent;
+class USAttributesComponent;
+class UPawnSensingComponent;
+
 
 UCLASS()
 class ACTIONROGUELIKE_TLC_API ASAICharacter : public ACharacter
@@ -20,15 +22,15 @@ class ACTIONROGUELIKE_TLC_API ASAICharacter : public ACharacter
 protected:
 	/** The component for attributes management */
 	UPROPERTY(VisibleAnywhere, Category=Components)
-	USAttributesComponent* AttributesComponent;
+	TObjectPtr<USAttributesComponent> AttributesComponent;
 
 	/** The component for action management */
 	UPROPERTY(VisibleAnywhere, Category=Components)
-	USActionComponent* ActionComponent;
+	TObjectPtr<USActionComponent> ActionComponent;
 	
 	/** Component to retrieve perception senses */
 	UPROPERTY(VisibleAnywhere, Category=Components)
-	UPawnSensingComponent* PawnSensingComponent;
+	TObjectPtr<UPawnSensingComponent> PawnSensingComponent;
 
 	/** Widget to show as health bar */
 	UPROPERTY(EditDefaultsOnly, Category=UI)
@@ -54,9 +56,9 @@ protected:
 	UPROPERTY()
 	TObjectPtr<USWorldUserWidget> ActiveHealthBar;
 
-	/** A reference of the created widget for health bar */
-	UPROPERTY()
-	TObjectPtr<USWorldUserWidget> ActivePlayerSpottedWidget;
+	// /** A reference of the created widget for health bar */
+	// UPROPERTY()
+	// TObjectPtr<USWorldUserWidget> ActivePlayerSpottedWidget;
 	
 
 /*********************************** METHODS *********************************/
@@ -96,6 +98,11 @@ protected:
 
 	/** Getter de BlackBoard TargetActor */
 	AActor* GetTargetActor() const;
+
+	/** Needed for OnPawnSeen server replication */
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastPawnSeen();
+	
 	
 
 /*********************************** DEBUG ***********************************/

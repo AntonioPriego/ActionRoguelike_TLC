@@ -13,10 +13,17 @@ ASCoinPickUp::ASCoinPickUp()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Set some default values
-	CreditsEarned = 1;
-	CreditsCost   = 0;
+	CreditsEarned  = 1;
+	CreditsCost    = 0;
 	bIsReSpawnable = false;
-	Adder         = 0;
+	Adder          = 0;
+}
+
+
+void ASCoinPickUp::BeginPlay()
+{
+	Super::BeginPlay();
+	TwistAnim();	// Timeline rotation anim on BP
 }
 
 
@@ -36,23 +43,4 @@ bool ASCoinPickUp::OnPickUpBehavior(APawn* InstigatorPawn)
 		}
 	}
 	return false;
-}
-
-
-// Called every frame
-void ASCoinPickUp::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-
-	// Magic numbers, temporal and arbitrary values
-	float Yaw  = 180*DeltaSeconds;
-	float Down = sin(Adder*5)*100;
-	Adder += DeltaSeconds;
-	
-	if (GetActorRotation().Yaw > 0)
-	{
-		Yaw  *= 2.5;
-	}
-	AddActorLocalRotation(FRotator(0, Yaw,0));
-	AddActorLocalOffset  (FVector(0,0,Down*DeltaSeconds));
 }

@@ -28,26 +28,26 @@ public:
 protected:
 	/** Used to implements physics to pull objects. Necessary...I mean, it's a black-hole */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Physics)
-	URadialForceComponent* RadialForceComponent;
+	TObjectPtr<URadialForceComponent> RadialForceComponent;
 
 	/** Sphere component for inhale (suck and destroy object) logic */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Physics)
-	USphereComponent* SphereInhaleCollision;
+	TObjectPtr<USphereComponent> SphereInhaleCollision;
 	
 	/** Float curve that defines the relative scale on every second of remaining lifespan */
 	UPROPERTY(EditDefaultsOnly, Category=Physics)
-	UCurveFloat* RelativeScaleCurve;
+	TObjectPtr<UCurveFloat> RelativeScaleCurve;
 
 	/** Value for lifespan */
 	UPROPERTY(EditDefaultsOnly, Category=Time)
 	float LifeTime;
 
 	/** Array with the Trapped Actors by the Black-hole projectile */
-	TArray<AActor*> TrappedActors;
+	TArray<TObjectPtr<AActor>> TrappedActors;
 	
 	/** Array with the actors that were trapped but eventually get
 	 *  out from the collision black-hole and pending to restore scale */
-	TArray<AActor*> ReleasedActors;
+	TArray<TObjectPtr<AActor>> ReleasedActors;
 
 	
 /*********************************** METHODS *********************************/

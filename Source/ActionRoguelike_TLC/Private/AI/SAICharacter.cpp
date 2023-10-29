@@ -2,12 +2,14 @@
 
 
 #include "AI/SAICharacter.h"
-
 #include "AIController.h"
 #include "BrainComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/CapsuleComponent.h"
+#include "SAttributesComponent.h"
+#include "Perception/PawnSensingComponent.h"
+#include "SActionComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 
@@ -57,29 +59,15 @@ void ASAICharacter::OnPawnSeen(APawn* Pawn)
 {
 	if (Pawn != GetTargetActor())
 	{
-		SetTargetActor(Pawn);
-
-		//DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
-		if (PlayerSpottedWidgetClass)
-		{
-			if (!ActivePlayerSpottedWidget || (ActivePlayerSpottedWidget && !ActivePlayerSpottedWidget->IsInViewport()))
-			{
-				ActivePlayerSpottedWidget = CreateWidget<USWorldUserWidget>(GetWorld(), PlayerSpottedWidgetClass);
-				if (ActivePlayerSpottedWidget)
-				{
-					ActivePlayerSpottedWidget->AttachedActor = this;
-					ActivePlayerSpottedWidget->AddToViewport(10);
-				}
-			}
-		}
+		SetTargetActor(Pawn);		
+		MulticastPawnSeen();
 	}
 }
 
 
 // The broadcast function that notifies when Health changes on AttributesComponent
 void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributesComponent* OwningComp, float NewHealth, float Delta)
-{
-	
+{	
 	// Damaged
 	if (Delta <= 0)
 	{
@@ -185,6 +173,21 @@ AActor* ASAICharacter::GetTargetActor() const
 		}
 	}
 	return nullptr;
+}
+
+
+// Needed for OnPawnSeen server replication
+void ASAICharacter::MulticastPawnSeen_Implementation()
+{
+	if (PlayerSpottedWidgetClass)
+	{
+		USWorldUserWidget* SpottedWidget = CreateWidget<USWorldUserWidget>(GetWorld(), PlayerSpottedWidgetClass);
+		if (SpottedWidget)
+		{
+			SpottedWidget->AttachedActor = this;
+			SpottedWidget->AddToViewport(10);
+		}
+	}
 }
 
 

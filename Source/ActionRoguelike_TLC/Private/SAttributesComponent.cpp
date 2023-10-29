@@ -91,14 +91,13 @@ bool USAttributesComponent::ApplyHealthChange(AActor* InstigatorActor, float Del
 		{
 			OnOwnerKilled(InstigatorActor);
 		}
+
+		// Rage management
+		if (ClampedDelta < 0.0f)
+		{
+			RageIncrease(-ClampedDelta);
+		}
 	}
-
-
-	if (ClampedDelta < 0.0f)
-	{
-		RageIncrease(-ClampedDelta);
-	}
-
 	
 	return (ClampedDelta != 0);
 }
@@ -125,7 +124,7 @@ void USAttributesComponent::RageIncrease(const float DamageReceived)
 		
 		Rage = ClampedRage;
 
-		OnRageChanged.Broadcast(this, Rage, -ClampedDelta);
+		MulticastRageChanged(Rage, -ClampedDelta);
 	}
 }
 
@@ -140,7 +139,7 @@ bool USAttributesComponent::RageDecrease(const float DecreaseAmount)
 		
 		Rage = ClampedRage;
 
-		OnRageChanged.Broadcast(this, Rage, ClampedDelta);
+		MulticastRageChanged(Rage, ClampedDelta);
 		return true;
 	}
 	else if (DecreaseAmount > Rage)
@@ -167,6 +166,9 @@ void USAttributesComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 
 	DOREPLIFETIME(USAttributesComponent, Health);
 	DOREPLIFETIME(USAttributesComponent, MaxHealth);
+	DOREPLIFETIME(USAttributesComponent, Rage);
+	DOREPLIFETIME(USAttributesComponent, MaxRage);
+	DOREPLIFETIME(USAttributesComponent, RatioDamageRage);
 	//DOREPLIFETIME_CONDITION(USAttributesComponent, MaxHealth, COND_OwnerOnly); // Optimized option
 }
 
@@ -175,6 +177,13 @@ void USAttributesComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 void USAttributesComponent::MulticastHealthChanged_Implementation(AActor* InstigatorActor, float NewHealth, float Delta)
 {
 	OnHealthChanged.Broadcast(InstigatorActor, this, NewHealth, Delta);
+}
+
+
+// Needed for HealthChanged server replication
+void USAttributesComponent::MulticastRageChanged_Implementation(float NewRage, float Delta)
+{
+	OnRageChanged.Broadcast(this, NewRage, Delta);
 }
 
 

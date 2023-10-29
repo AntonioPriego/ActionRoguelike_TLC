@@ -5,16 +5,16 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
-#include "SActionComponent.h"
-#include "SActionEffect.h"
-#include "SAttributesComponent.h"
-#include "SInteractionComponent.h"
 #include "SPlayerState.h"
-#include "Components/InputComponent.h"
 #include "SCharacter.generated.h"
 
+class UInputMappingContext;
+class UCameraComponent;
+class USAttributesComponent;
+class USActionComponent;
+class USInteractionComponent;
+class UInputAction;
 
 UCLASS()
 class ACTIONROGUELIKE_TLC_API ASCharacter : public ACharacter
@@ -26,64 +26,64 @@ class ACTIONROGUELIKE_TLC_API ASCharacter : public ACharacter
 protected:
 	/** Spring Arm Component to manage Camera collisions */
 	UPROPERTY(VisibleAnywhere)
-	USpringArmComponent* SpringArmComponent;
+	TObjectPtr<USpringArmComponent> SpringArmComponent;
 
 	/** Camera Component for player character */
 	UPROPERTY(VisibleAnywhere)
-	UCameraComponent* CameraComponent;
+	TObjectPtr<UCameraComponent> CameraComponent;
 
 	/** The component for interaction management */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	USInteractionComponent* InteractionComponent;
+	TObjectPtr<USInteractionComponent> InteractionComponent;
 
 	/** The component for attributes management */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	USAttributesComponent* AttributesComponent;
+	TObjectPtr<USAttributesComponent> AttributesComponent;
 
 	/** The component for credits management */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	USActionComponent* ActionComponent;
+	TObjectPtr<USActionComponent> ActionComponent;
 
 	
 	/** Context input for player */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
-	UInputMappingContext* PlayerContext;
+	TObjectPtr<UInputMappingContext> PlayerContext;
 	
 	/** Move input action for player */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
-	UInputAction* MoveAction;
+	TObjectPtr<UInputAction> MoveAction;
 	
 	/** Move camera input action for player */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
-	UInputAction* LookAction;
+	TObjectPtr<UInputAction> LookAction;
 	
 	/** Primary attack input action for player */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
-	UInputAction* PrimaryAttackAction;
+	TObjectPtr<UInputAction> PrimaryAttackAction;
 	
 	/** Secondary attack input action for player */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
-	UInputAction* SecondaryAttackAction;
+	TObjectPtr<UInputAction> SecondaryAttackAction;
 	
 	/** Primary interact input action for player */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
-	UInputAction* PrimaryInteractAction;
+	TObjectPtr<UInputAction> PrimaryInteractAction;
 	
 	/** Jump input action for player */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
-	UInputAction* JumpAction;
+	TObjectPtr<UInputAction> JumpAction;
 	
 	/** Sprint input action for player */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
-	UInputAction* SprintAction;
+	TObjectPtr<UInputAction> SprintAction;
 	
 	/** Dash input action for player */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
-	UInputAction* DashAction;
+	TObjectPtr<UInputAction> DashAction;
 
 	/** Parry input action for player */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
-	UInputAction* ParryAction;
+	TObjectPtr<UInputAction> ParryAction;
 	
 	/** FName for material variable that controls hit cue */
 	UPROPERTY(VisibleAnywhere, Category=Effects)

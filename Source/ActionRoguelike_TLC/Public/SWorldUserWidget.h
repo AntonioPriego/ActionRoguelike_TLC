@@ -20,7 +20,7 @@ class ACTIONROGUELIKE_TLC_API USWorldUserWidget : public UUserWidget
 public:
 	/** The actor is going to project this widget */
 	UPROPERTY(BlueprintReadOnly, Category=UI, meta=(ExposeOnSpawn=true))
-	AActor* AttachedActor;
+	TObjectPtr<AActor> AttachedActor;
 
 	/** Vertical offset between AttachedActor and the actual widget (this) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=UI)
@@ -28,7 +28,7 @@ public:
 
 protected:
 	UPROPERTY(meta=(BindWidget))
-	USizeBox* ParentSizeBox;
+	TObjectPtr<USizeBox> ParentSizeBox;
 	
 /*********************************** METHODS *********************************/
 protected:

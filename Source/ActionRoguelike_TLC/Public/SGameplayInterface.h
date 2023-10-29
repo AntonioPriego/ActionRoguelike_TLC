@@ -17,9 +17,8 @@ class USGameplayInterface : public UInterface
 class ACTIONROGUELIKE_TLC_API ISGameplayInterface
 {
 	GENERATED_BODY()
+
 	
-/********************************* PROPERTIES ********************************/
-// ...
 /*********************************** METHODS *********************************/
 public:
 	/** To establish the communication between the Instigator and the Actor instigated (that implements this interface) */

@@ -10,4 +10,5 @@ USSaveGame::USSaveGame()
 {
 	// Set some values
 	RoundPersonalBest = 0;
+	Credits           = 0;
 }

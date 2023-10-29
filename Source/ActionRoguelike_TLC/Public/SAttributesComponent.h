@@ -35,15 +35,15 @@ protected:
 	float MaxHealth;
 
 	/** Rage is an attribute used for certain abilities */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Attributes)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category=Attributes)
 	float Rage;
 
 	/** The max Rage value assignable */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Attributes)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category=Attributes)
 	float MaxRage;
 
 	/** The max Rage value assignable */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Attributes)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category=Attributes)
 	float RatioDamageRage;
 
 	
@@ -112,6 +112,10 @@ protected:
 	/** Needed for HealthChanged server replication */
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastHealthChanged(AActor* InstigatorActor, float NewHealth, float Delta);
+	
+	/** Needed for RageChanged server replication */
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRageChanged(float NewRage, float Delta);
 
 	
 /************************************ DEBUG **********************************/

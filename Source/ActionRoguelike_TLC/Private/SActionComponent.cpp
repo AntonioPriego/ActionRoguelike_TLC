@@ -90,7 +90,8 @@ void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 			*GetNameSafe(GetOuter())
 		);
 
-		LogOnScreen(this, ActionMsg, TextColor, 0.0f);
+		// Log Action traffic (disabled)
+		//LogOnScreen(this, ActionMsg, TextColor, 0.0f);
 	}
 }
 
