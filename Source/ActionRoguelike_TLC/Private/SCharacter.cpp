@@ -45,14 +45,21 @@ ASCharacter::ASCharacter()
 }
 
 
-// Internal function between Constructor and BeginPlay
 void ASCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	AttributesComponent->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
-	GetMesh()->OnComponentBeginOverlap.AddDynamic(this, &ASCharacter::OnActorBeginOverlap);
+	if (AttributesComponent)
+	{
+		AttributesComponent->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
+	}
+	if (GetMesh())
+	{
+		GetMesh()->OnComponentBeginOverlap.AddDynamic(this, &ASCharacter::OnActorBeginOverlap);
+	}
 }
+
+// Internal function between Constructor and BeginPlay
 
 
 // Called every frame

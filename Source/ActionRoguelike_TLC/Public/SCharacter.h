@@ -7,6 +7,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "SPlayerState.h"
+#include "SAttributesComponent.h"
 #include "SCharacter.generated.h"
 
 class UInputMappingContext;
@@ -33,15 +34,15 @@ protected:
 	TObjectPtr<UCameraComponent> CameraComponent;
 
 	/** The component for interaction management */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components)
 	TObjectPtr<USInteractionComponent> InteractionComponent;
 
 	/** The component for attributes management */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components)
 	TObjectPtr<USAttributesComponent> AttributesComponent;
 
 	/** The component for credits management */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components)
 	TObjectPtr<USActionComponent> ActionComponent;
 
 	
@@ -124,6 +125,9 @@ public:
 	/** Called to change crosshair widget to normal mode */
 	UFUNCTION(BlueprintImplementableEvent)
 	void ChangeCrossHairToNormal();
+	/** Called to add hit-marker to crosshair widget */
+	UFUNCTION(BlueprintImplementableEvent)
+	void AddHitmarkerToCrossHair();
 
 
 protected:	
